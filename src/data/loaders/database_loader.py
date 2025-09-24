@@ -80,25 +80,33 @@ class DatabaseLoader:
         """
         try:
             with _self.get_connection() as conn:
-                # Load main municipality data
+                # Load main municipality data with correct Portuguese column names
                 query = """
                 SELECT
-                    municipality,
-                    biogas_potential_m3_day,
-                    methane_potential_m3_day,
-                    energy_potential_kwh_day,
-                    co2_reduction_tons_year,
-                    population,
-                    urban_waste_tons_day,
-                    rural_waste_tons_day,
-                    total_waste_tons_day,
-                    latitude,
-                    longitude
+                    nome_municipio as municipality,
+                    total_final_m_ano as biogas_potential_m3_year,
+                    (total_final_m_ano / 365.0) as biogas_potential_m3_day,
+                    total_urbano_m_ano as urban_biogas_m3_year,
+                    total_agricola_m_ano as agricultural_biogas_m3_year,
+                    total_pecuaria_m_ano as livestock_biogas_m3_year,
+                    populacao_2022 as population,
+                    rsu_potencial_m_ano as urban_waste_potential_m3_year,
+                    rpo_potencial_m_ano as rural_waste_potential_m3_year,
+                    area_km2,
+                    densidade_demografica as population_density,
+                    lat as latitude,
+                    lon as longitude
                 FROM municipalities
-                ORDER BY municipality
+                WHERE total_final_m_ano IS NOT NULL
+                ORDER BY nome_municipio
                 """
 
                 df = pd.read_sql_query(query, conn)
+
+                # Calculate daily values and additional metrics
+                df['energy_potential_kwh_day'] = df['biogas_potential_m3_day'] * 0.6 * 9.97  # 60% methane, 9.97 kWh/m³
+                df['energy_potential_mwh_year'] = (df['energy_potential_kwh_day'] * 365) / 1000
+                df['co2_reduction_tons_year'] = df['energy_potential_kwh_day'] * 0.45 * 365 / 1000  # kg CO2 per kWh
 
                 _self.logger.info(f"Loaded data for {len(df)} municipalities")
                 return df
@@ -122,7 +130,7 @@ class DatabaseLoader:
             with _self.get_connection() as conn:
                 query = """
                 SELECT * FROM municipalities
-                WHERE municipality = ?
+                WHERE nome_municipio = ?
                 LIMIT 1
                 """
 
@@ -140,13 +148,13 @@ class DatabaseLoader:
 
     @st.cache_data(ttl=settings.CACHE_TTL)
     def get_top_municipalities(_self,
-                              by_column: str = "biogas_potential_m3_day",
+                              by_column: str = "total_final_m_ano",
                               limit: int = 20) -> Optional[pd.DataFrame]:
         """
         Get top municipalities by specified metric
 
         Args:
-            by_column: Column to sort by
+            by_column: Column to sort by (using database column names)
             limit: Number of municipalities to return
 
         Returns:
@@ -156,11 +164,10 @@ class DatabaseLoader:
             with _self.get_connection() as conn:
                 query = f"""
                 SELECT
-                    municipality,
-                    {by_column},
-                    biogas_potential_m3_day,
-                    energy_potential_kwh_day,
-                    population
+                    nome_municipio as municipality,
+                    (total_final_m_ano / 365.0) as biogas_potential_m3_day,
+                    (total_final_m_ano / 365.0 * 0.6 * 9.97) as energy_potential_kwh_day,
+                    populacao_2022 as population
                 FROM municipalities
                 WHERE {by_column} IS NOT NULL
                 ORDER BY {by_column} DESC
