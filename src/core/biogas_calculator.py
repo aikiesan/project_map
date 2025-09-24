@@ -160,30 +160,37 @@ class BiogasCalculator:
         Calculate state-wide totals for São Paulo
 
         Args:
-            municipalities_df: DataFrame with municipality calculations
+            municipalities_df: DataFrame with municipality calculations (from DatabaseLoader)
 
         Returns:
             Dictionary with state totals
         """
         try:
+            # Use the actual column names that DatabaseLoader returns
             totals = {
                 "total_municipalities": len(municipalities_df),
-                "total_population": municipalities_df['population'].sum(),
-                "total_waste_tons_day": municipalities_df['total_waste_tons_day'].sum(),
-                "total_biogas_m3_day": municipalities_df['biogas_potential_m3_day'].sum(),
-                "total_methane_m3_day": municipalities_df['methane_potential_m3_day'].sum(),
-                "total_energy_kwh_day": municipalities_df['energy_potential_kwh_day'].sum(),
-                "total_energy_mwh_year": municipalities_df['energy_potential_mwh_year'].sum(),
-                "total_co2_reduction_tons_year": municipalities_df['co2_reduction_tons_year'].sum(),
+                "total_population": municipalities_df['population'].sum() if 'population' in municipalities_df.columns else 0,
+                "total_biogas_m3_day": municipalities_df['biogas_potential_m3_day'].sum() if 'biogas_potential_m3_day' in municipalities_df.columns else 0,
+                "total_energy_kwh_day": municipalities_df['energy_potential_kwh_day'].sum() if 'energy_potential_kwh_day' in municipalities_df.columns else 0,
+                "total_energy_mwh_year": municipalities_df['energy_potential_mwh_year'].sum() if 'energy_potential_mwh_year' in municipalities_df.columns else 0,
+                "total_co2_reduction_tons_year": municipalities_df['co2_reduction_tons_year'].sum() if 'co2_reduction_tons_year' in municipalities_df.columns else 0,
             }
 
-            # Calculate averages
-            totals.update({
-                "avg_biogas_per_municipality": totals["total_biogas_m3_day"] / totals["total_municipalities"],
-                "avg_energy_per_municipality": totals["total_energy_kwh_day"] / totals["total_municipalities"],
-                "avg_biogas_per_capita": totals["total_biogas_m3_day"] / totals["total_population"],
-                "avg_energy_per_capita": totals["total_energy_kwh_day"] / totals["total_population"]
-            })
+            # Calculate methane (60% of biogas)
+            totals["total_methane_m3_day"] = totals["total_biogas_m3_day"] * 0.6
+
+            # Calculate averages (avoid division by zero)
+            if totals["total_municipalities"] > 0:
+                totals.update({
+                    "avg_biogas_per_municipality": totals["total_biogas_m3_day"] / totals["total_municipalities"],
+                    "avg_energy_per_municipality": totals["total_energy_kwh_day"] / totals["total_municipalities"]
+                })
+
+            if totals["total_population"] > 0:
+                totals.update({
+                    "avg_biogas_per_capita": totals["total_biogas_m3_day"] / totals["total_population"],
+                    "avg_energy_per_capita": totals["total_energy_kwh_day"] / totals["total_population"]
+                })
 
             # Round all values
             for key, value in totals.items():
@@ -191,10 +198,12 @@ class BiogasCalculator:
                     totals[key] = round(value, 2)
 
             self.logger.info(f"Calculated state totals for {totals['total_municipalities']} municipalities")
+            self.logger.debug(f"Total biogas potential: {totals['total_biogas_m3_day']} m³/day")
+
             return totals
 
         except Exception as e:
-            self.logger.error(f"State totals calculation failed: {e}")
+            self.logger.error(f"State totals calculation failed: {e}", exc_info=True)
             return {}
 
     def validate_inputs(self,

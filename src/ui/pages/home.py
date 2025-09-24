@@ -139,7 +139,7 @@ class HomePage:
         st.markdown("#### 🏆 Top 10 Municipalities by Biogas Potential")
 
         top_municipalities = database_loader.get_top_municipalities(
-            by_column="biogas_potential_m3_day",
+            by_column="total_final_m_ano",
             limit=10
         )
 
@@ -155,7 +155,7 @@ class HomePage:
 
             st.dataframe(
                 display_df,
-                use_container_width=True,
+                width='stretch',
                 hide_index=True
             )
 
