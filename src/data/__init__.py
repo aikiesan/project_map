@@ -2,9 +2,7 @@
 Data access layer for shapefiles, rasters, and database operations
 """
 
-# Imports will be added as modules are created
-# from .loaders.shapefile_loader import ShapefileLoader
-# from .loaders.database_loader import DatabaseLoader
-# from .cache.memory_cache import MemoryCache
+from .loaders.shapefile_loader import ShapefileLoader, shapefile_loader
+from .loaders.database_loader import DatabaseLoader, database_loader
 
-__all__ = []
+__all__ = ["ShapefileLoader", "shapefile_loader", "DatabaseLoader", "database_loader"]
