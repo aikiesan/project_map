@@ -326,10 +326,32 @@ class MapViewer:
     def _add_pipelines_layer(self, map_obj: folium.Map) -> Optional[gpd.GeoDataFrame]:
         """Add gas pipelines if available"""
         try:
-            # This is a placeholder for future pipeline data
-            # Would load from shapefile_loader.load_pipelines() when available
-            self.logger.info("Pipeline layer not yet implemented")
-            return None
+            # Load both distribution and transport pipelines
+            pipelines = shapefile_loader.load_gas_pipelines("both")
+            if pipelines is not None and len(pipelines) > 0:
+                # Limit pipelines for performance
+                display_pipelines = pipelines.head(self.layer_configs['pipelines']['performance_limit'])
+
+                for _, pipeline in display_pipelines.iterrows():
+                    # Different colors for different pipeline types
+                    pipeline_type = pipeline.get('Distrib', pipeline.get('TIPO', 'Unknown'))
+                    color = '#FF4500' if 'Distrib' in pipeline else '#1E90FF'  # Orange for distribution, blue for transport
+
+                    folium.GeoJson(
+                        pipeline.geometry,
+                        style_function=lambda feature, color=color: {
+                            'color': color,
+                            'weight': 3,
+                            'opacity': 0.8
+                        },
+                        popup=self._create_pipeline_popup(pipeline),
+                        tooltip=f"Pipeline: {pipeline_type}"
+                    ).add_to(map_obj)
+
+                self.logger.info(f"Added {len(display_pipelines)} pipeline segments")
+                return display_pipelines
+            else:
+                self.logger.warning("No pipeline data available")
 
         except Exception as e:
             self.logger.error(f"Error adding pipelines: {e}")
@@ -363,6 +385,20 @@ class MapViewer:
             <b>Type:</b> {plant_type}<br>
             <hr>
             <small>Existing or potential facility</small>
+        </div>
+        """
+
+    def _create_pipeline_popup(self, pipeline: pd.Series) -> str:
+        """Create popup for gas pipeline"""
+        pipeline_type = pipeline.get('Distrib', pipeline.get('TIPO', 'Unknown'))
+        uf = pipeline.get('UF', 'SP')
+        return f"""
+        <div style='width: 150px'>
+            <h4>Gas Pipeline</h4>
+            <b>Type:</b> {pipeline_type}<br>
+            <b>State:</b> {uf}<br>
+            <hr>
+            <small>Natural gas infrastructure</small>
         </div>
         """
 

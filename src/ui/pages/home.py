@@ -5,6 +5,7 @@ Professional home page with real data showcase and advanced functionality
 
 import streamlit as st
 import folium
+import folium.plugins
 import pandas as pd
 from streamlit_folium import st_folium
 from typing import Dict, Any, Optional
@@ -30,65 +31,141 @@ class HomePage:
 
     def render(self) -> None:
         """
-        Render the home page with real data and functionality
+        Render Map-First home page with native Streamlit components
         """
         try:
-            self._render_welcome_section()
-            self._render_data_status()
-            self._render_live_statistics()
-            self._render_interactive_map()
+            # Map-First approach: Hero map section at the top
+            self._render_hero_map_section()
+
+            # Live dashboard strip below map
+            self._render_live_dashboard_strip()
+
+            # Collapsible sections for additional info
+            self._render_expandable_sections()
 
         except Exception as e:
             self.logger.error(f"Error rendering home page: {e}", exc_info=True)
             st.error("⚠️ Failed to render home page. Check logs for details.")
 
-    def _render_welcome_section(self) -> None:
-        """Render welcome message with real data capabilities"""
-        st.markdown("""
-        ## 🗺️ CP2B Maps V2 - Professional Biogas Analysis Platform
+    def _render_hero_map_section(self) -> None:
+        """Render Map-First hero section with sidebar controls"""
+        # Simple header using native Streamlit
+        st.title("🗺️ CP2B Maps V2 - Professional Biogas GIS Platform")
 
-        ### 🎯 **Live Data Integration**
-        - **645 São Paulo Municipalities** with biogas potential calculations
-        - **425 Biogas Plants** (existing and potential locations)
-        - **Professional Architecture** with smart caching and optimization
-        - **Real-time Calculations** using literature-validated factors
-        """)
+        # Load municipality data for statistics
+        municipalities_df = database_loader.load_municipalities_data()
 
-    def _render_data_status(self) -> None:
-        """Show current data loading status and validation"""
-        st.markdown("### 📊 Data Infrastructure Status")
+        # Organized sidebar sections
+        with st.sidebar:
+            st.markdown("### 🎛️ Map Controls")
+            show_boundary = st.checkbox("🗺️ State Boundary", value=True)
+            show_plants = st.checkbox("🏭 Biogas Plants", value=True)
+            show_municipalities = st.checkbox("🏘️ Municipality Labels", value=False)
+            map_style = st.selectbox("Map Style:", options=['CartoDB positron', 'CartoDB dark_matter', 'OpenStreetMap'])
 
-        col1, col2, col3 = st.columns(3)
+            st.markdown("---")
+            st.markdown("### 📊 Live Metrics")
+            if municipalities_df is not None:
+                stats = biogas_calculator.get_state_totals(municipalities_df)
+                st.metric("Municipalities", f"{stats.get('total_municipalities', 0):,}")
+                st.metric("Daily Biogas", f"{stats.get('total_biogas_m3_day', 0):,.0f} m³")
+                st.metric("Annual Energy", f"{stats.get('total_energy_mwh_year', 0):,.0f} MWh")
+                st.metric("CO₂ Reduction", f"{stats.get('total_co2_reduction_tons_year', 0):,.0f} tons/year")
 
-        with col1:
-            # Database status
-            db_valid = database_loader.validate_database()
-            if db_valid:
-                st.success("✅ Database Connected")
-                db_info = database_loader.get_database_info()
-                st.caption(f"Size: {db_info.get('database_size_mb', 'Unknown')} MB")
-            else:
-                st.error("❌ Database Error")
-
-        with col2:
-            # Shapefile status
+            st.markdown("---")
+            st.markdown("### 🖥️ System Status")
+            db_status = "✅ Online" if database_loader.validate_database() else "❌ Error"
             shapefiles = shapefile_loader.get_available_shapefiles()
-            if shapefiles:
-                st.success(f"✅ {len(shapefiles)} Shapefiles")
-                total_size = sum(info['size_mb'] for info in shapefiles.values())
-                st.caption(f"Total: {total_size:.1f} MB")
-            else:
-                st.error("❌ No Shapefiles")
+            gis_status = f"✅ {len(shapefiles)} Layers" if shapefiles else "❌ Error"
+            st.success(f"🗄️ Database: {db_status}")
+            st.success(f"🗺️ GIS: {gis_status}")
+            st.success("⚙️ Calculator: ✅ Ready")
 
-        with col3:
-            # Calculator status
-            factors = biogas_calculator.get_conversion_factors_info()
-            st.success("✅ Calculator Ready")
-            st.caption("Literature-validated factors")
+        # Horizontal navigation overlay (minimalistic buttons over map)
+        nav_col1, nav_col2, nav_col3, nav_col4 = st.columns(4)
+        with nav_col1:
+            if st.button("🗺️ Advanced Maps", key="nav_maps", use_container_width=True):
+                st.info("👆 Use sidebar navigation to access Advanced Maps")
+        with nav_col2:
+            if st.button("📊 Data Analysis", key="nav_analysis", use_container_width=True):
+                st.info("👆 Use sidebar navigation to access Data Analysis")
+        with nav_col3:
+            if st.button("🔄 Municipality Compare", key="nav_compare", use_container_width=True):
+                st.info("👆 Use sidebar navigation to access Comparison tools")
+        with nav_col4:
+            if st.button("📥 Export & Reports", key="nav_export", use_container_width=True):
+                st.info("👆 Use sidebar navigation to access Export tools")
 
-    def _render_live_statistics(self) -> None:
-        """Display live statistics from the database"""
-        st.markdown("### 📈 Live São Paulo State Statistics")
+        # Full-width hero map
+        self._render_hero_map(show_boundary, show_plants, map_style)
+
+    def _render_hero_map(self, show_boundary: bool, show_plants: bool, map_style: str) -> None:
+        """Render the main hero map with professional styling"""
+        # Create large, prominent map
+        m = folium.Map(
+            location=settings.DEFAULT_CENTER,
+            zoom_start=7,
+            tiles=map_style
+        )
+
+        # Add fullscreen and measure tools
+        folium.plugins.Fullscreen().add_to(m)
+        folium.plugins.MeasureControl().add_to(m)
+
+        # Add state boundary if enabled
+        if show_boundary:
+            state_boundary = shapefile_loader.load_state_boundary()
+            if state_boundary is not None:
+                folium.GeoJson(
+                    state_boundary,
+                    style_function=lambda feature: {
+                        'color': '#2E8B57',
+                        'weight': 3,
+                        'opacity': 0.8,
+                        'fillOpacity': 0.1,
+                        'dashArray': '5, 5'
+                    },
+                    popup="São Paulo State - 645 Municipalities",
+                    tooltip="Click for state information"
+                ).add_to(m)
+
+        # Add biogas plants if enabled
+        if show_plants:
+            biogas_plants = shapefile_loader.load_biogas_plants()
+            if biogas_plants is not None and len(biogas_plants) > 0:
+                # Display first 100 plants for performance
+                display_plants = biogas_plants.head(100)
+
+                for _, plant in display_plants.iterrows():
+                    plant_type = plant.get('TIPO_PLANT', 'Unknown')
+                    folium.CircleMarker(
+                        location=[plant.geometry.y, plant.geometry.x],
+                        radius=6,
+                        popup=f"🏭 Biogas Plant<br><b>Type:</b> {plant_type}<br><b>Status:</b> Active",
+                        tooltip=f"🏭 {plant_type}",
+                        color='#FF6B35',
+                        fillColor='#FF6B35',
+                        fillOpacity=0.8,
+                        weight=2
+                    ).add_to(m)
+
+        # Display the hero map with increased height
+        map_data = st_folium(
+            m,
+            width="100%",
+            height=800,  # Large hero map
+            returned_objects=["last_object_clicked", "bounds"],
+            key="hero_map"
+        )
+
+        # Show interaction feedback
+        if map_data.get("last_object_clicked"):
+            st.success("🎯 Feature selected! Check the details in the sidebar.")
+
+    def _render_live_dashboard_strip(self) -> None:
+        """Render horizontal dashboard strip with key metrics"""
+        st.markdown("---")
+        st.markdown("### 📊 Real-Time Analytics Dashboard")
 
         # Load municipality data
         municipalities_df = database_loader.load_municipalities_data()
@@ -97,143 +174,86 @@ class HomePage:
             # Calculate state totals
             stats = biogas_calculator.get_state_totals(municipalities_df)
 
-            # Display in columns
-            col1, col2, col3, col4 = st.columns(4)
+            # Display metrics in horizontal layout
+            col1, col2, col3, col4, col5 = st.columns(5)
 
             with col1:
                 st.metric(
-                    "Total Municipalities",
-                    f"{stats.get('total_municipalities', 0):,}",
+                    label="🏘️ Municipalities",
+                    value=f"{stats.get('total_municipalities', 0):,}",
                     delta="Complete Coverage"
                 )
 
             with col2:
                 st.metric(
-                    "Daily Biogas Potential",
-                    f"{stats.get('total_biogas_m3_day', 0):,.0f} m³",
-                    delta="Per Day"
+                    label="⛽ Daily Biogas",
+                    value=f"{stats.get('total_biogas_m3_day', 0):,.0f} m³",
+                    delta="Real-time Potential"
                 )
 
             with col3:
                 st.metric(
-                    "Annual Energy Potential",
-                    f"{stats.get('total_energy_mwh_year', 0):,.0f} MWh",
+                    label="⚡ Annual Energy",
+                    value=f"{stats.get('total_energy_mwh_year', 0):,.0f} MWh",
                     delta="Clean Energy"
                 )
 
             with col4:
                 st.metric(
-                    "CO₂ Reduction Potential",
-                    f"{stats.get('total_co2_reduction_tons_year', 0):,.0f} tons",
+                    label="🌱 CO₂ Reduction",
+                    value=f"{stats.get('total_co2_reduction_tons_year', 0):,.0f} tons",
                     delta="Per Year"
                 )
 
-            # Top municipalities
-            self._render_top_municipalities(municipalities_df)
+            with col5:
+                # System health indicator
+                db_status = "✅ Online" if database_loader.validate_database() else "❌ Error"
+                st.metric(
+                    label="🖥️ System Status",
+                    value=db_status,
+                    delta="All Systems Operational"
+                )
 
         else:
-            st.warning("⚠️ Municipality data not available. Check database connection.")
+            st.warning("⚠️ Unable to load municipality data. Please check the database connection.")
 
-    def _render_top_municipalities(self, df: pd.DataFrame) -> None:
-        """Display top municipalities by biogas potential"""
-        st.markdown("#### 🏆 Top 10 Municipalities by Biogas Potential")
+    def _render_expandable_sections(self) -> None:
+        """Render collapsible section for top municipalities"""
+        with st.expander("🏆 Top Performing Municipalities", expanded=False):
+            self._render_top_municipalities_clean()
 
+    def _render_top_municipalities_clean(self) -> None:
+        """Clean version of top municipalities without complex styling"""
         top_municipalities = database_loader.get_top_municipalities(
             by_column="total_final_m_ano",
             limit=10
         )
 
         if top_municipalities is not None:
-            # Format the data for display
-            display_df = top_municipalities.copy()
-            display_df['biogas_potential_m3_day'] = display_df['biogas_potential_m3_day'].round(1)
-            display_df['energy_potential_kwh_day'] = display_df['energy_potential_kwh_day'].round(1)
-            display_df['population'] = display_df['population'].astype(int)
+            st.markdown("**Top 10 Municipalities by Biogas Potential:**")
 
-            # Rename columns for display
-            display_df.columns = ['Municipality', 'Biogas (m³/day)', 'Energy (kWh/day)', 'Population']
+            for idx, (_, municipality) in enumerate(top_municipalities.iterrows(), 1):
+                col1, col2, col3, col4 = st.columns([1, 3, 2, 2])
 
-            st.dataframe(
-                display_df,
-                width='stretch',
-                hide_index=True
-            )
+                with col1:
+                    if idx <= 3:
+                        medals = {1: "🥇", 2: "🥈", 3: "🥉"}
+                        st.markdown(medals.get(idx, f"#{idx}"))
+                    else:
+                        st.markdown(f"#{idx}")
 
-    def _render_interactive_map(self) -> None:
-        """Render interactive map with real data"""
-        st.markdown("### 🗺️ Interactive São Paulo State Map")
+                with col2:
+                    st.markdown(f"**{municipality['municipality']}**")
 
-        # Create folium map centered on São Paulo
-        m = folium.Map(
-            location=settings.DEFAULT_CENTER,
-            zoom_start=7,
-            tiles="CartoDB positron"
-        )
+                with col3:
+                    st.markdown(f"{municipality['biogas_potential_m3_day']:,.0f} m³/day")
 
-        # Load and display state boundary
-        state_boundary = shapefile_loader.load_state_boundary()
-        if state_boundary is not None:
-            folium.GeoJson(
-                state_boundary,
-                style_function=lambda feature: {
-                    'color': '#2E8B57',
-                    'weight': 3,
-                    'opacity': 0.8,
-                    'fillOpacity': 0.1
-                },
-                popup="São Paulo State",
-                tooltip="São Paulo State - 645 Municipalities"
-            ).add_to(m)
+                with col4:
+                    st.markdown(f"{municipality['population']:,.0f} people")
 
-        # Load and display biogas plants
-        biogas_plants = shapefile_loader.load_biogas_plants()
-        if biogas_plants is not None and len(biogas_plants) > 0:
-            for _, plant in biogas_plants.head(50).iterrows():  # Limit for performance
-                folium.CircleMarker(
-                    location=[plant.geometry.y, plant.geometry.x],
-                    radius=5,
-                    popup=f"Biogas Plant<br>Type: {plant.get('TIPO_PLANT', 'Unknown')}",
-                    tooltip=f"Biogas Plant: {plant.get('TIPO_PLANT', 'Unknown')}",
-                    color='#FF6B35',
-                    fillColor='#FF6B35',
-                    fillOpacity=0.7
-                ).add_to(m)
 
-        # Display map
-        map_data = st_folium(
-            m,
-            width=700,
-            height=500,
-            returned_objects=["last_object_clicked"]
-        )
 
-        # Show interaction feedback
-        if map_data["last_object_clicked"]:
-            st.success("✅ Map interaction detected! Click on biogas plants to see details.")
 
-        # Development progress
-        st.markdown("---")
-        st.markdown("### 🚀 Development Progress")
 
-        progress_col1, progress_col2 = st.columns([3, 1])
 
-        with progress_col1:
-            st.progress(0.6, text="Phase 2A: Data Infrastructure Complete")
 
-        with progress_col2:
-            st.metric("Progress", "60%", delta="Phase 2A ✅")
-
-        # Next steps
-        st.markdown("""
-        **✅ Completed:**
-        - Professional data loaders (ShapefileLoader, DatabaseLoader)
-        - Biogas calculation engine with literature-validated factors
-        - Real-time statistics from 645 municipalities
-        - Interactive map with state boundary and biogas plants
-
-        **🚧 Next Phase:**
-        - Advanced map layers and controls
-        - Municipality comparison tools
-        - Export functionality
-        - Performance optimization
-        """)
