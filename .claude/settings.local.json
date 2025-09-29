@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip install:*)",
+      "Bash(python:*)",
+      "Bash(streamlit run:*)",
+      "Read(//c/Users/Lucas/Documents/CP2B/CP2B_Maps/**)",
+      "WebFetch(domain:github.com)",
+      "Bash(find:*)",
+      "Bash(copy:*)",
+      "Bash(grep:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
