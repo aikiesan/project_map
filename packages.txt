@@ -3,7 +3,6 @@
 
 # GDAL - Geospatial Data Abstraction Library
 gdal-bin
-libgdal-dev
 
 # GEOS - Geometry Engine Open Source
 libgeos-dev
@@ -11,8 +10,5 @@ libgeos-dev
 # PROJ - Cartographic Projections Library
 libproj-dev
 
-# Additional geospatial dependencies
+# Spatial indexing
 libspatialindex-dev
-
-# For rasterio and other geospatial tools
-build-essential
