@@ -115,30 +115,29 @@ class HomePage:
                     )
 
                     data_options = {
-                        "Potencial Total": "total_final_nm_ano",
-                        "Potencial Agrícola": "total_agricola_nm_ano",
-                        "Potencial Pecuário": "total_pecuaria_nm_ano",
-                        "Biogás de Cana": "biogas_cana_nm_ano",
-                        "Biogás de Soja": "biogas_soja_nm_ano",
-                        "Biogás de Bovinos": "biogas_bovinos_nm_ano",
-                        "Biogás de Suínos": "biogas_suino_nm_ano"
+                        "Potencial Total de Biogás": "biogas_potential_m3_year",
+                        "Biogás Urbano": "urban_biogas_m3_year",
+                        "Biogás Agrícola": "agricultural_biogas_m3_year",
+                        "Biogás Pecuário": "livestock_biogas_m3_year",
+                        "Potencial Energético (MWh/ano)": "energy_potential_mwh_year",
+                        "Redução de CO₂ (ton/ano)": "co2_reduction_tons_year"
                     }
 
                     if filter_mode == "Individual":
                         selected = st.selectbox("Resíduo:", list(data_options.keys()), key="data_select")
-                        st.session_state.selected_data_column = data_options[selected]
+                        st.session_state['data_column'] = data_options[selected]
                     else:
                         selected_list = st.multiselect(
                             "Resíduos:",
                             list(data_options.keys()),
-                            default=["Potencial Total"],
+                            default=["Potencial Total de Biogás"],
                             key="data_multi"
                         )
                         # For multiple, use first selection or default
                         if selected_list:
-                            st.session_state.selected_data_column = data_options[selected_list[0]]
+                            st.session_state['data_column'] = data_options[selected_list[0]]
                         else:
-                            st.session_state.selected_data_column = "total_final_nm_ano"
+                            st.session_state['data_column'] = "biogas_potential_m3_year"
 
                     # Municipality search
                     search_term = st.text_input(
@@ -146,13 +145,13 @@ class HomePage:
                         placeholder="Nome do município...",
                         key="mun_search"
                     )
-                    st.session_state.search_term = search_term
+                    st.session_state['mun_search_term'] = search_term
             else:
                 # Disabled state
                 with st.expander("📊 Filtros de Dados", expanded=False):
                     st.warning("⚠️ **Ative a camada 'Potencial de Biogás' para usar os filtros**")
-                    st.session_state.selected_data_column = "total_final_nm_ano"
-                    st.session_state.search_term = ""
+                    st.session_state['data_column'] = "biogas_potential_m3_year"
+                    st.session_state['mun_search_term'] = ""
 
             # Panel 3: ESTILOS DE VISUALIZAÇÃO
             with st.expander("🎨 Estilos de Visualização", expanded=(st.session_state.active_panel == 'estilos')):
@@ -173,7 +172,8 @@ class HomePage:
                 elif viz_type == "Agrupamentos (Clusters)":
                     st.info("📍 Municípios próximos são agrupados em clusters")
 
-                st.session_state.viz_type = viz_type
+                # Store with different key name to avoid conflict
+                st.session_state['selected_viz_type'] = viz_type
 
                 st.markdown("---")
                 st.markdown("💡 **Dica**: Experimente diferentes estilos!")
@@ -228,7 +228,7 @@ class HomePage:
         municipalities_df = database_loader.load_municipalities_data()
 
         # Get selected data column
-        data_column = st.session_state.get('selected_data_column', 'total_final_nm_ano')
+        data_column = st.session_state.get('data_column', 'biogas_potential_m3_year')
 
         # Create map
         m = folium.Map(
@@ -302,7 +302,7 @@ class HomePage:
         df_filtered = df[df[data_column] > 0].copy()
 
         # Apply search filter if active
-        search_term = st.session_state.get('search_term', '')
+        search_term = st.session_state.get('mun_search_term', '')
         if search_term and len(search_term) >= 2:
             df_filtered = df_filtered[
                 df_filtered['municipio'].str.contains(search_term, case=False, na=False)
@@ -314,7 +314,7 @@ class HomePage:
             min_val = df_filtered[data_column].min()
 
             # Get visualization type
-            viz_type = st.session_state.get('viz_type', 'Círculos Proporcionais')
+            viz_type = st.session_state.get('selected_viz_type', 'Círculos Proporcionais')
 
             if viz_type == "Círculos Proporcionais":
                 # Add circles for each municipality
