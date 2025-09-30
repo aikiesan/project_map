@@ -1,0 +1,324 @@
+/*
+ * CP2B Maps V2 - Global Styling
+ * Visual parity with V1 - Enhanced styling for all components
+ */
+
+/* ============================================================================
+   BUTTONS - Enhanced with V1 Styling
+   ============================================================================ */
+
+button[kind="primary"],
+button[kind="secondary"],
+.stButton > button {
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.stButton > button:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+.stButton > button:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Green gradient buttons for primary actions */
+.stButton > button[kind="primary"] {
+    background: linear-gradient(135deg, #2E8B57 0%, #32CD32 100%) !important;
+    border: none !important;
+    color: white !important;
+}
+
+/* ============================================================================
+   METRICS - Enhanced Card Styling
+   ============================================================================ */
+
+[data-testid="metric-container"] {
+    background: white !important;
+    border-radius: 10px !important;
+    padding: 1rem !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    border: 1px solid #e9ecef !important;
+    transition: all 0.2s ease !important;
+}
+
+[data-testid="metric-container"]:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+[data-testid="stMetricLabel"] {
+    font-size: 0.9rem !important;
+    color: #6c757d !important;
+    font-weight: 500 !important;
+}
+
+[data-testid="stMetricValue"] {
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    color: #2c3e50 !important;
+}
+
+/* ============================================================================
+   EXPANDERS - Enhanced Styling with Shadows
+   ============================================================================ */
+
+.streamlit-expanderHeader {
+    background: #f8f9fa !important;
+    border-radius: 8px !important;
+    border: 1px solid #e9ecef !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease !important;
+}
+
+.streamlit-expanderHeader:hover {
+    background: #e9ecef !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+details[open] > .streamlit-expanderHeader {
+    border-radius: 8px 8px 0 0 !important;
+    border-bottom: 2px solid #667eea !important;
+}
+
+details[open] {
+    border: 1px solid #e9ecef !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* ============================================================================
+   TABLES - Zebra Striping and Borders
+   ============================================================================ */
+
+.dataframe {
+    border-collapse: collapse !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.dataframe thead tr {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    font-weight: 600 !important;
+}
+
+.dataframe thead th {
+    padding: 0.75rem !important;
+    border: none !important;
+}
+
+.dataframe tbody tr {
+    border-bottom: 1px solid #e9ecef !important;
+    transition: background 0.2s ease !important;
+}
+
+.dataframe tbody tr:nth-child(odd) {
+    background: #f8f9fa !important;
+}
+
+.dataframe tbody tr:nth-child(even) {
+    background: white !important;
+}
+
+.dataframe tbody tr:hover {
+    background: #e9ecef !important;
+    transform: scale(1.01) !important;
+}
+
+.dataframe tbody td {
+    padding: 0.75rem !important;
+    border: none !important;
+}
+
+/* ============================================================================
+   SIDEBAR - Enhanced Section Styling
+   ============================================================================ */
+
+[data-testid="stSidebar"] {
+    background: #f8f9fa !important;
+}
+
+[data-testid="stSidebar"] .element-container {
+    background: white !important;
+    border-radius: 8px !important;
+    padding: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
+}
+
+/* Sidebar section dividers */
+[data-testid="stSidebar"] hr {
+    margin: 1rem 0 !important;
+    border: none !important;
+    border-top: 2px solid #e9ecef !important;
+}
+
+/* Sidebar headers */
+[data-testid="stSidebar"] h3 {
+    color: #2c3e50 !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+    margin-top: 1rem !important;
+    padding-bottom: 0.5rem !important;
+    border-bottom: 2px solid #667eea !important;
+}
+
+/* ============================================================================
+   TABS - Enhanced with Shadows and Active States
+   ============================================================================ */
+
+.stTabs [data-baseweb="tab-list"] {
+    gap: 0.5rem !important;
+    background: #f8f9fa !important;
+    border-radius: 10px !important;
+    padding: 0.5rem !important;
+    margin-bottom: 2rem !important;
+}
+
+.stTabs [data-baseweb="tab"] {
+    height: 3rem !important;
+    padding: 1rem 2rem !important;
+    background: white !important;
+    border-radius: 8px !important;
+    border: 2px solid transparent !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+    transition: all 0.3s ease !important;
+}
+
+.stTabs [data-baseweb="tab"]:hover {
+    background: #e9ecef !important;
+    transform: translateY(-1px) !important;
+}
+
+.stTabs [aria-selected="true"] {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    border-color: #5a67d8 !important;
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3) !important;
+}
+
+/* ============================================================================
+   SELECTBOX / MULTISELECT - Enhanced Styling
+   ============================================================================ */
+
+[data-baseweb="select"] {
+    border-radius: 8px !important;
+    border: 1px solid #e9ecef !important;
+    transition: all 0.2s ease !important;
+}
+
+[data-baseweb="select"]:hover {
+    border-color: #667eea !important;
+    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.2) !important;
+}
+
+/* ============================================================================
+   CHECKBOXES - Enhanced Styling
+   ============================================================================ */
+
+[data-testid="stCheckbox"] {
+    padding: 0.5rem !important;
+    border-radius: 6px !important;
+    transition: background 0.2s ease !important;
+}
+
+[data-testid="stCheckbox"]:hover {
+    background: #f8f9fa !important;
+}
+
+/* ============================================================================
+   INFO / SUCCESS / WARNING / ERROR - Enhanced Banners
+   ============================================================================ */
+
+.stAlert {
+    border-radius: 8px !important;
+    border-left: 4px solid !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+[data-testid="stInfoMessage"] {
+    border-left-color: #17a2b8 !important;
+}
+
+[data-testid="stSuccessMessage"] {
+    border-left-color: #28a745 !important;
+}
+
+[data-testid="stWarningMessage"] {
+    border-left-color: #ffc107 !important;
+}
+
+[data-testid="stErrorMessage"] {
+    border-left-color: #dc3545 !important;
+}
+
+/* ============================================================================
+   LOADING SPINNER - Enhanced Animation
+   ============================================================================ */
+
+[data-testid="stSpinner"] > div {
+    border-color: #667eea transparent transparent transparent !important;
+    animation: spin 1s linear infinite !important;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ============================================================================
+   SCROLLBARS - Styled for Consistency
+   ============================================================================ */
+
+::-webkit-scrollbar {
+    width: 10px !important;
+    height: 10px !important;
+}
+
+::-webkit-scrollbar-track {
+    background: #f8f9fa !important;
+    border-radius: 5px !important;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #667eea !important;
+    border-radius: 5px !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #5a67d8 !important;
+}
+
+/* ============================================================================
+   CONTAINERS - Card-like Styling
+   ============================================================================ */
+
+.element-container {
+    border-radius: 8px !important;
+}
+
+/* ============================================================================
+   INPUT FIELDS - Enhanced Border and Focus States
+   ============================================================================ */
+
+input[type="text"],
+input[type="number"],
+textarea {
+    border-radius: 6px !important;
+    border: 1px solid #e9ecef !important;
+    transition: all 0.2s ease !important;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+textarea:focus {
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+    outline: none !important;
+}

@@ -27,7 +27,7 @@ from src.utils.logging_config import get_logger
 from src.ui.pages.home import HomePage
 
 # Import design system for V1 styling
-from src.ui.components.design_system import render_green_header
+from src.ui.components.design_system import render_green_header, load_global_css
 
 # Import accessibility components
 from src.accessibility.core import AccessibilityManager
@@ -53,6 +53,9 @@ def main():
     try:
         # Initialize accessibility features (WCAG Level A requirements)
         accessibility_manager.initialize()
+
+        # Load global CSS for V1 visual parity
+        load_global_css()
 
         # Log application start
         logger.info("Starting CP2B Maps V2 application with accessibility features")

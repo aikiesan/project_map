@@ -20,7 +20,10 @@ from src.core import biogas_calculator
 from src.ui.components.design_system import (
     render_section_header,
     render_info_banner,
-    render_feature_card
+    render_feature_card,
+    render_styled_metrics,
+    render_sidebar_section,
+    render_styled_table
 )
 
 logger = get_logger(__name__)
@@ -67,31 +70,56 @@ class HomePage:
         # Load municipality data for statistics
         municipalities_df = database_loader.load_municipalities_data()
 
-        # Organized sidebar sections
+        # Organized sidebar sections with V1 styling
         with st.sidebar:
-            st.markdown("### 🎛️ Map Controls")
+            render_sidebar_section("🎛️ Map Controls")
             show_boundary = st.checkbox("🗺️ State Boundary", value=True)
             show_plants = st.checkbox("🏭 Biogas Plants", value=True)
             show_municipalities = st.checkbox("🏘️ Municipality Labels", value=False)
             map_style = st.selectbox("Map Style:", options=['CartoDB positron', 'CartoDB dark_matter', 'OpenStreetMap'])
 
             st.markdown("---")
-            st.markdown("### 📊 Live Metrics")
+            render_sidebar_section("📊 Live Metrics")
             if municipalities_df is not None:
                 stats = biogas_calculator.get_state_totals(municipalities_df)
-                st.metric("Municipalities", f"{stats.get('total_municipalities', 0):,}")
-                st.metric("Daily Biogas", f"{stats.get('total_biogas_m3_day', 0):,.0f} m³")
-                st.metric("Annual Energy", f"{stats.get('total_energy_mwh_year', 0):,.0f} MWh")
-                st.metric("CO₂ Reduction", f"{stats.get('total_co2_reduction_tons_year', 0):,.0f} tons/year")
+
+                # Style metrics in gradient containers
+                st.markdown(f"""
+                <div style="background: rgba(102, 126, 234, 0.05); border-radius: 8px; padding: 1rem; margin: 0.5rem 0;">
+                    <div style="font-weight: 600; color: #2c3e50; margin-bottom: 0.5rem;">🏘️ Municipalities</div>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #667eea;">{stats.get('total_municipalities', 0):,}</div>
+                </div>
+                <div style="background: rgba(46, 139, 87, 0.05); border-radius: 8px; padding: 1rem; margin: 0.5rem 0;">
+                    <div style="font-weight: 600; color: #2c3e50; margin-bottom: 0.5rem;">⛽ Daily Biogas</div>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #2E8B57;">{stats.get('total_biogas_m3_day', 0):,.0f} m³</div>
+                </div>
+                <div style="background: rgba(255, 165, 0, 0.05); border-radius: 8px; padding: 1rem; margin: 0.5rem 0;">
+                    <div style="font-weight: 600; color: #2c3e50; margin-bottom: 0.5rem;">⚡ Annual Energy</div>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #FF8C00;">{stats.get('total_energy_mwh_year', 0):,.0f} MWh</div>
+                </div>
+                <div style="background: rgba(40, 167, 69, 0.05); border-radius: 8px; padding: 1rem; margin: 0.5rem 0;">
+                    <div style="font-weight: 600; color: #2c3e50; margin-bottom: 0.5rem;">🌱 CO₂ Reduction</div>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #28a745;">{stats.get('total_co2_reduction_tons_year', 0):,.0f} tons/yr</div>
+                </div>
+                """, unsafe_allow_html=True)
 
             st.markdown("---")
-            st.markdown("### 🖥️ System Status")
+            render_sidebar_section("🖥️ System Status")
             db_status = "✅ Online" if database_loader.validate_database() else "❌ Error"
             shapefiles = shapefile_loader.get_available_shapefiles()
             gis_status = f"✅ {len(shapefiles)} Layers" if shapefiles else "❌ Error"
-            st.success(f"🗄️ Database: {db_status}")
-            st.success(f"🗺️ GIS: {gis_status}")
-            st.success("⚙️ Calculator: ✅ Ready")
+
+            st.markdown(f"""
+            <div style="background: rgba(40, 167, 69, 0.1); border-radius: 6px; padding: 0.75rem; margin: 0.25rem 0; border-left: 3px solid #28a745;">
+                🗄️ Database: {db_status}
+            </div>
+            <div style="background: rgba(40, 167, 69, 0.1); border-radius: 6px; padding: 0.75rem; margin: 0.25rem 0; border-left: 3px solid #28a745;">
+                🗺️ GIS: {gis_status}
+            </div>
+            <div style="background: rgba(40, 167, 69, 0.1); border-radius: 6px; padding: 0.75rem; margin: 0.25rem 0; border-left: 3px solid #28a745;">
+                ⚙️ Calculator: ✅ Ready
+            </div>
+            """, unsafe_allow_html=True)
 
         # Horizontal navigation overlay (minimalistic buttons over map)
         nav_col1, nav_col2, nav_col3, nav_col4 = st.columns(4)
@@ -175,7 +203,7 @@ class HomePage:
             st.success("🎯 Feature selected! Check the details in the sidebar.")
 
     def _render_live_dashboard_strip(self) -> None:
-        """Render horizontal dashboard strip with key metrics"""
+        """Render horizontal dashboard strip with key metrics using styled cards"""
         st.markdown("---")
         render_section_header(
             "📊 Painel de Estatísticas em Tempo Real",
@@ -188,46 +216,43 @@ class HomePage:
         if municipalities_df is not None and len(municipalities_df) > 0:
             # Calculate state totals
             stats = biogas_calculator.get_state_totals(municipalities_df)
+            db_status = "✅ Online" if database_loader.validate_database() else "❌ Error"
 
-            # Display metrics in horizontal layout
-            col1, col2, col3, col4, col5 = st.columns(5)
+            # Use styled metrics helper
+            metrics_data = [
+                {
+                    'icon': '🏘️',
+                    'label': 'Municipalities',
+                    'value': f"{stats.get('total_municipalities', 0):,}",
+                    'delta': 'Complete Coverage'
+                },
+                {
+                    'icon': '⛽',
+                    'label': 'Daily Biogas',
+                    'value': f"{stats.get('total_biogas_m3_day', 0):,.0f} m³",
+                    'delta': 'Real-time Potential'
+                },
+                {
+                    'icon': '⚡',
+                    'label': 'Annual Energy',
+                    'value': f"{stats.get('total_energy_mwh_year', 0):,.0f} MWh",
+                    'delta': 'Clean Energy'
+                },
+                {
+                    'icon': '🌱',
+                    'label': 'CO₂ Reduction',
+                    'value': f"{stats.get('total_co2_reduction_tons_year', 0):,.0f} tons",
+                    'delta': 'Per Year'
+                },
+                {
+                    'icon': '🖥️',
+                    'label': 'System Status',
+                    'value': db_status,
+                    'delta': 'All Systems Operational'
+                }
+            ]
 
-            with col1:
-                st.metric(
-                    label="🏘️ Municipalities",
-                    value=f"{stats.get('total_municipalities', 0):,}",
-                    delta="Complete Coverage"
-                )
-
-            with col2:
-                st.metric(
-                    label="⛽ Daily Biogas",
-                    value=f"{stats.get('total_biogas_m3_day', 0):,.0f} m³",
-                    delta="Real-time Potential"
-                )
-
-            with col3:
-                st.metric(
-                    label="⚡ Annual Energy",
-                    value=f"{stats.get('total_energy_mwh_year', 0):,.0f} MWh",
-                    delta="Clean Energy"
-                )
-
-            with col4:
-                st.metric(
-                    label="🌱 CO₂ Reduction",
-                    value=f"{stats.get('total_co2_reduction_tons_year', 0):,.0f} tons",
-                    delta="Per Year"
-                )
-
-            with col5:
-                # System health indicator
-                db_status = "✅ Online" if database_loader.validate_database() else "❌ Error"
-                st.metric(
-                    label="🖥️ System Status",
-                    value=db_status,
-                    delta="All Systems Operational"
-                )
+            render_styled_metrics(metrics_data, columns=5)
 
         else:
             st.warning("⚠️ Unable to load municipality data. Please check the database connection.")
