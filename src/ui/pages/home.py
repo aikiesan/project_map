@@ -96,6 +96,13 @@ class HomePage:
                 width: auto !important;
                 height: auto !important;
             }
+            /* Sidebar white background - match site background */
+            section[data-testid="stSidebar"] {
+                background-color: white !important;
+            }
+            section[data-testid="stSidebar"] > div {
+                background-color: white !important;
+            }
             </style>
             <div style='background: #2E8B57; color: white; padding: 0.8rem; margin: 0.5rem -1rem 1rem -1rem;
                         text-align: center; border-radius: 8px;'>
