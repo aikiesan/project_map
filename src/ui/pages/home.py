@@ -70,7 +70,7 @@ class HomePage:
             col1, col2, col3 = st.columns([1, 2, 1])
             with col2:
                 try:
-                    st.image("logotipo-full-black.png", width=200)
+                    st.image("logotipo-full-black.png", width=960)
                 except:
                     st.markdown("**CP2B MAPS**")  # Fallback if logo not found
 
@@ -87,6 +87,8 @@ class HomePage:
             with st.expander("🗺️ Camadas Visíveis", expanded=(st.session_state.active_panel == 'camadas')):
                 st.markdown("**Dados Principais:**")
                 show_municipios_biogas = st.checkbox("📊 Potencial de Biogás", value=True, key="show_biogas")
+                show_municipios_polygons = st.checkbox("🗺️ Polígonos dos Municípios", value=False, disabled=True, key="show_polygons", help="Funcionalidade desabilitada na versão demo")
+                show_municipios_polygons = False  # Force disable
 
                 st.markdown("**Infraestrutura:**")
                 show_plantas = st.checkbox("🏭 Plantas de Biogás", value=False, key="show_plantas")
@@ -97,10 +99,14 @@ class HomePage:
                 show_rodovias = st.checkbox("🛣️ Rodovias", value=False, key="show_roads")
                 show_regioes_admin = st.checkbox("🏛️ Regiões Admin.", value=False, key="show_regions")
 
+                st.markdown("**Imagem de Satélite:**")
+                show_mapbiomas = st.checkbox("🌾 MapBiomas - Uso do Solo", value=False, key="show_mapbiomas")
+
                 # Store layer visibility (using different keys to avoid conflicts)
                 st.session_state['layer_show_biogas'] = show_municipios_biogas
                 st.session_state['layer_show_plantas'] = show_plantas
                 st.session_state['layer_show_boundary'] = True
+                st.session_state['layer_show_mapbiomas'] = show_mapbiomas
 
             # Panel 2: FILTROS DE DADOS (only active if biogas layer enabled)
             if show_municipios_biogas:
@@ -115,12 +121,14 @@ class HomePage:
                     )
 
                     data_options = {
-                        "Potencial Total de Biogás": "biogas_potential_m3_year",
-                        "Biogás Urbano": "urban_biogas_m3_year",
-                        "Biogás Agrícola": "agricultural_biogas_m3_year",
-                        "Biogás Pecuário": "livestock_biogas_m3_year",
-                        "Potencial Energético (MWh/ano)": "energy_potential_mwh_year",
-                        "Redução de CO₂ (ton/ano)": "co2_reduction_tons_year"
+                        "Potencial Total": "biogas_potential_m3_year",
+                        "Total Agrícola": "agricultural_biogas_m3_year",
+                        "Total Pecuária": "livestock_biogas_m3_year",
+                        "Total Urbano": "urban_biogas_m3_year",
+                        "Resíduos Urbanos": "urban_waste_potential_m3_year",
+                        "Resíduos Poda": "rural_waste_potential_m3_year",
+                        "Energia (MWh/ano)": "energy_potential_mwh_year",
+                        "Redução CO₂ (ton/ano)": "co2_reduction_tons_year"
                     }
 
                     if filter_mode == "Individual":
@@ -130,7 +138,7 @@ class HomePage:
                         selected_list = st.multiselect(
                             "Resíduos:",
                             list(data_options.keys()),
-                            default=["Potencial Total de Biogás"],
+                            default=["Potencial Total"],
                             key="data_multi"
                         )
                         # For multiple, use first selection or default
@@ -164,19 +172,52 @@ class HomePage:
                     index=0
                 )
 
-                # Info based on selection
-                if viz_type == "Círculos Proporcionais":
-                    st.info("🔵 Círculos maiores = maior potencial de biogás")
-                elif viz_type == "Mapa de Calor (Heatmap)":
-                    st.info("🔥 Cores quentes = valores altos, cores frias = valores baixos")
-                elif viz_type == "Agrupamentos (Clusters)":
-                    st.info("📍 Municípios próximos são agrupados em clusters")
-
                 # Store with different key name to avoid conflict
                 st.session_state['selected_viz_type'] = viz_type
 
+                # Info based on selection (V1-style detailed descriptions)
+                if viz_type == "Círculos Proporcionais":
+                    st.info("🔵 **Círculos Proporcionais**: O tamanho dos círculos representa o valor dos dados. Maior potencial = círculo maior.")
+                elif viz_type == "Mapa de Calor (Heatmap)":
+                    st.info("🔥 **Mapa de Calor**: Cores quentes (vermelho) indicam valores altos, cores frias (azul) indicam valores baixos.")
+                elif viz_type == "Agrupamentos (Clusters)":
+                    st.info("📍 **Agrupamentos**: Municípios próximos são agrupados em clusters. Números indicam quantos pontos estão agrupados.")
+
                 st.markdown("---")
-                st.markdown("💡 **Dica**: Experimente diferentes estilos!")
+                st.markdown("💡 **Dica**: Experimente diferentes estilos para descobrir qual visualização funciona melhor para seus dados!")
+
+            # === MUNICÍPIOS SELECIONADOS SECTION ===
+            if 'selected_municipalities' not in st.session_state:
+                st.session_state.selected_municipalities = []
+
+            if st.session_state.selected_municipalities:
+                st.markdown("---")
+                st.markdown("**🎯 Municípios Selecionados:**")
+
+                # Load municipality data to get names
+                try:
+                    municipalities_df = database_loader.load_municipalities_data()
+                    selected_names = municipalities_df[
+                        municipalities_df['municipality'].isin(st.session_state.selected_municipalities)
+                    ]['municipality'].tolist()
+
+                    # Show up to 3 names
+                    for name in selected_names[:3]:
+                        display_name = name[:15] + "..." if len(name) > 15 else name
+                        st.markdown(f"• {display_name}")
+
+                    # Show count if more than 3
+                    if len(selected_names) > 3:
+                        st.markdown(f"...+{len(selected_names)-3} mais")
+
+                    # Clear button
+                    if st.button("🗑️ Limpar Seleção", key="clear_selection"):
+                        count = len(st.session_state.selected_municipalities)
+                        st.session_state.selected_municipalities.clear()
+                        st.toast(f"{count} municípios removidos da seleção!", icon="🗑️")
+                        st.rerun()
+                except Exception as e:
+                    logger.error(f"Error displaying selected municipalities: {e}")
 
             # System info at bottom
             st.markdown("---")
@@ -218,6 +259,44 @@ class HomePage:
             st.button("🔄 Compare", key="nav_compare", help="Comparar Municípios")
         with nav_col4:
             st.button("📥 Export", key="nav_export", help="Exportar Dados")
+
+        # === ACTIVE FILTERS BANNER (V1 Feature) ===
+        active_filters = []
+
+        # Check if biogas layer is active
+        if st.session_state.get('layer_show_biogas', False):
+            # Get selected data column
+            data_column = st.session_state.get('data_column', 'biogas_potential_m3_year')
+
+            # Reverse lookup for display name
+            data_options = {
+                "Potencial Total": "biogas_potential_m3_year",
+                "Total Agrícola": "agricultural_biogas_m3_year",
+                "Total Pecuária": "livestock_biogas_m3_year",
+                "Total Urbano": "urban_biogas_m3_year",
+                "Resíduos Urbanos": "urban_waste_potential_m3_year",
+                "Resíduos Poda": "rural_waste_potential_m3_year",
+                "Energia (MWh/ano)": "energy_potential_mwh_year",
+                "Redução CO₂ (ton/ano)": "co2_reduction_tons_year"
+            }
+            reverse_options = {v: k for k, v in data_options.items()}
+            display_name = reverse_options.get(data_column, "Potencial Total")
+
+            if display_name != "Potencial Total":
+                active_filters.append(f"Resíduo: **{display_name}**")
+
+            # Check for search term
+            search_term = st.session_state.get('mun_search_term', '')
+            if search_term:
+                active_filters.append(f"Busca: **'{search_term}'**")
+
+            # Check for MapBiomas layer
+            if st.session_state.get('layer_show_mapbiomas', False):
+                active_filters.append(f"MapBiomas: **Ativo**")
+
+        # Display active filters banner
+        if active_filters:
+            st.info(f"🎯 Filtros Ativos: {' | '.join(active_filters)}")
 
         # Main map with municipality data (V1 Issues #2, #4)
         self._render_map_with_data()
@@ -280,11 +359,11 @@ class HomePage:
         # Add floating legend (V1 Issue #4)
         self._add_floating_legend(m, municipalities_df, data_column)
 
-        # Display map
+        # Display map (V1 uses height=600)
         map_data = st_folium(
             m,
             width="100%",
-            height=700,
+            height=600,
             returned_objects=["last_object_clicked"],
             key="main_map"
         )
