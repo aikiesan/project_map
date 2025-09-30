@@ -76,6 +76,27 @@ class HomePage:
 
             # Green header: PAINEL DE CONTROLE DO MAPA (V1 Issue #1)
             st.markdown("""
+            <style>
+            /* Remove purple line below green header */
+            .stMarkdown h3 {
+                border-bottom: none !important;
+            }
+            /* Hide "Pular para barra lateral" accessibility link */
+            a[href="#sidebar"] {
+                position: absolute !important;
+                left: -10000px !important;
+                top: auto !important;
+                width: 1px !important;
+                height: 1px !important;
+                overflow: hidden !important;
+            }
+            /* Show on focus for keyboard users */
+            a[href="#sidebar"]:focus {
+                position: static !important;
+                width: auto !important;
+                height: auto !important;
+            }
+            </style>
             <div style='background: #2E8B57; color: white; padding: 0.8rem; margin: 0.5rem -1rem 1rem -1rem;
                         text-align: center; border-radius: 8px;'>
                 <h3 style='margin: 0; font-size: 1.1rem;'>🎛️ PAINEL DE CONTROLE DO MAPA</h3>
@@ -83,8 +104,8 @@ class HomePage:
             </div>
             """, unsafe_allow_html=True)
 
-            # Panel 1: CAMADAS VISÍVEIS (expanded by default)
-            with st.expander("🗺️ Camadas Visíveis", expanded=(st.session_state.active_panel == 'camadas')):
+            # Panel 1: CAMADAS VISÍVEIS (starts collapsed)
+            with st.expander("🗺️ Camadas Visíveis", expanded=False):
                 st.markdown("**Dados Principais:**")
                 show_municipios_biogas = st.checkbox("📊 Potencial de Biogás", value=True, key="show_biogas")
                 show_municipios_polygons = st.checkbox("🗺️ Polígonos dos Municípios", value=False, disabled=True, key="show_polygons", help="Funcionalidade desabilitada na versão demo")
