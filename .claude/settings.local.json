@@ -13,7 +13,10 @@
       "Bash(streamlit --version)",
       "Bash(git commit:*)",
       "Bash(git push:*)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(for:*)",
+      "Bash(do head -20 \"C:\\Users\\Lucas\\Documents\\CP2B\\CP2B_Maps_V2\\src\\ui\\pages$file\")",
+      "Bash(done)"
     ],
     "deny": [],
     "ask": []

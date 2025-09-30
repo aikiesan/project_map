@@ -27,6 +27,13 @@ from src.core.geospatial_analysis import get_geospatial_analyzer
 from src.utils.logging_config import get_logger
 from config.settings import settings
 
+# Import V1 design system
+from src.ui.components.design_system import (
+    render_page_header,
+    render_section_header,
+    render_info_banner
+)
+
 logger = get_logger(__name__)
 
 

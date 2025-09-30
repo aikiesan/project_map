@@ -15,6 +15,12 @@ import datetime
 from config.settings import settings
 from src.utils.logging_config import get_logger
 
+# Import V1 design system
+from src.ui.components.design_system import (
+    render_section_header,
+    render_info_banner
+)
+
 logger = get_logger(__name__)
 
 
