@@ -305,7 +305,7 @@ class HomePage:
         search_term = st.session_state.get('mun_search_term', '')
         if search_term and len(search_term) >= 2:
             df_filtered = df_filtered[
-                df_filtered['municipio'].str.contains(search_term, case=False, na=False)
+                df_filtered['municipality'].str.contains(search_term, case=False, na=False)
             ]
 
         # Normalize values for circle size
@@ -335,9 +335,9 @@ class HomePage:
                         # Create popup with data
                         popup_html = f"""
                         <div style='font-family: Arial; font-size: 12px;'>
-                            <h4 style='margin: 0 0 8px 0; color: #2E8B57;'>{row['municipio']}</h4>
+                            <h4 style='margin: 0 0 8px 0; color: #2E8B57;'>{row['municipality']}</h4>
                             <b>Potencial:</b> {value:,.0f} m³/ano<br>
-                            <b>População:</b> {row.get('populacao', 0):,.0f}<br>
+                            <b>População:</b> {row.get('population', 0):,.0f}<br>
                             <small>Clique para mais detalhes</small>
                         </div>
                         """
@@ -346,7 +346,7 @@ class HomePage:
                             location=[row['latitude'], row['longitude']],
                             radius=radius,
                             popup=folium.Popup(popup_html, max_width=250),
-                            tooltip=f"{row['municipio']}: {value:,.0f} m³/ano",
+                            tooltip=f"{row['municipality']}: {value:,.0f} m³/ano",
                             color=color,
                             fillColor=color,
                             fillOpacity=0.6,
@@ -385,9 +385,9 @@ class HomePage:
 
                         popup_html = f"""
                         <div style='font-family: Arial; font-size: 12px;'>
-                            <h4 style='margin: 0 0 8px 0; color: #2E8B57;'>{row['municipio']}</h4>
+                            <h4 style='margin: 0 0 8px 0; color: #2E8B57;'>{row['municipality']}</h4>
                             <b>Potencial:</b> {value:,.0f} m³/ano<br>
-                            <b>População:</b> {row.get('populacao', 0):,.0f}
+                            <b>População:</b> {row.get('population', 0):,.0f}
                         </div>
                         """
 
@@ -395,7 +395,7 @@ class HomePage:
                             location=[row['latitude'], row['longitude']],
                             radius=8,
                             popup=folium.Popup(popup_html, max_width=250),
-                            tooltip=row['municipio'],
+                            tooltip=row['municipality'],
                             color='#2E8B57',
                             fillColor='#32CD32',
                             fillOpacity=0.7,
