@@ -56,8 +56,10 @@ class EnvironmentalAnalyzer:
             Dictionary with environmental analysis results
         """
         try:
-            st.markdown("## 🌍 Environmental Impact Analysis")
-            st.markdown("### CO2 reduction, sustainability metrics, and ecological benefits")
+            render_section_header(
+                "🌍 Análise de Impacto Ambiental",
+                description="Redução de CO2, métricas de sustentabilidade e benefícios ecológicos"
+            )
 
             # Calculate environmental metrics
             environmental_data = self._calculate_environmental_metrics(data, scenario_config)

@@ -693,7 +693,16 @@ Gerado pelo CP2B Maps V2 - Sistema de Análise de Potencial de Biogás
 
 
 def render_advanced_raster_analysis_page():
-    """Render the advanced raster analysis page"""
+    """Render the advanced raster analysis page with V1 styling"""
+    # Add beautiful header
+    render_page_header(
+        title="Análise Avançada de Satélite",
+        subtitle="Dados MapBiomas e Análise Geoespacial",
+        description="Análise profissional de dados de satélite com ferramentas avançadas de visualização e estatísticas",
+        icon="🛰️",
+        show_stats=True
+    )
+
     page = AdvancedRasterAnalysisPage()
     page.render()
 

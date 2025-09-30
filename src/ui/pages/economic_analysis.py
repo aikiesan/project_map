@@ -56,8 +56,10 @@ class EconomicAnalyzer:
             Dictionary with economic analysis results
         """
         try:
-            st.markdown("## 💰 Economic Feasibility Analysis")
-            st.markdown("### Financial viability and investment return calculations")
+            render_section_header(
+                "💰 Análise de Viabilidade Econômica",
+                description="Cálculos de viabilidade financeira e retorno de investimento"
+            )
 
             # Apply scenario adjustments
             adjusted_data = self._apply_economic_scenario(data, scenario_config)

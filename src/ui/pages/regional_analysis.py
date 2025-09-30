@@ -65,8 +65,10 @@ class RegionalAnalyzer:
             Dictionary with regional analysis results
         """
         try:
-            st.markdown("## 🗺️ Regional Development Analysis")
-            st.markdown("### Investment prioritization, policy recommendations, and regional planning")
+            render_section_header(
+                "🗺️ Análise de Desenvolvimento Regional",
+                description="Priorização de investimentos, recomendações de políticas e planejamento regional"
+            )
 
             # Calculate regional metrics
             regional_data = self._calculate_regional_metrics(data, scenario_config)

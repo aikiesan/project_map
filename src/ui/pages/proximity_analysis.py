@@ -55,9 +55,14 @@ class ProximityAnalysisPage:
     def render(self) -> None:
         """Render the complete proximity analysis page"""
         try:
-            # Page header
-            st.markdown("# 🎯 Proximity Analysis")
-            st.markdown("### Advanced catchment area analysis for biogas plant location optimization")
+            # V1-style beautiful header
+            render_page_header(
+                title="Análise de Proximidade",
+                subtitle="Otimização de Localização de Plantas de Biogás",
+                description="Análise avançada de área de captação com integração de dados raster e cálculos espaciais",
+                icon="🎯",
+                show_stats=True
+            )
 
             # Load municipality data
             municipality_data = self._load_municipality_data()

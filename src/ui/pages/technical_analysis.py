@@ -69,8 +69,10 @@ class TechnicalAnalyzer:
             Dictionary with technical analysis results
         """
         try:
-            st.markdown("## 🔧 Technical Feasibility Analysis")
-            st.markdown("### Infrastructure requirements, technology assessment, and implementation planning")
+            render_section_header(
+                "🔧 Análise de Viabilidade Técnica",
+                description="Requisitos de infraestrutura, avaliação de tecnologia e planejamento de implementação"
+            )
 
             # Calculate technical metrics
             technical_data = self._calculate_technical_metrics(data, scenario_config)
