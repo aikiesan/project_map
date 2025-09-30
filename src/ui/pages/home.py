@@ -1,6 +1,6 @@
 """
 CP2B Maps V2 - Home Page Component
-Professional home page with real data showcase and advanced functionality
+Complete V1 parity: sidebar with logo, collapsible panels, municipality data visualization, floating legend
 Enhanced with V1 design system for beautiful UI
 """
 
@@ -9,7 +9,8 @@ import folium
 import folium.plugins
 import pandas as pd
 from streamlit_folium import st_folium
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
+import numpy as np
 
 from config.settings import settings
 from src.utils.logging_config import get_logger
@@ -20,10 +21,7 @@ from src.core import biogas_calculator
 from src.ui.components.design_system import (
     render_section_header,
     render_info_banner,
-    render_feature_card,
-    render_styled_metrics,
-    render_sidebar_section,
-    render_styled_table
+    render_styled_metrics
 )
 
 logger = get_logger(__name__)
@@ -31,184 +29,454 @@ logger = get_logger(__name__)
 
 class HomePage:
     """
-    Professional home page component with real data integration
-    Showcases 645 municipalities and 425 biogas plants
+    Professional home page component matching V1 exactly
+    Features: CP2B Logo, Collapsible panels, Municipality data viz, Floating legend
     """
 
     def __init__(self):
         """Initialize home page component"""
         self.logger = get_logger(self.__class__.__name__)
-        self.logger.debug("Initializing HomePage component")
+        self.logger.debug("Initializing HomePage component with V1 structure")
+
+        # Initialize session state for panels
+        if 'active_panel' not in st.session_state:
+            st.session_state.active_panel = 'camadas'
 
     def render(self) -> None:
         """
-        Render Map-First home page with native Streamlit components
+        Render home page with V1 structure:
+        1. Sidebar with logo + 3 collapsible panels
+        2. Main map with municipality data
+        3. Live metrics dashboard
         """
         try:
-            # Map-First approach: Hero map section at the top
-            self._render_hero_map_section()
+            # Render V1-style sidebar (MUST be called first)
+            self._render_v1_sidebar()
 
-            # Live dashboard strip below map
+            # Main content area
+            self._render_main_map_section()
+
+            # Live dashboard metrics
             self._render_live_dashboard_strip()
-
-            # Collapsible sections for additional info
-            self._render_expandable_sections()
 
         except Exception as e:
             self.logger.error(f"Error rendering home page: {e}", exc_info=True)
             st.error("⚠️ Failed to render home page. Check logs for details.")
 
-    def _render_hero_map_section(self) -> None:
-        """Render Map-First hero section with sidebar controls"""
-        # V1-style section header
-        render_section_header(
-            "🗺️ Mapa Interativo de Biogás",
-            icon="",
-            description="Explore o potencial de biogás nos 645 municípios de São Paulo com dados em tempo real"
-        )
-
-        # Load municipality data for statistics
-        municipalities_df = database_loader.load_municipalities_data()
-
-        # Organized sidebar sections with V1 styling
+    def _render_v1_sidebar(self) -> None:
+        """Render V1-style sidebar with logo and 3 collapsible panels"""
         with st.sidebar:
-            render_sidebar_section("🎛️ Map Controls")
-            show_boundary = st.checkbox("🗺️ State Boundary", value=True)
-            show_plants = st.checkbox("🏭 Biogas Plants", value=True)
-            show_municipalities = st.checkbox("🏘️ Municipality Labels", value=False)
-            map_style = st.selectbox("Map Style:", options=['CartoDB positron', 'CartoDB dark_matter', 'OpenStreetMap'])
+            # CP2B Logo at top (V1 Issue #1)
+            col1, col2, col3 = st.columns([1, 2, 1])
+            with col2:
+                try:
+                    st.image("logotipo-full-black.png", width=200)
+                except:
+                    st.markdown("**CP2B MAPS**")  # Fallback if logo not found
 
-            st.markdown("---")
-            render_sidebar_section("📊 Live Metrics")
-            if municipalities_df is not None:
-                stats = biogas_calculator.get_state_totals(municipalities_df)
-
-                # Style metrics in gradient containers
-                st.markdown(f"""
-                <div style="background: rgba(102, 126, 234, 0.05); border-radius: 8px; padding: 1rem; margin: 0.5rem 0;">
-                    <div style="font-weight: 600; color: #2c3e50; margin-bottom: 0.5rem;">🏘️ Municipalities</div>
-                    <div style="font-size: 1.5rem; font-weight: 700; color: #667eea;">{stats.get('total_municipalities', 0):,}</div>
-                </div>
-                <div style="background: rgba(46, 139, 87, 0.05); border-radius: 8px; padding: 1rem; margin: 0.5rem 0;">
-                    <div style="font-weight: 600; color: #2c3e50; margin-bottom: 0.5rem;">⛽ Daily Biogas</div>
-                    <div style="font-size: 1.5rem; font-weight: 700; color: #2E8B57;">{stats.get('total_biogas_m3_day', 0):,.0f} m³</div>
-                </div>
-                <div style="background: rgba(255, 165, 0, 0.05); border-radius: 8px; padding: 1rem; margin: 0.5rem 0;">
-                    <div style="font-weight: 600; color: #2c3e50; margin-bottom: 0.5rem;">⚡ Annual Energy</div>
-                    <div style="font-size: 1.5rem; font-weight: 700; color: #FF8C00;">{stats.get('total_energy_mwh_year', 0):,.0f} MWh</div>
-                </div>
-                <div style="background: rgba(40, 167, 69, 0.05); border-radius: 8px; padding: 1rem; margin: 0.5rem 0;">
-                    <div style="font-weight: 600; color: #2c3e50; margin-bottom: 0.5rem;">🌱 CO₂ Reduction</div>
-                    <div style="font-size: 1.5rem; font-weight: 700; color: #28a745;">{stats.get('total_co2_reduction_tons_year', 0):,.0f} tons/yr</div>
-                </div>
-                """, unsafe_allow_html=True)
-
-            st.markdown("---")
-            render_sidebar_section("🖥️ System Status")
-            db_status = "✅ Online" if database_loader.validate_database() else "❌ Error"
-            shapefiles = shapefile_loader.get_available_shapefiles()
-            gis_status = f"✅ {len(shapefiles)} Layers" if shapefiles else "❌ Error"
-
-            st.markdown(f"""
-            <div style="background: rgba(40, 167, 69, 0.1); border-radius: 6px; padding: 0.75rem; margin: 0.25rem 0; border-left: 3px solid #28a745;">
-                🗄️ Database: {db_status}
-            </div>
-            <div style="background: rgba(40, 167, 69, 0.1); border-radius: 6px; padding: 0.75rem; margin: 0.25rem 0; border-left: 3px solid #28a745;">
-                🗺️ GIS: {gis_status}
-            </div>
-            <div style="background: rgba(40, 167, 69, 0.1); border-radius: 6px; padding: 0.75rem; margin: 0.25rem 0; border-left: 3px solid #28a745;">
-                ⚙️ Calculator: ✅ Ready
+            # Green header: PAINEL DE CONTROLE DO MAPA (V1 Issue #1)
+            st.markdown("""
+            <div style='background: #2E8B57; color: white; padding: 0.8rem; margin: 0.5rem -1rem 1rem -1rem;
+                        text-align: center; border-radius: 8px;'>
+                <h3 style='margin: 0; font-size: 1.1rem;'>🎛️ PAINEL DE CONTROLE DO MAPA</h3>
+                <p style='font-size: 0.8rem; opacity: 0.9; margin: 0.2rem 0 0 0;'>Página Mapa Principal</p>
             </div>
             """, unsafe_allow_html=True)
 
-        # Horizontal navigation overlay (minimalistic buttons over map)
+            # Panel 1: CAMADAS VISÍVEIS (expanded by default)
+            with st.expander("🗺️ Camadas Visíveis", expanded=(st.session_state.active_panel == 'camadas')):
+                st.markdown("**Dados Principais:**")
+                show_municipios_biogas = st.checkbox("📊 Potencial de Biogás", value=True, key="show_biogas")
+
+                st.markdown("**Infraestrutura:**")
+                show_plantas = st.checkbox("🏭 Plantas de Biogás", value=False, key="show_plantas")
+                show_gasodutos_dist = st.checkbox("⛽ Distribuição", value=False, key="show_gas_dist")
+                show_gasodutos_transp = st.checkbox("⛽ Transporte", value=False, key="show_gas_transp")
+
+                st.markdown("**Referência:**")
+                show_rodovias = st.checkbox("🛣️ Rodovias", value=False, key="show_roads")
+                show_regioes_admin = st.checkbox("🏛️ Regiões Admin.", value=False, key="show_regions")
+
+                # Store layer visibility in session state
+                st.session_state.update({
+                    'show_municipios_biogas': show_municipios_biogas,
+                    'show_plantas': show_plantas,
+                    'show_boundary': True  # Always show state boundary
+                })
+
+            # Panel 2: FILTROS DE DADOS (only active if biogas layer enabled)
+            if show_municipios_biogas:
+                with st.expander("📊 Filtros de Dados", expanded=(st.session_state.active_panel == 'filtros')):
+                    st.info("💡 **Filtros para visualização do Potencial de Biogás**")
+
+                    filter_mode = st.radio(
+                        "Modo:",
+                        ["Individual", "Múltiplos"],
+                        horizontal=True,
+                        key="filter_mode"
+                    )
+
+                    data_options = {
+                        "Potencial Total": "total_final_nm_ano",
+                        "Potencial Agrícola": "total_agricola_nm_ano",
+                        "Potencial Pecuário": "total_pecuaria_nm_ano",
+                        "Biogás de Cana": "biogas_cana_nm_ano",
+                        "Biogás de Soja": "biogas_soja_nm_ano",
+                        "Biogás de Bovinos": "biogas_bovinos_nm_ano",
+                        "Biogás de Suínos": "biogas_suino_nm_ano"
+                    }
+
+                    if filter_mode == "Individual":
+                        selected = st.selectbox("Resíduo:", list(data_options.keys()), key="data_select")
+                        st.session_state.selected_data_column = data_options[selected]
+                    else:
+                        selected_list = st.multiselect(
+                            "Resíduos:",
+                            list(data_options.keys()),
+                            default=["Potencial Total"],
+                            key="data_multi"
+                        )
+                        # For multiple, use first selection or default
+                        if selected_list:
+                            st.session_state.selected_data_column = data_options[selected_list[0]]
+                        else:
+                            st.session_state.selected_data_column = "total_final_nm_ano"
+
+                    # Municipality search
+                    search_term = st.text_input(
+                        "Buscar:",
+                        placeholder="Nome do município...",
+                        key="mun_search"
+                    )
+                    st.session_state.search_term = search_term
+            else:
+                # Disabled state
+                with st.expander("📊 Filtros de Dados", expanded=False):
+                    st.warning("⚠️ **Ative a camada 'Potencial de Biogás' para usar os filtros**")
+                    st.session_state.selected_data_column = "total_final_nm_ano"
+                    st.session_state.search_term = ""
+
+            # Panel 3: ESTILOS DE VISUALIZAÇÃO
+            with st.expander("🎨 Estilos de Visualização", expanded=(st.session_state.active_panel == 'estilos')):
+                st.markdown("**🎯 Escolha o estilo de visualização:**")
+
+                viz_type = st.radio(
+                    "Tipo de mapa:",
+                    ["Círculos Proporcionais", "Mapa de Calor (Heatmap)", "Agrupamentos (Clusters)"],
+                    key="viz_type",
+                    index=0
+                )
+
+                # Info based on selection
+                if viz_type == "Círculos Proporcionais":
+                    st.info("🔵 Círculos maiores = maior potencial de biogás")
+                elif viz_type == "Mapa de Calor (Heatmap)":
+                    st.info("🔥 Cores quentes = valores altos, cores frias = valores baixos")
+                elif viz_type == "Agrupamentos (Clusters)":
+                    st.info("📍 Municípios próximos são agrupados em clusters")
+
+                st.session_state.viz_type = viz_type
+
+                st.markdown("---")
+                st.markdown("💡 **Dica**: Experimente diferentes estilos!")
+
+            # System info at bottom
+            st.markdown("---")
+            st.markdown("**🖥️ Status do Sistema**")
+            db_status = "✅ Online" if database_loader.validate_database() else "❌ Error"
+            st.markdown(f"🗄️ Database: {db_status}")
+            st.markdown(f"⚙️ Calculator: ✅ Ready")
+
+    def _render_main_map_section(self) -> None:
+        """Render main map with municipality data visualization"""
+        # Minimalistic navigation buttons (V1 Issue #6)
+        st.markdown("""
+        <style>
+        .mini-nav-button {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            text-decoration: none;
+            color: #2c3e50;
+            transition: all 0.2s ease;
+        }
+        .mini-nav-button:hover {
+            background: #e9ecef;
+            border-color: #d3d9df;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
         nav_col1, nav_col2, nav_col3, nav_col4 = st.columns(4)
         with nav_col1:
-            if st.button("🗺️ Advanced Maps", key="nav_maps", use_container_width=True):
-                st.info("👆 Use sidebar navigation to access Advanced Maps")
+            st.button("🗺️ Advanced Maps", key="nav_maps", help="Ver Mapas Avançados")
         with nav_col2:
-            if st.button("📊 Data Analysis", key="nav_analysis", use_container_width=True):
-                st.info("👆 Use sidebar navigation to access Data Analysis")
+            st.button("📊 Data Analysis", key="nav_analysis", help="Análise de Dados")
         with nav_col3:
-            if st.button("🔄 Municipality Compare", key="nav_compare", use_container_width=True):
-                st.info("👆 Use sidebar navigation to access Comparison tools")
+            st.button("🔄 Compare", key="nav_compare", help="Comparar Municípios")
         with nav_col4:
-            if st.button("📥 Export & Reports", key="nav_export", use_container_width=True):
-                st.info("👆 Use sidebar navigation to access Export tools")
+            st.button("📥 Export", key="nav_export", help="Exportar Dados")
 
-        # Full-width hero map
-        self._render_hero_map(show_boundary, show_plants, map_style)
+        # Main map with municipality data (V1 Issues #2, #4)
+        self._render_map_with_data()
 
-    def _render_hero_map(self, show_boundary: bool, show_plants: bool, map_style: str) -> None:
-        """Render the main hero map with professional styling"""
-        # Create large, prominent map
+    def _render_map_with_data(self) -> None:
+        """Render map with municipality circles and floating legend"""
+        # Load municipality data
+        municipalities_df = database_loader.load_municipalities_data()
+
+        # Get selected data column
+        data_column = st.session_state.get('selected_data_column', 'total_final_nm_ano')
+
+        # Create map
         m = folium.Map(
             location=settings.DEFAULT_CENTER,
             zoom_start=7,
-            tiles=map_style
+            tiles='CartoDB positron',
+            prefer_canvas=True
         )
 
-        # Add fullscreen and measure tools
+        # Add fullscreen (remove MeasureControl per Issue #4)
         folium.plugins.Fullscreen().add_to(m)
-        folium.plugins.MeasureControl().add_to(m)
 
-        # Add state boundary if enabled
-        if show_boundary:
+        # Add state boundary
+        if st.session_state.get('show_boundary', True):
             state_boundary = shapefile_loader.load_state_boundary()
             if state_boundary is not None:
                 folium.GeoJson(
                     state_boundary,
                     style_function=lambda feature: {
                         'color': '#2E8B57',
-                        'weight': 3,
+                        'weight': 2,
                         'opacity': 0.8,
-                        'fillOpacity': 0.1,
+                        'fillOpacity': 0.05,
                         'dashArray': '5, 5'
                     },
-                    popup="São Paulo State - 645 Municipalities",
-                    tooltip="Click for state information"
+                    tooltip="São Paulo State"
                 ).add_to(m)
 
+        # Add municipality circles if biogas layer enabled (V1 Issue #2)
+        if st.session_state.get('show_municipios_biogas', True) and municipalities_df is not None:
+            self._add_municipality_circles(m, municipalities_df, data_column)
+
         # Add biogas plants if enabled
-        if show_plants:
+        if st.session_state.get('show_plantas', False):
             biogas_plants = shapefile_loader.load_biogas_plants()
             if biogas_plants is not None and len(biogas_plants) > 0:
-                # Display first 100 plants for performance
                 display_plants = biogas_plants.head(100)
-
                 for _, plant in display_plants.iterrows():
-                    plant_type = plant.get('TIPO_PLANT', 'Unknown')
                     folium.CircleMarker(
                         location=[plant.geometry.y, plant.geometry.x],
-                        radius=6,
-                        popup=f"🏭 Biogas Plant<br><b>Type:</b> {plant_type}<br><b>Status:</b> Active",
-                        tooltip=f"🏭 {plant_type}",
+                        radius=4,
+                        popup=f"🏭 {plant.get('TIPO_PLANT', 'Planta de Biogás')}",
                         color='#FF6B35',
                         fillColor='#FF6B35',
-                        fillOpacity=0.8,
-                        weight=2
+                        fillOpacity=0.7,
+                        weight=1
                     ).add_to(m)
 
-        # Display the hero map with increased height
+        # Add floating legend (V1 Issue #4)
+        self._add_floating_legend(m, municipalities_df, data_column)
+
+        # Display map
         map_data = st_folium(
             m,
             width="100%",
-            height=800,  # Large hero map
-            returned_objects=["last_object_clicked", "bounds"],
-            key="hero_map"
+            height=700,
+            returned_objects=["last_object_clicked"],
+            key="main_map"
         )
 
-        # Show interaction feedback
-        if map_data.get("last_object_clicked"):
-            st.success("🎯 Feature selected! Check the details in the sidebar.")
+        # Show municipality details if clicked
+        if map_data and map_data.get("last_object_clicked"):
+            self._show_municipality_popup(map_data["last_object_clicked"], municipalities_df)
+
+    def _add_municipality_circles(self, m: folium.Map, df: pd.DataFrame, data_column: str) -> None:
+        """Add municipality circles sized by biogas potential"""
+        if df is None or len(df) == 0:
+            return
+
+        # Filter and prepare data
+        df_filtered = df[df[data_column] > 0].copy()
+
+        # Apply search filter if active
+        search_term = st.session_state.get('search_term', '')
+        if search_term and len(search_term) >= 2:
+            df_filtered = df_filtered[
+                df_filtered['municipio'].str.contains(search_term, case=False, na=False)
+            ]
+
+        # Normalize values for circle size
+        if len(df_filtered) > 0:
+            max_val = df_filtered[data_column].max()
+            min_val = df_filtered[data_column].min()
+
+            # Get visualization type
+            viz_type = st.session_state.get('viz_type', 'Círculos Proporcionais')
+
+            if viz_type == "Círculos Proporcionais":
+                # Add circles for each municipality
+                for _, row in df_filtered.iterrows():
+                    if pd.notna(row.get('latitude')) and pd.notna(row.get('longitude')):
+                        value = row[data_column]
+
+                        # Calculate radius (5-25 pixels based on value)
+                        if max_val > min_val:
+                            normalized = (value - min_val) / (max_val - min_val)
+                            radius = 5 + (normalized * 20)
+                        else:
+                            radius = 10
+
+                        # Color based on value (green gradient)
+                        color = self._get_color_for_value(value, min_val, max_val)
+
+                        # Create popup with data
+                        popup_html = f"""
+                        <div style='font-family: Arial; font-size: 12px;'>
+                            <h4 style='margin: 0 0 8px 0; color: #2E8B57;'>{row['municipio']}</h4>
+                            <b>Potencial:</b> {value:,.0f} m³/ano<br>
+                            <b>População:</b> {row.get('populacao', 0):,.0f}<br>
+                            <small>Clique para mais detalhes</small>
+                        </div>
+                        """
+
+                        folium.CircleMarker(
+                            location=[row['latitude'], row['longitude']],
+                            radius=radius,
+                            popup=folium.Popup(popup_html, max_width=250),
+                            tooltip=f"{row['municipio']}: {value:,.0f} m³/ano",
+                            color=color,
+                            fillColor=color,
+                            fillOpacity=0.6,
+                            weight=2,
+                            opacity=0.8
+                        ).add_to(m)
+
+            elif viz_type == "Mapa de Calor (Heatmap)":
+                # Prepare data for heatmap
+                heat_data = [
+                    [row['latitude'], row['longitude'], row[data_column]]
+                    for _, row in df_filtered.iterrows()
+                    if pd.notna(row.get('latitude')) and pd.notna(row.get('longitude'))
+                ]
+
+                if heat_data:
+                    folium.plugins.HeatMap(
+                        heat_data,
+                        radius=25,
+                        blur=30,
+                        max_zoom=13,
+                        gradient={
+                            0.0: '#00ff00',
+                            0.5: '#ffff00',
+                            1.0: '#ff0000'
+                        }
+                    ).add_to(m)
+
+            elif viz_type == "Agrupamentos (Clusters)":
+                # Use marker cluster
+                marker_cluster = folium.plugins.MarkerCluster(name="Municípios").add_to(m)
+
+                for _, row in df_filtered.iterrows():
+                    if pd.notna(row.get('latitude')) and pd.notna(row.get('longitude')):
+                        value = row[data_column]
+
+                        popup_html = f"""
+                        <div style='font-family: Arial; font-size: 12px;'>
+                            <h4 style='margin: 0 0 8px 0; color: #2E8B57;'>{row['municipio']}</h4>
+                            <b>Potencial:</b> {value:,.0f} m³/ano<br>
+                            <b>População:</b> {row.get('populacao', 0):,.0f}
+                        </div>
+                        """
+
+                        folium.CircleMarker(
+                            location=[row['latitude'], row['longitude']],
+                            radius=8,
+                            popup=folium.Popup(popup_html, max_width=250),
+                            tooltip=row['municipio'],
+                            color='#2E8B57',
+                            fillColor='#32CD32',
+                            fillOpacity=0.7,
+                            weight=2
+                        ).add_to(marker_cluster)
+
+    def _get_color_for_value(self, value: float, min_val: float, max_val: float) -> str:
+        """Get green gradient color based on value"""
+        if max_val > min_val:
+            normalized = (value - min_val) / (max_val - min_val)
+        else:
+            normalized = 0.5
+
+        # Green gradient: light green to dark green
+        if normalized < 0.25:
+            return '#C8E6C9'  # Very light green
+        elif normalized < 0.5:
+            return '#81C784'  # Light green
+        elif normalized < 0.75:
+            return '#4CAF50'  # Medium green
+        else:
+            return '#2E7D32'  # Dark green
+
+    def _add_floating_legend(self, m: folium.Map, df: pd.DataFrame, data_column: str) -> None:
+        """Add floating legend to map (V1 Issue #4)"""
+        if df is None or len(df) == 0:
+            return
+
+        # Calculate ranges
+        df_filtered = df[df[data_column] > 0]
+        if len(df_filtered) == 0:
+            return
+
+        max_val = df_filtered[data_column].max()
+
+        # Create legend HTML
+        legend_html = f'''
+        <div style="position: fixed;
+                    bottom: 50px; right: 50px; width: 200px; height: auto;
+                    background-color: white; z-index:9999; font-size:12px;
+                    border-radius: 8px; padding: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+                    border: 2px solid #2E8B57;">
+            <p style="margin: 0 0 8px 0; font-weight: bold; color: #2E8B57; font-size: 13px;">
+                📊 Potencial de Biogás
+            </p>
+            <div style="margin: 4px 0;">
+                <span style="background: #C8E6C9; width: 20px; height: 12px; display: inline-block; border: 1px solid #888;"></span>
+                <span style="margin-left: 5px;">0 - {max_val*0.25:,.0f}</span>
+            </div>
+            <div style="margin: 4px 0;">
+                <span style="background: #81C784; width: 20px; height: 12px; display: inline-block; border: 1px solid #888;"></span>
+                <span style="margin-left: 5px;">{max_val*0.25:,.0f} - {max_val*0.5:,.0f}</span>
+            </div>
+            <div style="margin: 4px 0;">
+                <span style="background: #4CAF50; width: 20px; height: 12px; display: inline-block; border: 1px solid #888;"></span>
+                <span style="margin-left: 5px;">{max_val*0.5:,.0f} - {max_val*0.75:,.0f}</span>
+            </div>
+            <div style="margin: 4px 0;">
+                <span style="background: #2E7D32; width: 20px; height: 12px; display: inline-block; border: 1px solid #888;"></span>
+                <span style="margin-left: 5px;">{max_val*0.75:,.0f}+</span>
+            </div>
+            <p style="margin: 8px 0 0 0; font-size: 10px; color: #666; font-style: italic;">
+                m³/ano por município
+            </p>
+        </div>
+        '''
+
+        m.get_root().html.add_child(folium.Element(legend_html))
+
+    def _show_municipality_popup(self, clicked_data: Dict, df: pd.DataFrame) -> None:
+        """Show municipality details when map is clicked"""
+        if df is None:
+            return
+
+        st.success(f"🎯 Município selecionado! Latitude: {clicked_data.get('lat')}, Longitude: {clicked_data.get('lng')}")
 
     def _render_live_dashboard_strip(self) -> None:
-        """Render horizontal dashboard strip with key metrics using styled cards"""
+        """Render live metrics dashboard"""
         st.markdown("---")
-        render_section_header(
-            "📊 Painel de Estatísticas em Tempo Real",
-            description="Métricas consolidadas do potencial de biogás no estado de São Paulo"
-        )
 
         # Load municipality data
         municipalities_df = database_loader.load_municipalities_data()
@@ -253,54 +521,5 @@ class HomePage:
             ]
 
             render_styled_metrics(metrics_data, columns=5)
-
         else:
             st.warning("⚠️ Unable to load municipality data. Please check the database connection.")
-
-    def _render_expandable_sections(self) -> None:
-        """Render collapsible section for top municipalities"""
-        st.markdown("---")
-        render_info_banner(
-            "💡 Explore os municípios com maior potencial de produção de biogás abaixo",
-            banner_type="info",
-            icon="💡"
-        )
-
-        with st.expander("🏆 Top 10 Municípios por Potencial de Biogás", expanded=False):
-            self._render_top_municipalities_clean()
-
-    def _render_top_municipalities_clean(self) -> None:
-        """Clean version of top municipalities without complex styling"""
-        top_municipalities = database_loader.get_top_municipalities(
-            by_column="total_final_m_ano",
-            limit=10
-        )
-
-        if top_municipalities is not None:
-            st.markdown("**Top 10 Municipalities by Biogas Potential:**")
-
-            for idx, (_, municipality) in enumerate(top_municipalities.iterrows(), 1):
-                col1, col2, col3, col4 = st.columns([1, 3, 2, 2])
-
-                with col1:
-                    if idx <= 3:
-                        medals = {1: "🥇", 2: "🥈", 3: "🥉"}
-                        st.markdown(medals.get(idx, f"#{idx}"))
-                    else:
-                        st.markdown(f"#{idx}")
-
-                with col2:
-                    st.markdown(f"**{municipality['municipality']}**")
-
-                with col3:
-                    st.markdown(f"{municipality['biogas_potential_m3_day']:,.0f} m³/day")
-
-                with col4:
-                    st.markdown(f"{municipality['population']:,.0f} people")
-
-
-
-
-
-
-
