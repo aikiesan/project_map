@@ -120,11 +120,6 @@ def main():
             </style>
             """, unsafe_allow_html=True)
 
-        # Accessibility settings in sidebar (minimal, not intrusive)
-        with st.sidebar:
-            with st.expander("♿ Acessibilidade", expanded=False):
-                accessibility_settings.render_basic_settings()
-
         # Main content area with landmark (WCAG 1.3.1)
         st.markdown('<main role="main" id="main-content" aria-label="Conteúdo principal">', unsafe_allow_html=True)
 

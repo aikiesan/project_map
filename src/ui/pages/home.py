@@ -186,6 +186,12 @@ class HomePage:
                 st.markdown("---")
                 st.markdown("💡 **Dica**: Experimente diferentes estilos para descobrir qual visualização funciona melhor para seus dados!")
 
+            # Panel 4: ACESSIBILIDADE (moved from app.py sidebar)
+            with st.expander("♿ Acessibilidade", expanded=False):
+                from src.accessibility.settings import AccessibilitySettings
+                accessibility_settings = AccessibilitySettings()
+                accessibility_settings.render_basic_settings()
+
             # === MUNICÍPIOS SELECIONADOS SECTION ===
             if 'selected_municipalities' not in st.session_state:
                 st.session_state.selected_municipalities = []
