@@ -66,45 +66,78 @@ def main():
         # Language identification (WCAG 3.1.1)
         st.markdown('<div lang="pt-BR">', unsafe_allow_html=True)
 
-        # Navigation and page selection
+        # V1-Style Tab Navigation
+        tabs = st.tabs([
+            "🏠 Mapa Principal",
+            "🗺️ Mapas Avançados",
+            "🛰️ Análise de Satélite",
+            "🎯 Análise de Proximidade",
+            "📊 Análise de Dados",
+            "🔄 Comparação",
+            "📚 Referências",
+            "📥 Exportar"
+        ])
+
+        # Add custom CSS for V1-style tabs
+        st.markdown("""
+            <style>
+            /* Improve main navigation tabs - V1 Style */
+            .stTabs [data-baseweb="tab-list"] {
+                gap: 12px;
+                background-color: #f8f9fa;
+                padding: 8px 12px;
+                border-radius: 10px;
+                margin-bottom: 16px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .stTabs [data-baseweb="tab"] {
+                margin-right: 6px;
+                padding: 10px 18px;
+                border-radius: 8px;
+                font-weight: 500;
+                transition: all 0.3s ease;
+                border: 2px solid transparent;
+            }
+            .stTabs [data-baseweb="tab"]:hover {
+                background-color: #e3f2fd;
+                transform: translateY(-1px);
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            }
+            .stTabs [aria-selected="true"] {
+                background-color: #2E8B57 !important;
+                color: white !important;
+                border-color: #2E8B57;
+                box-shadow: 0 3px 10px rgba(46,139,87,0.3);
+            }
+            .stTabs [aria-selected="true"]:hover {
+                background-color: #257a4a !important;
+            }
+            .stTabs [data-baseweb="tab"] p {
+                font-size: 14px;
+                margin: 0;
+                font-weight: 600;
+            }
+            </style>
+            """, unsafe_allow_html=True)
+
+        # Accessibility settings in sidebar (minimal, not intrusive)
         with st.sidebar:
-            # Sidebar landmark setup
-            st.markdown('<div role="navigation" aria-label="Navegação principal">', unsafe_allow_html=True)
-
-            st.markdown(f"**Versão:** {settings.APP_VERSION}")
-            st.markdown("---")
-
-            # Accessibility settings panel
             with st.expander("♿ Acessibilidade", expanded=False):
                 accessibility_settings.render_basic_settings()
-
-            st.markdown("---")
-
-            # Accessible page navigation (WCAG 2.4.4, 3.3.2)
-            page = accessible_selectbox(
-                "Navegar por:",
-                options=["Home", "Advanced Maps", "Raster Analysis", "Advanced Satellite Analysis", "Proximity Analysis", "Data Analysis", "Municipality Comparison", "Academic References", "Export & Reports"],
-                help_text="Selecione uma página para explorar diferentes recursos",
-                aria_label="Navegação principal do aplicativo"
-            )
-
-            st.markdown("---")
-            st.markdown('</div>', unsafe_allow_html=True)  # Close navigation landmark
 
         # Main content area with landmark (WCAG 1.3.1)
         st.markdown('<main role="main" id="main-content" aria-label="Conteúdo principal">', unsafe_allow_html=True)
 
-        # Announce page changes to screen readers (WCAG dynamic content)
-        announce_page_change(page)
-
-        # Render selected page with accessibility features
-        if page == "Home":
+        # Render content in tabs
+        with tabs[0]:  # Home
+            announce_page_change("Home")
             accessibility_manager.create_accessible_heading("Página Inicial", level=2, id_attr="home-section")
             from src.ui.pages.home import HomePage
             home_page = HomePage()
             home_page.render()
 
-        elif page == "Advanced Maps":
+        with tabs[1]:  # Advanced Maps
+            announce_page_change("Advanced Maps")
             accessibility_manager.create_accessible_heading("Mapas Interativos Avançados", level=2, id_attr="maps-section")
             st.markdown("Mapeamento profissional multi-camadas com visualização de infraestrutura de biogás")
 
@@ -112,63 +145,48 @@ def main():
             map_viewer = MapViewer()
             map_viewer.render()
 
-        elif page == "Raster Analysis":
-            accessibility_manager.create_accessible_heading("Análise de Dados Raster e Satélite", level=2, id_attr="raster-section")
-            st.markdown("Análise geoespacial avançada usando MapBiomas e imagens de satélite")
-
-            from src.ui.components.raster_map_viewer import create_raster_map_viewer
-            from src.data.loaders.database_loader import DatabaseLoader
-
-            # Load municipality data for overlay
-            try:
-                db_loader = DatabaseLoader()
-                municipality_data = db_loader.load_municipalities_data()
-                accessibility_manager.announce_to_screen_reader("Dados municipais carregados com sucesso", "polite")
-            except Exception as e:
-                logger.warning(f"Could not load municipality data: {e}")
-                municipality_data = None
-                create_accessible_alert("Aviso: Alguns dados municipais podem não estar disponíveis", "warning")
-
-            # Create and render raster map viewer
-            raster_viewer = create_raster_map_viewer()
-            raster_viewer.render(municipality_data)
-
-        elif page == "Advanced Satellite Analysis":
+        with tabs[2]:  # Satellite Analysis
+            announce_page_change("Advanced Satellite Analysis")
             accessibility_manager.create_accessible_heading("Análise Avançada de Dados de Satélite", level=2, id_attr="advanced-satellite-section")
             st.markdown("Análise profissional de dados MapBiomas com ferramentas avançadas de visualização e estatísticas")
 
             from src.ui.pages.advanced_raster_analysis import render_advanced_raster_analysis_page
             render_advanced_raster_analysis_page()
 
-        elif page == "Proximity Analysis":
+        with tabs[3]:  # Proximity Analysis
+            announce_page_change("Proximity Analysis")
             accessibility_manager.create_accessible_heading("Análise de Proximidade", level=2, id_attr="proximity-section")
 
             from src.ui.pages.proximity_analysis import create_proximity_analysis_page
             proximity_page = create_proximity_analysis_page()
             proximity_page.render()
 
-        elif page == "Data Analysis":
+        with tabs[4]:  # Data Analysis
+            announce_page_change("Data Analysis")
             accessibility_manager.create_accessible_heading("Análise de Dados", level=2, id_attr="analysis-section")
 
             from src.ui.pages.analysis import AnalysisPage
             analysis_page = AnalysisPage()
             analysis_page.render()
 
-        elif page == "Municipality Comparison":
+        with tabs[5]:  # Comparison
+            announce_page_change("Municipality Comparison")
             accessibility_manager.create_accessible_heading("Comparação de Municípios", level=2, id_attr="comparison-section")
 
             from src.ui.pages.comparison import ComparisonPage
             comparison_page = ComparisonPage()
             comparison_page.render()
 
-        elif page == "Academic References":
+        with tabs[6]:  # References
+            announce_page_change("Academic References")
             accessibility_manager.create_accessible_heading("Referências Acadêmicas", level=2, id_attr="references-section")
 
             from src.ui.components.reference_browser import create_reference_browser
             reference_browser = create_reference_browser()
             reference_browser.render()
 
-        elif page == "Export & Reports":
+        with tabs[7]:  # Export
+            announce_page_change("Export & Reports")
             accessibility_manager.create_accessible_heading("Exportação e Relatórios", level=2, id_attr="export-section")
 
             from src.ui.components.export import Export

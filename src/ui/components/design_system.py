@@ -163,14 +163,12 @@ def render_page_header(
     st.markdown(header_html, unsafe_allow_html=True)
 
 def render_green_header():
-    """Render V1's signature green gradient header for main app - CP2B MAPS"""
+    """Render V1's signature green gradient header - Análise de Potencial de Biogás"""
     st.markdown("""
     <div style='background: linear-gradient(135deg, #2E8B57 0%, #228B22 50%, #32CD32 100%);
                 color: white; padding: 1.5rem; margin: -1rem -1rem 1rem -1rem;
                 text-align: center; border-radius: 0 0 15px 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);'>
-        <h1 style='margin: 0; font-size: 2.2rem; font-weight: 700;'>
-            <span style='background: linear-gradient(135deg, #ffffff 0%, #e8f5e9 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;'>🗺️</span> CP2B MAPS
-        </h1>
+        <h1 style='margin: 0; font-size: 2.2rem; font-weight: 700;'>🗺️ Análise de Potencial de Biogás</h1>
         <p style='margin: 5px 0 0 0; font-size: 1rem; opacity: 0.9;'>
             645 municípios de São Paulo
         </p>

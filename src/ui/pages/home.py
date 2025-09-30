@@ -228,37 +228,6 @@ class HomePage:
 
     def _render_main_map_section(self) -> None:
         """Render main map with municipality data visualization"""
-        # Minimalistic navigation buttons (V1 Issue #6)
-        st.markdown("""
-        <style>
-        .mini-nav-button {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            margin: 0.25rem;
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            text-decoration: none;
-            color: #2c3e50;
-            transition: all 0.2s ease;
-        }
-        .mini-nav-button:hover {
-            background: #e9ecef;
-            border-color: #d3d9df;
-        }
-        </style>
-        """, unsafe_allow_html=True)
-
-        nav_col1, nav_col2, nav_col3, nav_col4 = st.columns(4)
-        with nav_col1:
-            st.button("🗺️ Advanced Maps", key="nav_maps", help="Ver Mapas Avançados")
-        with nav_col2:
-            st.button("📊 Data Analysis", key="nav_analysis", help="Análise de Dados")
-        with nav_col3:
-            st.button("🔄 Compare", key="nav_compare", help="Comparar Municípios")
-        with nav_col4:
-            st.button("📥 Export", key="nav_export", help="Exportar Dados")
 
         # === ACTIVE FILTERS BANNER (V1 Feature) ===
         active_filters = []
