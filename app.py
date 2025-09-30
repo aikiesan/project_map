@@ -26,6 +26,9 @@ st.set_page_config(
 from src.utils.logging_config import get_logger
 from src.ui.pages.home import HomePage
 
+# Import design system for V1 styling
+from src.ui.components.design_system import render_green_header
+
 # Import accessibility components
 from src.accessibility.core import AccessibilityManager
 from src.accessibility.settings import AccessibilitySettings
@@ -54,9 +57,8 @@ def main():
         # Log application start
         logger.info("Starting CP2B Maps V2 application with accessibility features")
 
-        # Main heading with proper hierarchy (WCAG 1.3.1)
-        accessibility_manager.create_accessible_heading("🗺️ CP2B Maps V2", level=1, id_attr="main-title")
-        st.markdown("### Plataforma Profissional de Análise de Potencial de Biogás")
+        # V1-style beautiful green gradient header
+        render_green_header()
 
         # Language identification (WCAG 3.1.1)
         st.markdown('<div lang="pt-BR">', unsafe_allow_html=True)
