@@ -1,31 +1,15 @@
-# CP2B Maps V2 - Requirements for Streamlit Cloud
-# Simplified and tested for cloud deployment
-
-# Core Framework
-streamlit
-streamlit-folium
-
-# Data Processing
-pandas
-numpy<2.0.0
-
-# Geospatial - specific versions known to work
-pyproj
-shapely
-fiona
-geopandas
-rasterio
-
-# Visualization
-folium
-plotly
-matplotlib
-
-# Data Export
-openpyxl
-xlrd
-
-# Utilities
-psutil
-jenkspy
-pillow
+streamlit>=1.31.0,<2.0.0
+streamlit-folium>=0.16.0,<1.0.0
+pandas>=2.1.0,<3.0.0
+numpy>=1.24.0,<2.0.0
+geopandas>=0.14.0,<1.0.0
+shapely>=2.0.0,<3.0.0
+folium>=0.15.0,<1.0.0
+rasterio>=1.3.0,<2.0.0
+plotly>=5.17.0,<6.0.0
+matplotlib>=3.7.0,<4.0.0
+openpyxl>=3.1.0,<4.0.0
+xlrd>=2.0.1,<3.0.0
+jenkspy>=0.3.2,<1.0.0
+pillow>=10.0.0,<11.0.0
+psutil>=5.9.0,<6.0.0
