@@ -1,14 +1,3 @@
-# System-level packages required for CP2B Maps V2
-# These are installed via apt-get on Streamlit Cloud (Debian/Ubuntu)
-
-# GDAL - Geospatial Data Abstraction Library
 gdal-bin
-
-# GEOS - Geometry Engine Open Source
-libgeos-dev
-
-# PROJ - Cartographic Projections Library
-libproj-dev
-
-# Spatial indexing
+libgdal-dev
 libspatialindex-dev
