@@ -25,6 +25,13 @@ from src.ui.components.proximity_results import create_proximity_results
 from src.data.loaders.mapbiomas_loader import get_mapbiomas_loader
 from src.data.loaders.database_loader import DatabaseLoader
 
+# Import V1 design system
+from src.ui.components.design_system import (
+    render_page_header,
+    render_section_header,
+    render_info_banner
+)
+
 logger = get_logger(__name__)
 
 

@@ -1,6 +1,7 @@
 """
 CP2B Maps V2 - Comparison Page
 Professional multi-municipality comparison and benchmarking analysis
+Enhanced with V1 design system
 """
 
 import streamlit as st
@@ -17,6 +18,13 @@ from src.utils.logging_config import get_logger
 from src.data import database_loader
 from src.core import biogas_calculator
 from src.ui.components.charts import Charts
+
+# Import V1 design system
+from src.ui.components.design_system import (
+    render_page_header,
+    render_section_header,
+    render_info_banner
+)
 
 logger = get_logger(__name__)
 
@@ -43,8 +51,14 @@ class ComparisonPage:
             Dictionary with comparison results and analysis data
         """
         try:
-            st.markdown("# 🔍 Municipality Comparison & Analysis")
-            st.markdown("### Compare multiple municipalities side-by-side with detailed benchmarking")
+            # V1-style header
+            render_page_header(
+                title="Comparação de Municípios",
+                subtitle="Análise Comparativa e Benchmarking",
+                description="Compare múltiplos municípios lado a lado com análise detalhada de benchmarking e rankings",
+                icon="🔍",
+                show_stats=True
+            )
 
             # Load municipality data
             municipalities_df = self._load_comparison_data()

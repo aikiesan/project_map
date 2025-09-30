@@ -1,6 +1,7 @@
 """
 CP2B Maps V2 - Home Page Component
 Professional home page with real data showcase and advanced functionality
+Enhanced with V1 design system for beautiful UI
 """
 
 import streamlit as st
@@ -14,6 +15,13 @@ from config.settings import settings
 from src.utils.logging_config import get_logger
 from src.data import database_loader, shapefile_loader
 from src.core import biogas_calculator
+
+# Import V1 design system
+from src.ui.components.design_system import (
+    render_section_header,
+    render_info_banner,
+    render_feature_card
+)
 
 logger = get_logger(__name__)
 
@@ -49,8 +57,12 @@ class HomePage:
 
     def _render_hero_map_section(self) -> None:
         """Render Map-First hero section with sidebar controls"""
-        # Simple header using native Streamlit
-        st.title("🗺️ CP2B Maps V2 - Professional Biogas GIS Platform")
+        # V1-style section header
+        render_section_header(
+            "🗺️ Mapa Interativo de Biogás",
+            icon="",
+            description="Explore o potencial de biogás nos 645 municípios de São Paulo com dados em tempo real"
+        )
 
         # Load municipality data for statistics
         municipalities_df = database_loader.load_municipalities_data()
@@ -165,7 +177,10 @@ class HomePage:
     def _render_live_dashboard_strip(self) -> None:
         """Render horizontal dashboard strip with key metrics"""
         st.markdown("---")
-        st.markdown("### 📊 Real-Time Analytics Dashboard")
+        render_section_header(
+            "📊 Painel de Estatísticas em Tempo Real",
+            description="Métricas consolidadas do potencial de biogás no estado de São Paulo"
+        )
 
         # Load municipality data
         municipalities_df = database_loader.load_municipalities_data()
@@ -219,7 +234,14 @@ class HomePage:
 
     def _render_expandable_sections(self) -> None:
         """Render collapsible section for top municipalities"""
-        with st.expander("🏆 Top Performing Municipalities", expanded=False):
+        st.markdown("---")
+        render_info_banner(
+            "💡 Explore os municípios com maior potencial de produção de biogás abaixo",
+            banner_type="info",
+            icon="💡"
+        )
+
+        with st.expander("🏆 Top 10 Municípios por Potencial de Biogás", expanded=False):
             self._render_top_municipalities_clean()
 
     def _render_top_municipalities_clean(self) -> None:

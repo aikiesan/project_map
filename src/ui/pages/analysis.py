@@ -1,6 +1,7 @@
 """
 CP2B Maps V2 - Analysis Orchestrator
 Main analysis page that coordinates all specialized analysis modules
+Enhanced with V1 design system
 """
 
 import streamlit as st
@@ -12,6 +13,14 @@ import datetime
 from config.settings import settings
 from src.utils.logging_config import get_logger
 from src.data import database_loader
+
+# Import V1 design system
+from src.ui.components.design_system import (
+    render_page_header,
+    render_section_header,
+    render_enhanced_tabs,
+    render_info_banner
+)
 
 # Import specialized analysis modules
 from src.ui.pages.economic_analysis import create_economic_analyzer
@@ -47,8 +56,14 @@ class AnalysisOrchestrator:
             Dictionary with complete analysis results
         """
         try:
-            st.markdown("# 📈 Advanced Biogas Analysis & Planning")
-            st.markdown("### Comprehensive scenario planning, feasibility analysis, and strategic planning")
+            # V1-style beautiful header
+            render_page_header(
+                title="Análises Avançadas de Biogás",
+                subtitle="Planejamento de Cenários e Análise de Viabilidade",
+                description="Análise completa de viabilidade econômica, impacto ambiental, aspectos técnicos e desenvolvimento regional",
+                icon="📊",
+                show_stats=True
+            )
 
             # Load and prepare data
             analysis_data = self._load_analysis_data()
@@ -57,14 +72,23 @@ class AnalysisOrchestrator:
                 return {}
 
             # Scenario configuration
+            render_section_header("⚙️ Configuração de Cenário", description="Configure os parâmetros para análise")
             scenario_config = self._render_scenario_configuration()
 
-            # Analysis tabs for better organization
-            tab1, tab2, tab3, tab4 = st.tabs([
-                "💰 Economic Analysis",
-                "🌍 Environmental Analysis",
-                "🔧 Technical Analysis",
-                "🗺️ Regional Analysis"
+            st.markdown("---")
+
+            # Analysis tabs with V1 styling
+            render_info_banner(
+                "Explore as diferentes dimensões da análise de biogás através das abas abaixo",
+                banner_type="info",
+                icon="💡"
+            )
+
+            tab1, tab2, tab3, tab4 = render_enhanced_tabs([
+                "💰 Análise Econômica",
+                "🌍 Análise Ambiental",
+                "🔧 Análise Técnica",
+                "🗺️ Análise Regional"
             ])
 
             results = {}
