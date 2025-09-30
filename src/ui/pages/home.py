@@ -97,12 +97,10 @@ class HomePage:
                 show_rodovias = st.checkbox("🛣️ Rodovias", value=False, key="show_roads")
                 show_regioes_admin = st.checkbox("🏛️ Regiões Admin.", value=False, key="show_regions")
 
-                # Store layer visibility in session state
-                st.session_state.update({
-                    'show_municipios_biogas': show_municipios_biogas,
-                    'show_plantas': show_plantas,
-                    'show_boundary': True  # Always show state boundary
-                })
+                # Store layer visibility (using different keys to avoid conflicts)
+                st.session_state['layer_show_biogas'] = show_municipios_biogas
+                st.session_state['layer_show_plantas'] = show_plantas
+                st.session_state['layer_show_boundary'] = True
 
             # Panel 2: FILTROS DE DADOS (only active if biogas layer enabled)
             if show_municipios_biogas:
@@ -244,7 +242,7 @@ class HomePage:
         folium.plugins.Fullscreen().add_to(m)
 
         # Add state boundary
-        if st.session_state.get('show_boundary', True):
+        if st.session_state.get('layer_show_boundary', True):
             state_boundary = shapefile_loader.load_state_boundary()
             if state_boundary is not None:
                 folium.GeoJson(
@@ -260,11 +258,11 @@ class HomePage:
                 ).add_to(m)
 
         # Add municipality circles if biogas layer enabled (V1 Issue #2)
-        if st.session_state.get('show_municipios_biogas', True) and municipalities_df is not None:
+        if st.session_state.get('layer_show_biogas', True) and municipalities_df is not None:
             self._add_municipality_circles(m, municipalities_df, data_column)
 
         # Add biogas plants if enabled
-        if st.session_state.get('show_plantas', False):
+        if st.session_state.get('layer_show_plantas', False):
             biogas_plants = shapefile_loader.load_biogas_plants()
             if biogas_plants is not None and len(biogas_plants) > 0:
                 display_plants = biogas_plants.head(100)
