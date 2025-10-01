@@ -56,8 +56,7 @@ class AdvancedRasterAnalysisPage:
         # Page header with accessibility
         self.accessibility_manager.create_accessible_heading(
             "🛰️ Análise Avançada de Dados de Satélite",
-            level=1,
-            help_text="Interface profissional para análise de dados MapBiomas"
+            level=1
         )
 
         st.markdown("**Análise profissional de uso e cobertura do solo com dados MapBiomas**")

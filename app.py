@@ -66,16 +66,15 @@ def main():
         # Language identification (WCAG 3.1.1)
         st.markdown('<div lang="pt-BR">', unsafe_allow_html=True)
 
-        # V1-Style Tab Navigation
+        # V1-Style Tab Navigation (7 tabs matching V1)
         tabs = st.tabs([
             "🏠 Mapa Principal",
-            "🗺️ Mapas Avançados",
-            "🛰️ Análise de Satélite",
+            "📊 Explorar Dados",
+            "🛰️ Análises Avançadas",
             "🎯 Análise de Proximidade",
-            "📊 Análise de Dados",
-            "🔄 Comparação",
-            "📚 Referências",
-            "📥 Exportar"
+            "📚 Referências Científicas",
+            "📥 Exportar & Relatórios",
+            "ℹ️ Sobre"
         ])
 
         # Add custom CSS for V1-style tabs
@@ -131,22 +130,38 @@ def main():
             home_page = HomePage()
             home_page.render()
 
-        with tabs[1]:  # Advanced Maps
-            announce_page_change("Advanced Maps")
-            accessibility_manager.create_accessible_heading("Mapas Interativos Avançados", level=2, id_attr="maps-section")
-            st.markdown("Mapeamento profissional multi-camadas com visualização de infraestrutura de biogás")
+        with tabs[1]:  # Explorar Dados (Data Analysis + Comparison)
+            announce_page_change("Explorar Dados")
+            accessibility_manager.create_accessible_heading("Explorar Dados", level=2, id_attr="explore-section")
 
-            from src.ui.components.map_viewer import MapViewer
-            map_viewer = MapViewer()
-            map_viewer.render()
+            # Sub-tabs for data exploration
+            data_tabs = st.tabs(["📊 Análise de Dados", "🔄 Comparação de Municípios"])
 
-        with tabs[2]:  # Satellite Analysis
-            announce_page_change("Advanced Satellite Analysis")
-            accessibility_manager.create_accessible_heading("Análise Avançada de Dados de Satélite", level=2, id_attr="advanced-satellite-section")
-            st.markdown("Análise profissional de dados MapBiomas com ferramentas avançadas de visualização e estatísticas")
+            with data_tabs[0]:  # Data Analysis
+                from src.ui.pages.analysis import AnalysisPage
+                analysis_page = AnalysisPage()
+                analysis_page.render()
 
-            from src.ui.pages.advanced_raster_analysis import render_advanced_raster_analysis_page
-            render_advanced_raster_analysis_page()
+            with data_tabs[1]:  # Comparison
+                from src.ui.pages.comparison import ComparisonPage
+                comparison_page = ComparisonPage()
+                comparison_page.render()
+
+        with tabs[2]:  # Análises Avançadas (Advanced Maps + Satellite)
+            announce_page_change("Análises Avançadas")
+            accessibility_manager.create_accessible_heading("Análises Avançadas", level=2, id_attr="advanced-section")
+
+            # Sub-tabs for advanced analysis
+            advanced_tabs = st.tabs(["🗺️ Mapas Avançados", "🛰️ Análise de Satélite"])
+
+            with advanced_tabs[0]:  # Advanced Maps
+                from src.ui.components.map_viewer import MapViewer
+                map_viewer = MapViewer()
+                map_viewer.render()
+
+            with advanced_tabs[1]:  # Satellite Analysis
+                from src.ui.pages.advanced_raster_analysis import render_advanced_raster_analysis_page
+                render_advanced_raster_analysis_page()
 
         with tabs[3]:  # Proximity Analysis
             announce_page_change("Proximity Analysis")
@@ -156,31 +171,15 @@ def main():
             proximity_page = create_proximity_analysis_page()
             proximity_page.render()
 
-        with tabs[4]:  # Data Analysis
-            announce_page_change("Data Analysis")
-            accessibility_manager.create_accessible_heading("Análise de Dados", level=2, id_attr="analysis-section")
-
-            from src.ui.pages.analysis import AnalysisPage
-            analysis_page = AnalysisPage()
-            analysis_page.render()
-
-        with tabs[5]:  # Comparison
-            announce_page_change("Municipality Comparison")
-            accessibility_manager.create_accessible_heading("Comparação de Municípios", level=2, id_attr="comparison-section")
-
-            from src.ui.pages.comparison import ComparisonPage
-            comparison_page = ComparisonPage()
-            comparison_page.render()
-
-        with tabs[6]:  # References
+        with tabs[4]:  # References
             announce_page_change("Academic References")
-            accessibility_manager.create_accessible_heading("Referências Acadêmicas", level=2, id_attr="references-section")
+            accessibility_manager.create_accessible_heading("Referências Científicas", level=2, id_attr="references-section")
 
             from src.ui.components.reference_browser import create_reference_browser
             reference_browser = create_reference_browser()
             reference_browser.render()
 
-        with tabs[7]:  # Export
+        with tabs[5]:  # Export
             announce_page_change("Export & Reports")
             accessibility_manager.create_accessible_heading("Exportação e Relatórios", level=2, id_attr="export-section")
 
@@ -206,6 +205,50 @@ def main():
                 st.markdown("---")
                 charts_component = Charts()
                 charts_component.render()
+
+        with tabs[6]:  # Sobre (About)
+            announce_page_change("Sobre o CP2B Maps")
+            accessibility_manager.create_accessible_heading("Sobre o CP2B Maps", level=2, id_attr="about-section")
+
+            st.markdown("""
+            ### 🗺️ CP2B Maps - Plataforma de Análise de Potencial de Biogás
+
+            **Versão 2.0** - Análise Profissional de Potencial de Biogás no Estado de São Paulo
+
+            #### 📊 Sobre a Plataforma
+
+            O CP2B Maps é uma ferramenta profissional desenvolvida para análise do potencial de produção
+            de biogás em municípios do Estado de São Paulo. A plataforma oferece:
+
+            - 🗺️ **Visualização Interativa**: Mapas profissionais com múltiplas camadas de dados
+            - 📊 **Análise de Dados**: Ferramentas avançadas para exploração de dados de biogás
+            - 🛰️ **Integração com MapBiomas**: Análise de uso e cobertura do solo
+            - 🎯 **Análise de Proximidade**: Identificação de locais estratégicos
+            - ♿ **Acessibilidade**: Conformidade com WCAG 2.1 Nível A
+
+            #### 🎓 Desenvolvido por
+
+            **Centro Paulista de Estudos em Biogás e Bioprodutos (CP2B)**
+
+            #### 📚 Dados e Metodologia
+
+            Os dados de potencial de biogás são calculados com base em:
+            - Resíduos agrícolas e pecuários
+            - Resíduos urbanos e de poda
+            - Estimativas de produção energética (MWh/ano)
+            - Potencial de redução de emissões de CO₂
+
+            #### 📞 Contato
+
+            Para mais informações sobre o CP2B Maps e o Centro CP2B, visite nosso site institucional.
+
+            ---
+
+            *CP2B Maps V2 - 2024 | Todos os direitos reservados*
+            """)
+
+            # Display logo
+            st.image("logotipo-full-black.png", width=400)
 
         # Close main content landmark
         st.markdown('</main>', unsafe_allow_html=True)
