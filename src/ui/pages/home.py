@@ -24,6 +24,12 @@ from src.ui.components.design_system import (
     render_styled_metrics
 )
 
+# Import reference system for inline citations
+from src.data.references.scientific_references import (
+    render_reference_button,
+    get_substrate_reference_map
+)
+
 logger = get_logger(__name__)
 
 
@@ -195,7 +201,7 @@ class HomePage:
 
                 viz_type = st.radio(
                     "Tipo de mapa:",
-                    ["Círculos Proporcionais", "Mapa de Calor (Heatmap)", "Agrupamentos (Clusters)"],
+                    ["Círculos Proporcionais", "Mapa de Preenchimento (Coroplético)", "Mapa de Calor (Heatmap)", "Agrupamentos (Clusters)"],
                     key="viz_type",
                     index=0
                 )
@@ -206,6 +212,8 @@ class HomePage:
                 # Info based on selection (V1-style detailed descriptions)
                 if viz_type == "Círculos Proporcionais":
                     st.info("🔵 **Círculos Proporcionais**: O tamanho dos círculos representa o valor dos dados. Maior potencial = círculo maior.")
+                elif viz_type == "Mapa de Preenchimento (Coroplético)":
+                    st.info("🗺️ **Mapa Coroplético**: Municípios preenchidos com cores baseadas no valor. Verde claro = baixo, verde escuro = alto.")
                 elif viz_type == "Mapa de Calor (Heatmap)":
                     st.info("🔥 **Mapa de Calor**: Cores quentes (vermelho) indicam valores altos, cores frias (azul) indicam valores baixos.")
                 elif viz_type == "Agrupamentos (Clusters)":
@@ -435,6 +443,65 @@ class HomePage:
                             weight=2,
                             opacity=0.8
                         ).add_to(m)
+
+            elif viz_type == "Mapa de Preenchimento (Coroplético)":
+                # Choropleth map - load municipality polygons and create filled map
+                try:
+                    municipality_shapes = shapefile_loader.load_municipality_polygons()
+
+                    if municipality_shapes is not None and len(municipality_shapes) > 0:
+                        # Merge shapes with data
+                        # Try different municipality code column names
+                        shape_mun_col = None
+                        for col in ['cd_mun', 'codigo', 'municipality_code', 'code']:
+                            if col in municipality_shapes.columns:
+                                shape_mun_col = col
+                                break
+
+                        data_mun_col = None
+                        for col in ['municipality_code', 'cd_mun', 'codigo', 'code']:
+                            if col in df_filtered.columns:
+                                data_mun_col = col
+                                break
+
+                        if shape_mun_col and data_mun_col:
+                            # Merge geometries with data
+                            merged_geo = municipality_shapes.merge(
+                                df_filtered[[data_mun_col, data_column]],
+                                left_on=shape_mun_col,
+                                right_on=data_mun_col,
+                                how='inner'
+                            )
+
+                            if len(merged_geo) > 0:
+                                # Create choropleth using Folium's Choropleth
+                                folium.Choropleth(
+                                    geo_data=merged_geo,
+                                    data=df_filtered,
+                                    columns=[data_mun_col, data_column],
+                                    key_on=f'feature.properties.{shape_mun_col}',
+                                    fill_color='YlGn',  # Yellow-Green scale (V1 style)
+                                    fill_opacity=0.7,
+                                    line_opacity=0.5,
+                                    legend_name=f'Potencial de Biogás (m³/ano)',
+                                    nan_fill_color='white',
+                                    nan_fill_opacity=0.1
+                                ).add_to(m)
+                            else:
+                                st.warning("⚠️ Não foi possível combinar dados com geometrias")
+                        else:
+                            st.info("💡 Mapa coroplético indisponível - usando círculos")
+                            # Fallback to circles
+                            self._add_municipality_circles(m, df_filtered, data_column)
+                    else:
+                        st.info("💡 Geometrias de municípios não carregadas - usando círculos")
+                        # Fallback to circles
+                        self._add_municipality_circles(m, df_filtered, data_column)
+                except Exception as e:
+                    logger.error(f"Error creating choropleth: {e}")
+                    st.warning("⚠️ Erro ao criar mapa coroplético - usando círculos")
+                    # Fallback to circles
+                    self._add_municipality_circles(m, df_filtered, data_column)
 
             elif viz_type == "Mapa de Calor (Heatmap)":
                 # Prepare data for heatmap

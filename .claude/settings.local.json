@@ -16,7 +16,10 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "Bash(for:*)",
       "Bash(do head -20 \"C:\\Users\\Lucas\\Documents\\CP2B\\CP2B_Maps_V2\\src\\ui\\pages$file\")",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(cat:*)",
+      "Read(//c/Users/Lucas/Documents/CP2B/CP2B_IA_BAGACINHO/**)",
+      "Bash(sed:*)"
     ],
     "deny": [],
     "ask": []

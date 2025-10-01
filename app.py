@@ -130,22 +130,14 @@ def main():
             home_page = HomePage()
             home_page.render()
 
-        with tabs[1]:  # Explorar Dados (Data Analysis + Comparison)
+        with tabs[1]:  # Explorar Dados (Enhanced Data Explorer with V1 charts)
             announce_page_change("Explorar Dados")
             accessibility_manager.create_accessible_heading("Explorar Dados", level=2, id_attr="explore-section")
 
-            # Sub-tabs for data exploration
-            data_tabs = st.tabs(["📊 Análise de Dados", "🔄 Comparação de Municípios"])
-
-            with data_tabs[0]:  # Data Analysis
-                from src.ui.pages.analysis import AnalysisPage
-                analysis_page = AnalysisPage()
-                analysis_page.render()
-
-            with data_tabs[1]:  # Comparison
-                from src.ui.pages.comparison import ComparisonPage
-                comparison_page = ComparisonPage()
-                comparison_page.render()
+            # Enhanced Data Explorer with V1's comprehensive chart library
+            from src.ui.pages.data_explorer import create_data_explorer_page
+            data_explorer = create_data_explorer_page()
+            data_explorer.render()
 
         with tabs[2]:  # Análises Avançadas (Advanced Maps + Satellite)
             announce_page_change("Análises Avançadas")
