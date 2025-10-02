@@ -34,9 +34,9 @@ class MapConfig:
     # Visualization style
     viz_type: str = "Círculos Proporcionais"
 
-    # Map center and zoom
-    center_lat: float = -23.5505
-    center_lon: float = -46.6333
+    # Map center and zoom (São Paulo State center, not city)
+    center_lat: float = -22.5  # São Paulo State center latitude
+    center_lon: float = -48.5  # São Paulo State center longitude
     zoom_start: int = 7
 
     # Display options
