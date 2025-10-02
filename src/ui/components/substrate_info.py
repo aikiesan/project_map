@@ -6,7 +6,7 @@ SOLID: Single Responsibility - Display substrate technical information
 
 import streamlit as st
 from typing import Dict, Any
-from src.data.references import render_reference_button
+from src.data.references.scientific_references import render_reference_button
 from src.utils.logging_config import get_logger
 
 logger = get_logger(__name__)
