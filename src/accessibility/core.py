@@ -46,23 +46,42 @@ class AccessibilityManager:
         css_content = """
         <style>
         /* WCAG 2.1 Level A - Skip Links (2.4.1) */
+        /* Hidden by default, visible only on keyboard focus */
+        .skip-links {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 10001;
+            pointer-events: none;
+        }
+        
         .skip-link {
             position: absolute;
-            top: -40px;
-            left: 6px;
+            left: -10000px;
+            top: auto;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
             background: #000000;
             color: #ffffff;
             padding: 8px 16px;
             text-decoration: none;
             font-weight: bold;
-            z-index: 10000;
             border-radius: 0 0 4px 4px;
+            pointer-events: auto;
         }
 
         .skip-link:focus {
-            top: 0;
+            position: fixed;
+            left: 6px;
+            top: 6px;
+            width: auto;
+            height: auto;
+            overflow: visible;
             outline: 3px solid #ffffff;
             outline-offset: 2px;
+            z-index: 10002;
         }
 
         /* WCAG 2.1 Level A - Focus Indicators (2.4.3) */

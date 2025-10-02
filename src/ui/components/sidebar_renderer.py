@@ -67,21 +67,6 @@ class SidebarRenderer:
         .stMarkdown h3 {
             border-bottom: none !important;
         }
-        /* Hide "Pular para barra lateral" accessibility link */
-        a[href="#sidebar"] {
-            position: absolute !important;
-            left: -10000px !important;
-            top: auto !important;
-            width: 1px !important;
-            height: 1px !important;
-            overflow: hidden !important;
-        }
-        /* Show on focus for keyboard users */
-        a[href="#sidebar"]:focus {
-            position: static !important;
-            width: auto !important;
-            height: auto !important;
-        }
         /* Sidebar white background - match site background */
         section[data-testid="stSidebar"] {
             background-color: white !important;
