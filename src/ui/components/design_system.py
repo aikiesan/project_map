@@ -163,14 +163,35 @@ def render_page_header(
     st.markdown(header_html, unsafe_allow_html=True)
 
 def render_green_header():
-    """Render V1's signature green gradient header - Análise de Potencial de Biogás"""
+    """Render V1's signature green gradient header at the top of the page"""
     st.markdown("""
-    <div style='background: linear-gradient(135deg, #2E8B57 0%, #228B22 50%, #32CD32 100%);
-                color: white; padding: 1.5rem; margin: -1rem -1rem 1rem -1rem;
-                text-align: center; border-radius: 0 0 15px 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);'>
-        <h1 style='margin: 0; font-size: 2.2rem; font-weight: 700;'>🗺️ Análise de Potencial de Biogás</h1>
-        <p style='margin: 5px 0 0 0; font-size: 1rem; opacity: 0.9;'>
-            645 municípios de São Paulo
+    <style>
+    /* Push main content down to accommodate header */
+    .main > div:first-child {
+        padding-top: 0 !important;
+    }
+    
+    /* Remove Streamlit's default top padding */
+    .block-container {
+        padding-top: 2rem !important;
+    }
+    </style>
+    <div style='background: linear-gradient(135deg, #2E8B57 0%, #3ba068 50%, #48b879 100%);
+                color: white; padding: 1.5rem; margin: -2rem -1rem 1.5rem -1rem;
+                text-align: center; border-radius: 0 0 15px 15px; box-shadow: 0 3px 10px rgba(46,139,87,0.3);'>
+        <h1 style='margin: 0 0 0.5rem 0; font-size: 2.2rem; font-weight: 700; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+                   font-family: Montserrat, system-ui, sans-serif;'>
+            🗺️ CP2B Maps
+        </h1>
+        <h2 style='margin: 0 0 0.6rem 0; font-size: 1.4rem; font-weight: 400; color: #fff2e6;
+                   font-family: Montserrat, system-ui, sans-serif;'>
+            Análise de Potencial de Biogás
+        </h2>
+        <p style='margin: 0.5rem 0; font-size: 1rem; opacity: 0.95; font-family: Montserrat, system-ui, sans-serif;'>
+            📍 <strong>645 municípios</strong> de São Paulo • ⚡ <strong>Energia Renovável</strong> • 🌱 <strong>Base Científica</strong>
+        </p>
+        <p style='margin: 0.3rem 0 0 0; font-size: 0.85rem; opacity: 0.85; font-style: italic; font-family: Montserrat, system-ui, sans-serif;'>
+            Centro Paulista de Estudos em Biogás e Bioprodutos
         </p>
     </div>
     """, unsafe_allow_html=True)
