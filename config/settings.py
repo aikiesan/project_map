@@ -55,7 +55,7 @@ class AppSettings:
     LOG_FORMAT: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
     # Map Settings
-    DEFAULT_CENTER: tuple = (-23.5505, -46.6333)  # São Paulo
+    DEFAULT_CENTER: tuple = (-22.5, -48.5)  # São Paulo State center (matches V1)
     DEFAULT_ZOOM: int = 7
 
     @classmethod

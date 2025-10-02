@@ -10,7 +10,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from typing import Dict, List, Optional, Any, Tuple
-import seaborn as sns
 
 from config.settings import settings
 from src.utils.logging_config import get_logger
