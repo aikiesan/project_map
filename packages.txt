@@ -1,3 +1,1 @@
-gdal-bin
-libgdal-dev
-python3-gdal
+# No system packages needed - rasterio wheels include GDAL bindings
