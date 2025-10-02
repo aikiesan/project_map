@@ -4,10 +4,12 @@ Professional citation management and reference database
 """
 
 from .reference_database import ReferenceDatabase, Reference, ReferenceCategory, get_reference_database
+from .scientific_references import render_reference_button
 
 __all__ = [
     'ReferenceDatabase',
     'Reference',
     'ReferenceCategory',
-    'get_reference_database'
+    'get_reference_database',
+    'render_reference_button'
 ]
