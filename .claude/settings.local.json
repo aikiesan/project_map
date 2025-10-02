@@ -19,7 +19,8 @@
       "Bash(done)",
       "Bash(cat:*)",
       "Read(//c/Users/Lucas/Documents/CP2B/CP2B_IA_BAGACINHO/**)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Bash(git merge:*)"
     ],
     "deny": [],
     "ask": []
