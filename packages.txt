@@ -1,1 +1,0 @@
-# No system packages needed - rasterio wheels include GDAL bindings
