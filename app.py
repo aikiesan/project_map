@@ -66,55 +66,93 @@ def main():
         # Language identification (WCAG 3.1.1)
         st.markdown('<div lang="pt-BR">', unsafe_allow_html=True)
 
-        # V1-Style Tab Navigation (7 tabs matching V1)
+        # V1-Style Tab Navigation (7 tabs - EXACT V1 match)
         tabs = st.tabs([
             "🏠 Mapa Principal",
-            "📊 Explorar Dados",
-            "🛰️ Análises Avançadas",
+            "🔍 Explorar Dados",
+            "📊 Análises Avançadas",
             "🎯 Análise de Proximidade",
+            "🍊 Bagacinho",
             "📚 Referências Científicas",
-            "📥 Exportar & Relatórios",
-            "ℹ️ Sobre"
+            "ℹ️ Sobre o CP2B Maps"
         ])
 
-        # Add custom CSS for V1-style tabs
+        # Add custom CSS for V1-style tabs + Accessibility fixes
         st.markdown("""
             <style>
-            /* Improve main navigation tabs - V1 Style */
+            /* Import Montserrat font */
+            @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
+            /* Hide accessibility skip links visually (but keep for screen readers) */
+            a[href="#main-content"],
+            a[href="#sidebar"],
+            a[href^="Pular"] {
+                position: absolute !important;
+                left: -10000px !important;
+                top: auto !important;
+                width: 1px !important;
+                height: 1px !important;
+                overflow: hidden !important;
+            }
+            /* Show on keyboard focus for accessibility */
+            a[href="#main-content"]:focus,
+            a[href="#sidebar"]:focus {
+                position: static !important;
+                width: auto !important;
+                height: auto !important;
+                background: #2E8B57;
+                color: white;
+                padding: 0.5rem 1rem;
+                z-index: 9999;
+            }
+
+            /* Remove purple lines from sidebar headers */
+            .stMarkdown h3 {
+                border-bottom: none !important;
+            }
+            section[data-testid="stSidebar"] h1,
+            section[data-testid="stSidebar"] h2,
+            section[data-testid="stSidebar"] h3 {
+                border-bottom: none !important;
+            }
+
+            /* Compact navigation tabs - 60% of V1 size */
             .stTabs [data-baseweb="tab-list"] {
-                gap: 12px;
+                gap: 7px;
                 background-color: #f8f9fa;
-                padding: 8px 12px;
-                border-radius: 10px;
-                margin-bottom: 16px;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                padding: 5px 7px;
+                border-radius: 6px;
+                margin-bottom: 10px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             }
             .stTabs [data-baseweb="tab"] {
-                margin-right: 6px;
-                padding: 10px 18px;
-                border-radius: 8px;
+                margin-right: 4px;
+                padding: 6px 11px;
+                border-radius: 5px;
                 font-weight: 500;
                 transition: all 0.3s ease;
-                border: 2px solid transparent;
+                border: 1px solid transparent;
+                font-family: 'Montserrat', system-ui, sans-serif;
             }
             .stTabs [data-baseweb="tab"]:hover {
                 background-color: #e3f2fd;
                 transform: translateY(-1px);
-                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+                box-shadow: 0 1px 5px rgba(0,0,0,0.15);
             }
             .stTabs [aria-selected="true"] {
                 background-color: #2E8B57 !important;
                 color: white !important;
                 border-color: #2E8B57;
-                box-shadow: 0 3px 10px rgba(46,139,87,0.3);
+                box-shadow: 0 2px 6px rgba(46,139,87,0.3);
             }
             .stTabs [aria-selected="true"]:hover {
                 background-color: #257a4a !important;
             }
             .stTabs [data-baseweb="tab"] p {
-                font-size: 14px;
+                font-size: 11px;
                 margin: 0;
                 font-weight: 600;
+                font-family: 'Montserrat', system-ui, sans-serif;
             }
             </style>
             """, unsafe_allow_html=True)
@@ -139,108 +177,55 @@ def main():
             data_explorer = create_data_explorer_page()
             data_explorer.render()
 
-        with tabs[2]:  # Análises Avançadas (Advanced Maps + Satellite)
+        with tabs[2]:  # Análises Avançadas (Residue Analysis only)
             announce_page_change("Análises Avançadas")
             accessibility_manager.create_accessible_heading("Análises Avançadas", level=2, id_attr="advanced-section")
 
-            # Sub-tabs for advanced analysis
-            advanced_tabs = st.tabs(["🗺️ Mapas Avançados", "🛰️ Análise de Satélite"])
+            # Direct render - no sub-tabs
+            from src.ui.pages.residue_analysis import create_residue_analysis_page
+            create_residue_analysis_page()
 
-            with advanced_tabs[0]:  # Advanced Maps
-                from src.ui.components.map_viewer import MapViewer
-                map_viewer = MapViewer()
-                map_viewer.render()
-
-            with advanced_tabs[1]:  # Satellite Analysis
-                from src.ui.pages.advanced_raster_analysis import render_advanced_raster_analysis_page
-                render_advanced_raster_analysis_page()
-
-        with tabs[3]:  # Proximity Analysis
-            announce_page_change("Proximity Analysis")
+        with tabs[3]:  # Proximity Analysis (V1 UX with V2 Architecture)
+            announce_page_change("Análise de Proximidade")
             accessibility_manager.create_accessible_heading("Análise de Proximidade", level=2, id_attr="proximity-section")
 
             from src.ui.pages.proximity_analysis import create_proximity_analysis_page
             proximity_page = create_proximity_analysis_page()
             proximity_page.render()
 
-        with tabs[4]:  # References
+        with tabs[4]:  # Bagacinho (Standby)
+            announce_page_change("Bagacinho IA")
+            accessibility_manager.create_accessible_heading("Bagacinho IA - Em Breve", level=2, id_attr="bagacinho-section")
+
+            # Standby message
+            st.info("🍊 **Bagacinho IA** está temporariamente em standby e será implementado em breve.")
+            st.markdown("""
+            ### O que é o Bagacinho?
+
+            O Bagacinho é um assistente de IA especializado em análise de potencial de biogás,
+            capaz de responder perguntas sobre:
+
+            - 📊 Potencial de biogás por município
+            - 🌾 Tipos de resíduos e substratos
+            - 📈 Comparações e rankings
+            - 🔍 Análise de dados específicos
+
+            Esta funcionalidade será ativada em uma próxima atualização do CP2B Maps.
+            """)
+
+        with tabs[5]:  # References (V1 style)
             announce_page_change("Academic References")
             accessibility_manager.create_accessible_heading("Referências Científicas", level=2, id_attr="references-section")
 
-            from src.ui.components.reference_browser import create_reference_browser
-            reference_browser = create_reference_browser()
-            reference_browser.render()
+            from src.ui.pages.references_v1 import render_references_v1_page
+            render_references_v1_page()
 
-        with tabs[5]:  # Export
-            announce_page_change("Export & Reports")
-            accessibility_manager.create_accessible_heading("Exportação e Relatórios", level=2, id_attr="export-section")
-
-            from src.ui.components.export import Export
-            from src.ui.components.charts import Charts
-
-            # Load data for export
-            try:
-                from src.data import database_loader
-                data = database_loader.load_municipalities_data()
-                accessibility_manager.announce_to_screen_reader("Dados carregados para exportação", "polite")
-            except Exception as e:
-                logger.error(f"Error loading data for export: {e}")
-                create_accessible_alert("Erro: Não foi possível carregar dados para exportação", "error")
-                data = None
-
-            if data is not None:
-                # Export functionality
-                export_component = Export()
-                export_component.render(data)
-
-                # Add some charts for the export page
-                st.markdown("---")
-                charts_component = Charts()
-                charts_component.render()
-
-        with tabs[6]:  # Sobre (About)
+        with tabs[6]:  # Sobre (About) - V1 Style
             announce_page_change("Sobre o CP2B Maps")
             accessibility_manager.create_accessible_heading("Sobre o CP2B Maps", level=2, id_attr="about-section")
 
-            st.markdown("""
-            ### 🗺️ CP2B Maps - Plataforma de Análise de Potencial de Biogás
-
-            **Versão 2.0** - Análise Profissional de Potencial de Biogás no Estado de São Paulo
-
-            #### 📊 Sobre a Plataforma
-
-            O CP2B Maps é uma ferramenta profissional desenvolvida para análise do potencial de produção
-            de biogás em municípios do Estado de São Paulo. A plataforma oferece:
-
-            - 🗺️ **Visualização Interativa**: Mapas profissionais com múltiplas camadas de dados
-            - 📊 **Análise de Dados**: Ferramentas avançadas para exploração de dados de biogás
-            - 🛰️ **Integração com MapBiomas**: Análise de uso e cobertura do solo
-            - 🎯 **Análise de Proximidade**: Identificação de locais estratégicos
-            - ♿ **Acessibilidade**: Conformidade com WCAG 2.1 Nível A
-
-            #### 🎓 Desenvolvido por
-
-            **Centro Paulista de Estudos em Biogás e Bioprodutos (CP2B)**
-
-            #### 📚 Dados e Metodologia
-
-            Os dados de potencial de biogás são calculados com base em:
-            - Resíduos agrícolas e pecuários
-            - Resíduos urbanos e de poda
-            - Estimativas de produção energética (MWh/ano)
-            - Potencial de redução de emissões de CO₂
-
-            #### 📞 Contato
-
-            Para mais informações sobre o CP2B Maps e o Centro CP2B, visite nosso site institucional.
-
-            ---
-
-            *CP2B Maps V2 - 2024 | Todos os direitos reservados*
-            """)
-
-            # Display logo
-            st.image("logotipo-full-black.png", width=400)
+            from src.ui.pages.about_v1 import render_about_v1_page
+            render_about_v1_page()
 
         # Close main content landmark
         st.markdown('</main>', unsafe_allow_html=True)

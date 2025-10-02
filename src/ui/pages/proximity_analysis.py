@@ -1,13 +1,14 @@
 """
 CP2B Maps V2 - Proximity Analysis Page
-Comprehensive proximity analysis with integrated raster analysis and biogas plant optimization
+100% V1 Parity - Current GitHub Version
+Professional layout with purple gradient header, 50/50 split, top controls
 """
 
 from typing import Dict, List, Optional, Any, Tuple
 import streamlit as st
 import pandas as pd
 
-# Geospatial imports with error handling
+# Geospatial imports
 try:
     import folium
     from streamlit_folium import st_folium
@@ -20,521 +21,401 @@ except ImportError:
 from config.settings import settings
 from src.utils.logging_config import get_logger
 from src.core.proximity_analyzer import get_proximity_analyzer
-from src.ui.components.proximity_controls import create_proximity_controls
-from src.ui.components.proximity_results import create_proximity_results
 from src.data.loaders.mapbiomas_loader import get_mapbiomas_loader
 from src.data.loaders.database_loader import DatabaseLoader
-
-# Import V1 design system
-from src.ui.components.design_system import (
-    render_page_header,
-    render_section_header,
-    render_info_banner
-)
+from src.data.loaders.shapefile_loader import ShapefileLoader
 
 logger = get_logger(__name__)
 
 
 class ProximityAnalysisPage:
     """
-    Professional proximity analysis page with integrated features
-    Features: Interactive map, proximity controls, raster integration, results display
+    Professional proximity analysis page - V1 Current Version Parity
+
+    Layout:
+    1. Purple gradient header
+    2. 3-column controls (radius | options | status)
+    3. 50/50 split (map | results)
+    4. Instruction cards when empty
     """
 
     def __init__(self):
-        """Initialize ProximityAnalysisPage"""
+        """Initialize with dependency injection"""
         self.logger = get_logger(self.__class__.__name__)
-        self.proximity_analyzer = get_proximity_analyzer()
-        self.proximity_controls = create_proximity_controls()
-        self.proximity_results = create_proximity_results()
         self.mapbiomas_loader = get_mapbiomas_loader()
+        self.proximity_analyzer = get_proximity_analyzer(raster_loader=self.mapbiomas_loader)
+        self.database_loader = DatabaseLoader()
+        self.shapefile_loader = ShapefileLoader()
 
-        if not HAS_FOLIUM:
-            self.logger.error("Folium not available - map functionality disabled")
+        # Initialize session state
+        if 'proximity_center' not in st.session_state:
+            st.session_state.proximity_center = None
+        if 'proximity_radius' not in st.session_state:
+            st.session_state.proximity_radius = 30  # V1 default
+        if 'proximity_results' not in st.session_state:
+            st.session_state.proximity_results = None
 
     def render(self) -> None:
-        """Render the complete proximity analysis page"""
+        """Render proximity analysis page (V1 current structure)"""
         try:
-            # V1-style beautiful header
-            render_page_header(
-                title="Análise de Proximidade",
-                subtitle="Otimização de Localização de Plantas de Biogás",
-                description="Análise avançada de área de captação com integração de dados raster e cálculos espaciais",
-                icon="🎯",
-                show_stats=True
-            )
+            # 1. Purple gradient header (V1 style)
+            self._render_header()
 
-            # Load municipality data
-            municipality_data = self._load_municipality_data()
+            # 2. Top controls (3 columns)
+            radius_km, enable_raster, enable_municipal = self._render_controls()
 
-            if municipality_data is None:
-                st.error("⚠️ Could not load municipality data")
-                return
+            # 3. Separator
+            st.markdown("---")
 
-            # Create layout
-            self._render_page_layout(municipality_data)
+            # 4. Main 50/50 layout
+            self._render_main_content(radius_km, enable_raster, enable_municipal)
 
         except Exception as e:
-            self.logger.error(f"Error rendering proximity analysis page: {e}")
-            st.error("⚠️ Error loading proximity analysis page")
-
-    def _load_municipality_data(self) -> Optional[pd.DataFrame]:
-        """Load municipality data for analysis"""
-        try:
-            db_loader = DatabaseLoader()
-            data = db_loader.load_municipalities_data()
-
-            if data is not None and not data.empty:
-                self.logger.info(f"Loaded {len(data)} municipalities for proximity analysis")
-                return data
-            else:
-                self.logger.warning("No municipality data available")
-                return None
-
-        except Exception as e:
-            self.logger.error(f"Error loading municipality data: {e}")
-            return None
-
-    def _render_page_layout(self, municipality_data: pd.DataFrame) -> None:
-        """Render the main page layout"""
-        try:
-            # Create sidebar for controls
-            with st.sidebar:
-                # Render proximity controls
-                controls = self.proximity_controls.render(municipality_data)
-
-            # Main content area
-            if controls.get('enabled'):
-                # Create two-column layout
-                col1, col2 = st.columns([2, 1])
-
-                with col1:
-                    # Interactive map
-                    map_data = self._render_interactive_map(municipality_data, controls)
-
-                with col2:
-                    # Analysis status and quick info
-                    self._render_analysis_status(controls)
-
-                # Check if analysis should be triggered
-                analysis_results = self._check_and_run_analysis(municipality_data, controls, map_data)
-
-                # Display results if available
-                if analysis_results:
-                    st.markdown("---")
-                    self.proximity_results.render(analysis_results)
-
-            else:
-                # Analysis disabled - show information
-                self._render_disabled_state()
-
-        except Exception as e:
-            self.logger.error(f"Error rendering page layout: {e}")
-            st.error("⚠️ Error rendering page layout")
-
-    def _render_interactive_map(self, municipality_data: pd.DataFrame, controls: Dict[str, Any]) -> Dict[str, Any]:
-        """Render interactive map with proximity analysis features"""
-        if not HAS_FOLIUM:
-            st.error("⚠️ Map functionality requires folium library")
-            return {}
-
-        try:
-            st.markdown("### 🗺️ Interactive Analysis Map")
-
-            # Get current analysis configuration
-            config = self.proximity_controls.get_analysis_config()
-
-            # Create base map
-            center_lat, center_lon = settings.DEFAULT_CENTER
-
-            # Use analysis center if available
-            if config.get('latitude') and config.get('longitude'):
-                center_lat = config['latitude']
-                center_lon = config['longitude']
-
-            m = folium.Map(
-                location=[center_lat, center_lon],
-                zoom_start=settings.DEFAULT_ZOOM,
-                tiles='OpenStreetMap'
-            )
-
-            # Add municipality markers
-            self._add_municipality_markers(m, municipality_data)
-
-            # Add analysis center and radius if coordinates are set
-            if config.get('latitude') and config.get('longitude'):
-                self._add_analysis_circle(m, config)
-
-            # Add any existing analysis results
-            if 'proximity_results' in st.session_state:
-                self._add_results_to_map(m, st.session_state['proximity_results'])
-
-            # Render map with click detection
-            map_data = st_folium(
-                m,
-                key="proximity_map",
-                width=None,
-                height=500,
-                returned_objects=["last_clicked", "last_object_clicked"]
-            )
-
-            # Handle map clicks
-            self._handle_map_click(map_data)
-
-            return map_data
-
-        except Exception as e:
-            self.logger.error(f"Error rendering interactive map: {e}")
-            st.error("⚠️ Error rendering map")
-            return {}
-
-    def _add_municipality_markers(self, map_obj, municipality_data: pd.DataFrame) -> None:
-        """Add municipality markers to map"""
-        try:
-            if 'lat' not in municipality_data.columns or 'lon' not in municipality_data.columns:
-                return
-
-            # Create municipality group
-            municipality_group = folium.FeatureGroup(name="Municipalities", show=True)
-
-            # Sample municipalities for performance (show up to 100)
-            sample_data = municipality_data.sample(n=min(100, len(municipality_data)))
-
-            for idx, row in sample_data.iterrows():
-                if pd.notna(row['lat']) and pd.notna(row['lon']):
-                    # Create popup content
-                    popup_text = f"<b>{row.get('nome_municipio', 'Unknown')}</b>"
-
-                    if 'potencial_biogas_total' in row and pd.notna(row['potencial_biogas_total']):
-                        popup_text += f"<br>Biogas Potential: {row['potencial_biogas_total']:,.0f} m³/ano"
-
-                    if 'populacao_total' in row and pd.notna(row['populacao_total']):
-                        popup_text += f"<br>Population: {row['populacao_total']:,.0f}"
-
-                    # Determine marker size based on biogas potential
-                    potential = row.get('potencial_biogas_total', 0)
-                    if potential > 1000000:  # > 1M m³/year
-                        radius = 8
-                        color = 'red'
-                    elif potential > 500000:  # > 500k m³/year
-                        radius = 6
-                        color = 'orange'
-                    elif potential > 100000:  # > 100k m³/year
-                        radius = 4
-                        color = 'yellow'
-                    else:
-                        radius = 3
-                        color = 'blue'
-
-                    folium.CircleMarker(
-                        location=[row['lat'], row['lon']],
-                        radius=radius,
-                        popup=popup_text,
-                        color=color,
-                        fillColor=color,
-                        fillOpacity=0.6,
-                        weight=2
-                    ).add_to(municipality_group)
-
-            municipality_group.add_to(map_obj)
-
-            # Add layer control
-            folium.LayerControl().add_to(map_obj)
-
-        except Exception as e:
-            self.logger.error(f"Error adding municipality markers: {e}")
-
-    def _add_analysis_circle(self, map_obj, config: Dict[str, Any]) -> None:
-        """Add analysis center point and radius circle to map"""
-        try:
-            lat = config['latitude']
-            lon = config['longitude']
-            radius_km = config['radius_km']
-
-            # Add center marker
-            folium.Marker(
-                location=[lat, lon],
-                popup=f"Analysis Center<br>{lat:.4f}, {lon:.4f}",
-                icon=folium.Icon(color='red', icon='crosshairs', prefix='fa'),
-                tooltip="Analysis Center"
-            ).add_to(map_obj)
-
-            # Add radius circle
-            folium.Circle(
-                location=[lat, lon],
-                radius=radius_km * 1000,  # Convert km to meters
-                color='red',
-                fillColor='red',
-                fillOpacity=0.1,
-                weight=2,
-                popup=f"Analysis Radius: {radius_km} km"
-            ).add_to(map_obj)
-
-        except Exception as e:
-            self.logger.error(f"Error adding analysis circle: {e}")
-
-    def _add_results_to_map(self, map_obj, results: Dict[str, Any]) -> None:
-        """Add analysis results visualization to map"""
-        try:
-            if not results or 'municipality_details' not in results:
-                return
-
-            municipality_details = results['municipality_details']
-
-            # Create results group
-            results_group = folium.FeatureGroup(name="Analysis Results", show=True)
-
-            for municipality in municipality_details:
-                if 'lat' in municipality and 'lon' in municipality:
-                    lat = municipality.get('lat')
-                    lon = municipality.get('lon')
-
-                    if lat and lon:
-                        # Create detailed popup
-                        popup_text = f"<b>{municipality.get('nome_municipio', 'Unknown')}</b><br>"
-                        popup_text += f"Distance: {municipality.get('distance_km', 0):.2f} km<br>"
-
-                        for key, value in municipality.items():
-                            if 'biogas' in key.lower() and isinstance(value, (int, float)):
-                                popup_text += f"{key.replace('_', ' ').title()}: {value:,.0f}<br>"
-
-                        # Color based on distance
-                        distance = municipality.get('distance_km', 0)
-                        if distance <= 10:
-                            color = 'green'
-                        elif distance <= 25:
-                            color = 'orange'
-                        else:
-                            color = 'red'
-
-                        folium.CircleMarker(
-                            location=[lat, lon],
-                            radius=6,
-                            popup=popup_text,
-                            color=color,
-                            fillColor=color,
-                            fillOpacity=0.8,
-                            weight=2
-                        ).add_to(results_group)
-
-            results_group.add_to(map_obj)
-
-        except Exception as e:
-            self.logger.error(f"Error adding results to map: {e}")
-
-    def _handle_map_click(self, map_data: Dict[str, Any]) -> None:
-        """Handle map click events for analysis center selection"""
-        try:
-            if map_data and map_data.get('last_clicked'):
-                clicked_point = map_data['last_clicked']
-                lat = clicked_point['lat']
-                lon = clicked_point['lng']
-
-                # Store clicked coordinates in session state
-                st.session_state['map_click_lat'] = lat
-                st.session_state['map_click_lon'] = lon
-
-                # Clear any existing results when new point is clicked
-                if 'proximity_results' in st.session_state:
-                    del st.session_state['proximity_results']
-
-                self.logger.info(f"Map clicked at: {lat:.4f}, {lon:.4f}")
-
-        except Exception as e:
-            self.logger.error(f"Error handling map click: {e}")
-
-    def _render_analysis_status(self, controls: Dict[str, Any]) -> None:
-        """Render analysis status and quick information"""
-        try:
-            st.markdown("### 📊 Analysis Status")
-
-            # Check if ready for analysis
-            is_ready, message = self.proximity_controls.is_ready_for_analysis()
-
-            if is_ready:
-                st.success(f"✅ {message}")
-
-                # Show current configuration
-                config = self.proximity_controls.get_analysis_config()
-
-                with st.expander("📋 Current Configuration"):
-                    st.write(f"**Method:** {config.get('input_method', 'N/A')}")
-                    st.write(f"**Radius:** {config.get('radius_km', 'N/A')} km")
-                    st.write(f"**Analysis Depth:** {config.get('analysis_depth', 'N/A')}")
-
-                    if config.get('latitude') and config.get('longitude'):
-                        st.write(f"**Center:** {config['latitude']:.4f}, {config['longitude']:.4f}")
-
-            else:
-                st.warning(f"⚠️ {message}")
-
-                # Provide guidance
-                st.markdown("#### 💡 Next Steps:")
-                if "coordinates" in message.lower():
-                    st.markdown("- Click on the map to set analysis center")
-                    st.markdown("- Or use manual coordinate input")
-                elif "not enabled" in message.lower():
-                    st.markdown("- Enable proximity analysis in the sidebar")
-
-            # Show recent results summary
-            if 'proximity_results' in st.session_state:
-                results = st.session_state['proximity_results']
-                st.markdown("#### 📈 Latest Results")
-                st.info(f"Found {results.get('municipalities_found', 0)} municipalities")
-
-        except Exception as e:
-            self.logger.error(f"Error rendering analysis status: {e}")
-
-    def _check_and_run_analysis(self,
-                               municipality_data: pd.DataFrame,
-                               controls: Dict[str, Any],
-                               map_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        """Check if analysis should be triggered and run it"""
-        try:
-            # Check for analysis trigger
-            triggers = controls.get('triggers', {})
-
-            if not triggers.get('run_analysis'):
-                # Return existing results if available
-                return st.session_state.get('proximity_results')
-
-            # Check if ready for analysis
-            is_ready, message = self.proximity_controls.is_ready_for_analysis()
-
-            if not is_ready:
-                st.error(f"❌ Cannot run analysis: {message}")
-                return None
-
-            # Get analysis configuration
-            config = self.proximity_controls.get_analysis_config()
-
-            # Run analysis with progress indicator
-            with st.spinner("🔄 Running proximity analysis..."):
-                results = self._perform_comprehensive_analysis(
-                    municipality_data, config
-                )
-
-            if results and 'error' not in results:
-                # Store results in session state
-                st.session_state['proximity_results'] = results
-                st.success("✅ Analysis completed successfully!")
-
-                # Add raster analysis if enabled
-                if config.get('include_raster', False):
-                    self._add_raster_analysis(results, config)
-
-                return results
-            else:
-                error_msg = results.get('error', 'Unknown error') if results else 'Analysis failed'
-                st.error(f"❌ Analysis failed: {error_msg}")
-                return None
-
-        except Exception as e:
-            self.logger.error(f"Error in analysis execution: {e}")
-            st.error(f"⚠️ Analysis error: {str(e)}")
-            return None
-
-    def _perform_comprehensive_analysis(self,
-                                      municipality_data: pd.DataFrame,
-                                      config: Dict[str, Any]) -> Dict[str, Any]:
-        """Perform comprehensive proximity analysis"""
-        try:
-            # Extract analysis parameters
-            lat = config['latitude']
-            lon = config['longitude']
-            radius_km = config['radius_km']
-            analysis_columns = config.get('analysis_columns', ['potencial_biogas_total'])
-
-            # Run core proximity analysis
-            results = self.proximity_analyzer.analyze_catchment_area(
-                lat, lon, radius_km, municipality_data, analysis_columns
-            )
-
-            return results
-
-        except Exception as e:
-            self.logger.error(f"Error in comprehensive analysis: {e}")
-            return {'error': f'Analysis failed: {str(e)}'}
-
-    def _add_raster_analysis(self, results: Dict[str, Any], config: Dict[str, Any]) -> None:
-        """Add raster analysis to proximity results"""
-        try:
-            # Check if raster files are available
-            available_rasters = self.mapbiomas_loader.get_available_mapbiomas_files()
-
-            if not available_rasters:
-                self.logger.warning("No raster files available for analysis")
-                return
-
-            # Perform raster analysis
-            lat = config['latitude']
-            lon = config['longitude']
-            radius_km = config['radius_km']
-
-            # Use first available raster file
-            raster_file = available_rasters[0]
-            raster_path = raster_file['path']
-
-            with st.spinner("🛰️ Adding satellite data analysis..."):
-                raster_results = self.mapbiomas_loader.analyze_radius_area(
-                    raster_path, lat, lon, radius_km
-                )
-
-            if raster_results:
-                # Add raster results to main results
-                results['raster_analysis'] = raster_results
-                st.success("✅ Satellite data analysis added")
-            else:
-                st.warning("⚠️ Could not complete satellite data analysis")
-
-        except Exception as e:
-            self.logger.error(f"Error adding raster analysis: {e}")
-            st.warning("⚠️ Error adding satellite data analysis")
-
-    def _render_disabled_state(self) -> None:
-        """Render content when proximity analysis is disabled"""
-        st.markdown("## 🎯 Proximity Analysis")
-
-        st.info("**Enable proximity analysis in the sidebar to get started**")
-
+            self.logger.error(f"Error rendering proximity page: {e}", exc_info=True)
+            st.error("⚠️ Erro ao carregar análise de proximidade.")
+
+    def _render_header(self) -> None:
+        """Render V1-style purple gradient header"""
         st.markdown("""
-        ### 🔍 What is Proximity Analysis?
+        <div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white; padding: 2rem; margin: -1rem -1rem 2rem -1rem;
+                    text-align: center; border-radius: 0 0 20px 20px;'>
+            <h1 style='margin: 0; font-size: 2.5rem;'>🎯 Análise de Proximidade</h1>
+            <p style='margin: 10px 0 0 0; font-size: 1.2rem; opacity: 0.9;'>
+                Análise especializada de uso do solo e potencial de biogás por raio de captação
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
 
-        Proximity analysis helps you find the optimal location for biogas plants by analyzing:
+    def _render_controls(self) -> Tuple[int, bool, bool]:
+        """
+        Render top controls in 3 columns
 
-        - **Catchment Areas**: Municipality distribution within specified radius
-        - **Biogas Potential**: Total and per-source biogas generation capacity
-        - **Transport Optimization**: Distance-weighted resource accessibility
-        - **Feasibility Assessment**: Economic viability based on potential and concentration
+        Returns:
+            Tuple of (radius_km, enable_raster, enable_municipal)
+        """
+        st.markdown("### 🎛️ Configuração da Análise")
 
-        ### 📊 Features Available:
+        col1, col2, col3 = st.columns([1.5, 2, 2])
 
-        - **Interactive Map Selection**: Click to choose analysis center
-        - **Flexible Radius**: Analyze areas from 1km to 100km radius
-        - **Multi-Source Analysis**: Animal waste, agricultural residues, total potential
-        - **Satellite Integration**: Land use analysis from MapBiomas data
-        - **Professional Reports**: Export results for academic or commercial use
+        # Column 1: Radius selection
+        with col1:
+            radius_km = st.selectbox(
+                "📏 Raio de Captação:",
+                options=[10, 30, 50],
+                index=1,  # Default 30km (V1 default)
+                help="Raio da área de análise em quilômetros"
+            )
+            st.session_state.proximity_radius = radius_km
+            st.caption(f"🎯 **{radius_km} km** a partir do clique")
+            st.caption("📍 Válido apenas para **São Paulo**")
 
-        ### 🚀 Getting Started:
+        # Column 2: Analysis options
+        with col2:
+            enable_raster = st.checkbox(
+                "🌾 Análise de Culturas (MapBiomas)",
+                value=True,
+                help="Analisa o uso real do solo usando dados do MapBiomas"
+            )
+            enable_municipal = st.checkbox(
+                "🏘️ Dados Municipais",
+                value=True,
+                help="Inclui dados de potencial de biogás dos municípios"
+            )
 
-        1. **Enable Analysis**: Check "Enable Proximity Analysis" in the sidebar
-        2. **Set Parameters**: Choose analysis radius and options
-        3. **Select Center**: Click on map or use coordinates
-        4. **Run Analysis**: Click "Run Analysis" to generate results
-        """)
+        # Column 3: Status/actions
+        with col3:
+            if st.session_state.proximity_center:
+                center_lat, center_lon = st.session_state.proximity_center
+                st.success(f"📍 Centro: {center_lat:.4f}, {center_lon:.4f}")
 
-        # Show sample visualization
-        st.markdown("### 📈 Sample Analysis Output:")
-        st.image("https://via.placeholder.com/600x300/1f77b4/ffffff?text=Sample+Proximity+Analysis+Chart",
-                caption="Example: Biogas potential distribution within 50km radius")
+                if st.button("🗑️ Limpar Centro", use_container_width=True):
+                    st.session_state.proximity_center = None
+                    st.session_state.proximity_results = None
+                    st.rerun()
+            else:
+                st.info("👆 Clique no mapa abaixo para definir o centro")
+                st.caption("🗺️ Funciona apenas dentro do estado de São Paulo")
+
+        return radius_km, enable_raster, enable_municipal
+
+    def _render_main_content(
+        self,
+        radius_km: int,
+        enable_raster: bool,
+        enable_municipal: bool
+    ) -> None:
+        """Render main 50/50 layout (map | results)"""
+        col_map, col_results = st.columns([1, 1])
+
+        with col_map:
+            self._render_map_section(radius_km)
+
+        with col_results:
+            self._render_results_section(radius_km, enable_raster, enable_municipal)
+
+    def _render_map_section(self, radius_km: int) -> None:
+        """Render map section (left column)"""
+        st.markdown("### 🗺️ Mapa de Análise de Proximidade")
+
+        if not HAS_FOLIUM:
+            st.error("🔧 Sistema de mapas não disponível")
+            return
+
+        # Create map
+        m = self._create_proximity_map(radius_km)
+
+        # Display map
+        map_data = st_folium(
+            m,
+            key="proximity_map",
+            width=None,  # Full column width
+            height=650,
+            returned_objects=["last_clicked"]
+        )
+
+        # Handle map clicks
+        if map_data and map_data.get("last_clicked") and map_data["last_clicked"].get("lat"):
+            new_center = (
+                map_data["last_clicked"]["lat"],
+                map_data["last_clicked"]["lng"]
+            )
+
+            # Only update if significantly different
+            if not st.session_state.proximity_center or \
+               abs(st.session_state.proximity_center[0] - new_center[0]) > 0.001 or \
+               abs(st.session_state.proximity_center[1] - new_center[1]) > 0.001:
+
+                st.session_state.proximity_center = new_center
+                st.session_state.proximity_results = None  # Clear cache
+                st.toast(f"📍 Novo centro: {new_center[0]:.4f}, {new_center[1]:.4f}", icon="🎯")
+                st.rerun()
+
+    def _render_results_section(
+        self,
+        radius_km: int,
+        enable_raster: bool,
+        enable_municipal: bool
+    ) -> None:
+        """Render results section (right column)"""
+        st.markdown("### 📊 Resultados da Análise")
+
+        if st.session_state.proximity_center:
+            # Run analysis if not cached
+            if st.session_state.proximity_results is None:
+                with st.spinner("🔍 Analisando área selecionada..."):
+                    results = self._perform_analysis(
+                        radius_km,
+                        enable_raster,
+                        enable_municipal
+                    )
+                    st.session_state.proximity_results = results
+
+            # Display results
+            if st.session_state.proximity_results:
+                self._display_results(st.session_state.proximity_results, radius_km)
+        else:
+            # Show instruction cards (V1 style)
+            self._render_instruction_cards()
+
+    def _render_instruction_cards(self) -> None:
+        """Render V1-style instruction cards (3 steps)"""
+        # Welcome message
+        st.markdown("""
+        <div style='background: linear-gradient(135deg, #E8F5E8 0%, #F0F8F0 100%);
+                    padding: 1.5rem; border-radius: 10px; border-left: 4px solid #2E8B57; margin-bottom: 1rem;'>
+            <h4 style='margin-top: 0; color: #2E8B57;'>🎯 Bem-vindo à Análise de Proximidade!</h4>
+            <p style='margin-bottom: 0; font-size: 1rem;'>
+                Descubra o potencial de biogás em qualquer região de São Paulo clicando no mapa.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("### 🚀 Como usar (3 passos simples):")
+
+        step1, step2, step3 = st.columns(3)
+
+        with step1:
+            st.markdown("""
+            <div style='
+                text-align: center; padding: 1.2rem 0.8rem;
+                border: 2px solid #4CAF50; border-radius: 12px;
+                background: linear-gradient(135deg, #f8fff8 0%, #e8f5e8 100%);
+                box-shadow: 0 2px 8px rgba(76, 175, 80, 0.15);
+                min-height: 140px; display: flex; flex-direction: column; justify-content: center;'>
+                <div style='font-size: 2.2rem; margin-bottom: 0.8rem;'>📏</div>
+                <div style='font-weight: bold; font-size: 1rem; color: #2E7D32; margin-bottom: 0.5rem;'>
+                    1. Escolha o Raio
+                </div>
+                <div style='font-size: 0.85rem; color: #4A4A4A; line-height: 1.3;'>
+                    Selecione 10km, 30km ou<br>50km acima
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        with step2:
+            st.markdown("""
+            <div style='
+                text-align: center; padding: 1.2rem 0.8rem;
+                border: 2px solid #2196F3; border-radius: 12px;
+                background: linear-gradient(135deg, #f0f8ff 0%, #e3f2fd 100%);
+                box-shadow: 0 2px 8px rgba(33, 150, 243, 0.15);
+                min-height: 140px; display: flex; flex-direction: column; justify-content: center;'>
+                <div style='font-size: 2.2rem; margin-bottom: 0.8rem;'>🗺️</div>
+                <div style='font-weight: bold; font-size: 1rem; color: #1565C0; margin-bottom: 0.5rem;'>
+                    2. Clique no Mapa
+                </div>
+                <div style='font-size: 0.85rem; color: #4A4A4A; line-height: 1.3;'>
+                    Defina o centro da<br>sua análise
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        with step3:
+            st.markdown("""
+            <div style='
+                text-align: center; padding: 1.2rem 0.8rem;
+                border: 2px solid #FF9800; border-radius: 12px;
+                background: linear-gradient(135deg, #fff8f0 0%, #ffe8cc 100%);
+                box-shadow: 0 2px 8px rgba(255, 152, 0, 0.15);
+                min-height: 140px; display: flex; flex-direction: column; justify-content: center;'>
+                <div style='font-size: 2.2rem; margin-bottom: 0.8rem;'>📊</div>
+                <div style='font-weight: bold; font-size: 1rem; color: #E65100; margin-bottom: 0.5rem;'>
+                    3. Veja os Resultados
+                </div>
+                <div style='font-size: 0.85rem; color: #4A4A4A; line-height: 1.3;'>
+                    Análise automática<br>em segundos
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+    def _create_proximity_map(self, radius_km: int) -> folium.Map:
+        """Create proximity map with circle and marker"""
+        m = folium.Map(
+            location=settings.DEFAULT_CENTER,
+            zoom_start=7,
+            tiles='CartoDB positron',
+            prefer_canvas=True
+        )
+
+        # Add fullscreen
+        folium.plugins.Fullscreen().add_to(m)
+
+        # Add state boundary
+        try:
+            state_boundary = self.shapefile_loader.load_state_boundary()
+            if state_boundary is not None:
+                folium.GeoJson(
+                    state_boundary,
+                    style_function=lambda feature: {
+                        'color': '#2E8B57',
+                        'weight': 2,
+                        'opacity': 0.8,
+                        'fillOpacity': 0.05,
+                        'dashArray': '5, 5'
+                    },
+                    tooltip="São Paulo State"
+                ).add_to(m)
+        except Exception as e:
+            self.logger.warning(f"Could not load state boundary: {e}")
+
+        # Add proximity circle and marker if center is defined
+        if st.session_state.proximity_center:
+            center = st.session_state.proximity_center
+
+            # Marker
+            folium.Marker(
+                location=center,
+                popup=f"📍 <b>Centro de Análise</b><br>🎯 Raio: {radius_km} km",
+                tooltip="🎯 Centro da Análise de Proximidade",
+                icon=folium.Icon(color='red', icon='screenshot', prefix='glyphicon')
+            ).add_to(m)
+
+            # Circle
+            folium.Circle(
+                location=center,
+                radius=radius_km * 1000,  # km to meters
+                color='#667eea',  # Purple (matches header)
+                fill=True,
+                fillColor='#667eea',
+                fillOpacity=0.15,
+                weight=2,
+                popup=f"Raio de Captação: {radius_km}km"
+            ).add_to(m)
+
+        return m
+
+    def _perform_analysis(
+        self,
+        radius_km: int,
+        enable_raster: bool,
+        enable_municipal: bool
+    ) -> Dict:
+        """Perform proximity analysis"""
+        center_lat, center_lon = st.session_state.proximity_center
+        results = {}
+
+        # Raster analysis (MapBiomas)
+        if enable_raster:
+            try:
+                raster_results = self.proximity_analyzer.analyze_proximity(
+                    center_lat, center_lon, radius_km
+                )
+                results['raster'] = raster_results
+            except Exception as e:
+                self.logger.error(f"Raster analysis failed: {e}")
+                results['raster'] = None
+
+        # Municipal analysis
+        if enable_municipal:
+            try:
+                # Load municipalities and calculate in radius
+                df = self.database_loader.load_municipalities_data()
+                # TODO: Implement municipal analysis
+                results['municipal'] = {"status": "not_implemented"}
+            except Exception as e:
+                self.logger.error(f"Municipal analysis failed: {e}")
+                results['municipal'] = None
+
+        return results
+
+    def _display_results(self, results: Dict, radius_km: int) -> None:
+        """Display analysis results"""
+        center_lat, center_lon = st.session_state.proximity_center
+
+        # Raster results
+        if results.get('raster'):
+            st.markdown(f"#### 🌾 Uso do Solo (MapBiomas) - Raio {radius_km}km")
+            st.caption(f"Centro: {center_lat:.4f}, {center_lon:.4f}")
+
+            raster_data = results['raster']
+
+            if raster_data:
+                # Convert to DataFrame
+                df = pd.DataFrame([
+                    {'Tipo de Uso': uso, 'Área (ha)': area}
+                    for uso, area in raster_data.items()
+                ]).sort_values('Área (ha)', ascending=False)
+
+                # Display table
+                st.dataframe(df, use_container_width=True, hide_index=True)
+
+                # Summary metrics
+                total_area = df['Área (ha)'].sum()
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.metric("🏞️ Área Total", f"{total_area:,.0f} ha")
+                with col2:
+                    st.metric("📊 Tipos de Uso", len(df))
+            else:
+                st.warning("⚠️ Nenhum dado encontrado na área")
+
+        # Municipal results
+        if results.get('municipal') and results['municipal'] != {"status": "not_implemented"}:
+            st.markdown("#### 🏘️ Análise Municipal")
+            st.info("Dados municipais em desenvolvimento")
 
 
-# Factory function for page creation
 def create_proximity_analysis_page() -> ProximityAnalysisPage:
-    """
-    Create ProximityAnalysisPage instance
-
-    Returns:
-        ProximityAnalysisPage instance
-    """
+    """Factory function"""
     return ProximityAnalysisPage()

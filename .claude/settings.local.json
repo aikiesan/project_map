@@ -19,7 +19,16 @@
       "Bash(done)",
       "Bash(cat:*)",
       "Read(//c/Users/Lucas/Documents/CP2B/CP2B_IA_BAGACINHO/**)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(del srcuipagesproximity_analysis.py)",
+      "Bash(del srccoreproximity_analyzer.py)",
+      "Bash(del srcuicomponentsproximity_controls.py)",
+      "Bash(del srcuicomponentsproximity_results.py)",
+      "Read(//c/Users/Lucas/Documents/**)",
+      "Bash(powershell:*)"
     ],
     "deny": [],
     "ask": []

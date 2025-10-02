@@ -121,7 +121,7 @@ class AdvancedRasterAnalysisPage:
         selected_raster = accessible_selectbox(
             "Arquivo de Satélite:",
             list(raster_options.keys()),
-            help="Selecione o arquivo de dados de satélite para análise"
+            help_text="Selecione o arquivo de dados de satélite para análise"
         )
 
         if selected_raster:
@@ -154,7 +154,7 @@ class AdvancedRasterAnalysisPage:
         selection_mode = accessible_selectbox(
             "Modo de Seleção:",
             ["Todas as Classes", "Seleção Personalizada", "Grupos Temáticos"],
-            help="Escolha como selecionar as classes de uso do solo"
+            help_text="Escolha como selecionar as classes de uso do solo"
         )
 
         if selection_mode == "Todas as Classes":
@@ -210,7 +210,7 @@ class AdvancedRasterAnalysisPage:
             selected_group = accessible_selectbox(
                 "Grupo Temático:",
                 list(thematic_groups.keys()),
-                help="Selecione um grupo temático para análise"
+                help_text="Selecione um grupo temático para análise"
             )
 
             if selected_group:
@@ -227,7 +227,7 @@ class AdvancedRasterAnalysisPage:
         analysis_mode = accessible_selectbox(
             "Modo de Análise:",
             ["Análise por Clique", "Análise por Região", "Análise Comparativa"],
-            help="Selecione o tipo de análise a ser realizada"
+            help_text="Selecione o tipo de análise a ser realizada"
         )
         controls['analysis_mode'] = analysis_mode
 
@@ -259,7 +259,7 @@ class AdvancedRasterAnalysisPage:
         controls['basemap'] = accessible_selectbox(
             "Mapa Base:",
             ['OpenStreetMap', 'Satellite', 'CartoDB positron', 'CartoDB dark_matter'],
-            help="Escolha o estilo do mapa base"
+            help_text="Escolha o estilo do mapa base"
         )
 
         # Layer opacity
@@ -276,7 +276,7 @@ class AdvancedRasterAnalysisPage:
         controls['color_scheme'] = accessible_selectbox(
             "Esquema de Cores:",
             ['viridis', 'plasma', 'inferno', 'magma', 'terrain'],
-            help="Esquema de cores para dados não-MapBiomas"
+            help_text="Esquema de cores para dados não-MapBiomas"
         )
 
         return controls
