@@ -14,8 +14,10 @@ import numpy as np
 
 from config.settings import settings
 from src.utils.logging_config import get_logger
-from src.data import database_loader, shapefile_loader
-from src.core import biogas_calculator
+from src.data import get_database_loader, shapefile_loader
+from src.data.loaders.database_loader import DatabaseLoader
+from src.core import get_biogas_calculator
+from src.core.biogas_calculator import BiogasCalculator
 
 # Import V1 design system
 from src.ui.components.design_system import (
@@ -30,6 +32,13 @@ from src.data.references.scientific_references import (
     get_substrate_reference_map
 )
 
+# Import substrate information and academic footer components
+from src.ui.components.substrate_info import render_substrate_information
+from src.ui.components.academic_footer import render_academic_footer
+
+# Import map export component
+from src.ui.components.map_export import render_export_panel_compact
+
 logger = get_logger(__name__)
 
 
@@ -39,10 +48,22 @@ class HomePage:
     Features: CP2B Logo, Collapsible panels, Municipality data viz, Floating legend
     """
 
-    def __init__(self):
-        """Initialize home page component"""
+    def __init__(self,
+                 db_loader: DatabaseLoader = None,
+                 calculator: BiogasCalculator = None):
+        """
+        Initialize home page component with dependency injection
+
+        Args:
+            db_loader: DatabaseLoader instance (uses default if None)
+            calculator: BiogasCalculator instance (uses default if None)
+        """
         self.logger = get_logger(self.__class__.__name__)
         self.logger.debug("Initializing HomePage component with V1 structure")
+
+        # Inject dependencies (use factories for defaults)
+        self.database_loader = db_loader if db_loader is not None else get_database_loader()
+        self.biogas_calculator = calculator if calculator is not None else get_biogas_calculator()
 
         # Initialize session state for panels
         if 'active_panel' not in st.session_state:
@@ -54,6 +75,8 @@ class HomePage:
         1. Sidebar with logo + 3 collapsible panels
         2. Main map with municipality data
         3. Live metrics dashboard
+        4. Substrate information modal (if requested)
+        5. Academic footer
         """
         try:
             # Render V1-style sidebar (MUST be called first)
@@ -65,6 +88,17 @@ class HomePage:
             # Live dashboard metrics
             self._render_live_dashboard_strip()
 
+            # Substrate information modal
+            if st.session_state.get('show_substrate_modal', False):
+                with st.expander("🧪 Guia Completo de Substratos para Biogás", expanded=True):
+                    render_substrate_information()
+                    if st.button("✖️ Fechar Guia", use_container_width=True):
+                        st.session_state['show_substrate_modal'] = False
+                        st.rerun()
+
+            # Academic footer at bottom
+            render_academic_footer()
+
         except Exception as e:
             self.logger.error(f"Error rendering home page: {e}", exc_info=True)
             st.error("⚠️ Failed to render home page. Check logs for details.")
@@ -72,11 +106,11 @@ class HomePage:
     def _render_v1_sidebar(self) -> None:
         """Render V1-style sidebar with logo and 3 collapsible panels"""
         with st.sidebar:
-            # CP2B Logo at top (V1 Issue #1)
+            # CP2B Logo at top (V1 Issue #1) - Increased size for better visibility
             col1, col2, col3 = st.columns([1, 2, 1])
             with col2:
                 try:
-                    st.image("logotipo-full-black.png", width=960)
+                    st.image("logotipo-full-black.png", width=200)
                 except:
                     st.markdown("**CP2B MAPS**")  # Fallback if logo not found
 
@@ -228,45 +262,11 @@ class HomePage:
                 accessibility_settings = AccessibilitySettings()
                 accessibility_settings.render_basic_settings()
 
-            # === MUNICÍPIOS SELECIONADOS SECTION ===
-            if 'selected_municipalities' not in st.session_state:
-                st.session_state.selected_municipalities = []
-
-            if st.session_state.selected_municipalities:
-                st.markdown("---")
-                st.markdown("**🎯 Municípios Selecionados:**")
-
-                # Load municipality data to get names
-                try:
-                    municipalities_df = database_loader.load_municipalities_data()
-                    selected_names = municipalities_df[
-                        municipalities_df['municipality'].isin(st.session_state.selected_municipalities)
-                    ]['municipality'].tolist()
-
-                    # Show up to 3 names
-                    for name in selected_names[:3]:
-                        display_name = name[:15] + "..." if len(name) > 15 else name
-                        st.markdown(f"• {display_name}")
-
-                    # Show count if more than 3
-                    if len(selected_names) > 3:
-                        st.markdown(f"...+{len(selected_names)-3} mais")
-
-                    # Clear button
-                    if st.button("🗑️ Limpar Seleção", key="clear_selection"):
-                        count = len(st.session_state.selected_municipalities)
-                        st.session_state.selected_municipalities.clear()
-                        st.toast(f"{count} municípios removidos da seleção!", icon="🗑️")
-                        st.rerun()
-                except Exception as e:
-                    logger.error(f"Error displaying selected municipalities: {e}")
-
-            # System info at bottom
-            st.markdown("---")
-            st.markdown("**🖥️ Status do Sistema**")
-            db_status = "✅ Online" if database_loader.validate_database() else "❌ Error"
-            st.markdown(f"🗄️ Database: {db_status}")
-            st.markdown(f"⚙️ Calculator: ✅ Ready")
+            # Panel 5: INFORMAÇÕES SOBRE SUBSTRATOS
+            with st.expander("🧪 Informações sobre Substratos", expanded=False):
+                st.info("📚 Dados técnicos sobre substratos para produção de biogás")
+                if st.button("📖 Ver Guia Completo de Substratos", use_container_width=True):
+                    st.session_state['show_substrate_modal'] = True
 
     def _render_main_map_section(self) -> None:
         """Render main map with municipality data visualization"""
@@ -315,7 +315,7 @@ class HomePage:
     def _render_map_with_data(self) -> None:
         """Render map with municipality circles and floating legend"""
         # Load municipality data
-        municipalities_df = database_loader.load_municipalities_data()
+        municipalities_df = self.database_loader.load_municipalities_data()
 
         # Get selected data column
         data_column = st.session_state.get('data_column', 'biogas_potential_m3_year')
@@ -369,6 +369,9 @@ class HomePage:
 
         # Add floating legend (V1 Issue #4)
         self._add_floating_legend(m, municipalities_df, data_column)
+
+        # Store map in session state for export
+        st.session_state.current_map = m
 
         # Display map (V1 uses height=600)
         map_data = st_folium(
@@ -626,12 +629,12 @@ class HomePage:
         st.markdown("---")
 
         # Load municipality data
-        municipalities_df = database_loader.load_municipalities_data()
+        municipalities_df = self.database_loader.load_municipalities_data()
 
         if municipalities_df is not None and len(municipalities_df) > 0:
             # Calculate state totals
-            stats = biogas_calculator.get_state_totals(municipalities_df)
-            db_status = "✅ Online" if database_loader.validate_database() else "❌ Error"
+            stats = self.biogas_calculator.get_state_totals(municipalities_df)
+            db_status = "✅ Online" if self.database_loader.validate_database() else "❌ Error"
 
             # Use styled metrics helper
             metrics_data = [

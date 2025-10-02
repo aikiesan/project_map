@@ -316,5 +316,16 @@ class DatabaseLoader:
             return False
 
 
-# Global instance for easy access
-database_loader = DatabaseLoader()
+# Factory function with caching for dependency injection
+@st.cache_resource
+def get_database_loader(db_path: Optional[Path] = None) -> DatabaseLoader:
+    """
+    Get cached DatabaseLoader instance for dependency injection
+
+    Args:
+        db_path: Optional custom database path
+
+    Returns:
+        Cached DatabaseLoader instance
+    """
+    return DatabaseLoader(db_path)

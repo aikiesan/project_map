@@ -5,6 +5,7 @@ Literature-validated biogas potential calculations for municipal waste
 
 import pandas as pd
 import numpy as np
+import streamlit as st
 from typing import Dict, Any, Optional, Union
 from dataclasses import dataclass
 
@@ -254,5 +255,16 @@ class BiogasCalculator:
         }
 
 
-# Global instance for easy access
-biogas_calculator = BiogasCalculator()
+# Factory function with caching for dependency injection
+@st.cache_resource
+def get_biogas_calculator(factors: Optional[ConversionFactors] = None) -> BiogasCalculator:
+    """
+    Get cached BiogasCalculator instance for dependency injection
+
+    Args:
+        factors: Optional custom ConversionFactors
+
+    Returns:
+        Cached BiogasCalculator instance
+    """
+    return BiogasCalculator(factors)

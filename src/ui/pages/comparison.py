@@ -15,8 +15,10 @@ import itertools
 
 from config.settings import settings
 from src.utils.logging_config import get_logger
-from src.data import database_loader
-from src.core import biogas_calculator
+from src.data import get_database_loader
+from src.data.loaders.database_loader import DatabaseLoader
+from src.core import get_biogas_calculator
+from src.core.biogas_calculator import BiogasCalculator
 from src.ui.components.charts import Charts
 
 # Import V1 design system
@@ -35,10 +37,22 @@ class ComparisonPage:
     Features: Side-by-side comparison, benchmarking, ranking analysis, export reports
     """
 
-    def __init__(self):
-        """Initialize Comparison Page"""
+    def __init__(self,
+                 db_loader: DatabaseLoader = None,
+                 calculator: BiogasCalculator = None):
+        """
+        Initialize Comparison Page with dependency injection
+
+        Args:
+            db_loader: DatabaseLoader instance (uses default if None)
+            calculator: BiogasCalculator instance (uses default if None)
+        """
         self.logger = get_logger(self.__class__.__name__)
         self.logger.debug("Initializing ComparisonPage component")
+
+        # Inject dependencies
+        self.database_loader = db_loader if db_loader is not None else get_database_loader()
+        self.biogas_calculator = calculator if calculator is not None else get_biogas_calculator()
 
         # Initialize charts component for visualization
         self.charts = Charts()
@@ -110,7 +124,7 @@ class ComparisonPage:
     def _load_comparison_data(self) -> Optional[pd.DataFrame]:
         """Load and prepare municipality data for comparison"""
         try:
-            data = database_loader.load_municipalities_data()
+            data = self.database_loader.load_municipalities_data()
             if data is None:
                 return None
 
@@ -190,7 +204,7 @@ class ComparisonPage:
         # Show some statistics to help with selection
         try:
             # Quick stats
-            data = database_loader.load_municipalities_data()
+            data = self.database_loader.load_municipalities_data()
             if data is not None:
                 col1, col2, col3 = st.columns(3)
 

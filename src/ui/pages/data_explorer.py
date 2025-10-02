@@ -10,7 +10,8 @@ from typing import Dict, Any, Optional, List
 
 from config.settings import settings
 from src.utils.logging_config import get_logger
-from src.data import database_loader
+from src.data import get_database_loader
+from src.data.loaders.database_loader import DatabaseLoader
 
 # Import V1 design system
 from src.ui.components.design_system import (
@@ -38,6 +39,9 @@ from src.data.references.scientific_references import (
     get_substrate_reference_map
 )
 
+# Import academic footer component
+from src.ui.components.academic_footer import render_compact_academic_footer
+
 logger = get_logger(__name__)
 
 
@@ -47,10 +51,18 @@ class DataExplorerPage:
     Features: 4 chart types, rankings, statistics, municipality comparison
     """
 
-    def __init__(self):
-        """Initialize Data Explorer page"""
+    def __init__(self, db_loader: DatabaseLoader = None):
+        """
+        Initialize Data Explorer page with dependency injection
+
+        Args:
+            db_loader: DatabaseLoader instance (uses default if None)
+        """
         self.logger = get_logger(self.__class__.__name__)
         self.logger.debug("Initializing DataExplorerPage with V1 chart library")
+
+        # Inject dependencies
+        self.database_loader = db_loader if db_loader is not None else get_database_loader()
 
     def render(self) -> None:
         """
@@ -65,7 +77,7 @@ class DataExplorerPage:
             )
 
             # Load municipality data
-            df = database_loader.load_municipalities_data()
+            df = self.database_loader.load_municipalities_data()
             if df is None or len(df) == 0:
                 st.error("⚠️ Não foi possível carregar os dados dos municípios")
                 return
@@ -97,6 +109,9 @@ class DataExplorerPage:
 
             with tab4:
                 self._render_comparison_section(df, selected_municipalities, selected_column)
+
+            # Academic footer at bottom
+            render_compact_academic_footer()
 
         except Exception as e:
             self.logger.error(f"Error rendering data explorer: {e}", exc_info=True)
