@@ -77,8 +77,7 @@ class SidebarRenderer:
         </style>
         <div style='background: #2E8B57; color: white; padding: 0.8rem; margin: 0.5rem -1rem 1rem -1rem;
                     text-align: center; border-radius: 8px;'>
-            <h3 style='margin: 0; font-size: 1.1rem;'>🎛️ PAINEL DE CONTROLE DO MAPA</h3>
-            <p style='font-size: 0.8rem; opacity: 0.9; margin: 0.2rem 0 0 0;'>Página Mapa Principal</p>
+            <h3 style='margin: 0; font-size: 1.1rem;'>🗺️ Painel de Controle do Mapa</h3>
         </div>
         """, unsafe_allow_html=True)
 
@@ -91,27 +90,27 @@ class SidebarRenderer:
         """
         config = MapConfig()
 
-        # Panel 1: Camadas Visíveis
-        with st.expander("🗺️ Camadas Visíveis", expanded=False):
-            st.markdown("**Dados Principais:**")
-            config.show_biogas = st.checkbox("📊 Potencial de Biogás", value=True, key="show_biogas")
-            show_polygons = st.checkbox("🗺️ Polígonos dos Municípios", value=False, disabled=True,
-                                       key="show_polygons", help="Funcionalidade desabilitada na versão demo")
-            config.show_polygons = False  # Force disable
-
-            st.markdown("**Infraestrutura:**")
+        # Panel 1: Camadas no Mapa (Ultra-Minimalistic Single Column)
+        with st.expander("🗺️ Camadas no Mapa", expanded=False):
+            config.show_biogas = st.checkbox("⚡ Potencial de Biogás", value=True, key="show_biogas")
+            config.show_mapbiomas = st.checkbox("🌳 MapBiomas", value=False, key="show_mapbiomas")
             config.show_plantas = st.checkbox("🏭 Plantas de Biogás", value=False, key="show_plantas")
-            config.show_gasodutos_dist = st.checkbox("⛽ Distribuição", value=False, key="show_gas_dist")
-            config.show_gasodutos_transp = st.checkbox("⛽ Transporte", value=False, key="show_gas_transp")
-
-            st.markdown("**Referência:**")
-            config.show_rodovias = st.checkbox("🛣️ Rodovias", value=False, key="show_roads")
-            config.show_regioes_admin = st.checkbox("🏛️ Regiões Admin.", value=False, key="show_regions")
+            config.show_gasodutos = st.checkbox("🔥 Gasodutos", value=False, key="show_gasodutos")
             config.show_regioes_intermediarias = st.checkbox("🗺️ Regiões Intermediárias", value=False, key="show_reg_inter")
             config.show_regioes_imediatas = st.checkbox("📍 Regiões Imediatas", value=False, key="show_reg_imed")
 
-            st.markdown("**Imagem de Satélite:**")
-            config.show_mapbiomas = st.checkbox("🌾 MapBiomas - Uso do Solo", value=False, key="show_mapbiomas")
+            # Infrastructure layers
+            config.show_etes = st.checkbox("🏭 ETEs", value=False, key="show_etes")
+            config.show_power_substations = st.checkbox("⚡ Subestações", value=False, key="show_subs")
+            config.show_transmission_lines = st.checkbox("🔌 Linhas Transm.", value=False, key="show_trans")
+            config.show_highways = st.checkbox("🛣️ Rodovias", value=False, key="show_highways")
+            config.show_urban_areas = st.checkbox("🏙️ Áreas Urbanas", value=False, key="show_urban")
+
+            # Set combined/derived values
+            config.show_gasodutos_dist = config.show_gasodutos
+            config.show_gasodutos_transp = config.show_gasodutos
+            config.show_rodovias = config.show_highways  # Use highways checkbox
+            config.show_regioes_admin = False  # Shapefile doesn't exist
 
         # Panel 2: Filtros de Dados
         if config.show_biogas:
@@ -126,28 +125,53 @@ class SidebarRenderer:
                 )
 
                 data_options = {
+                    # Totals
                     "Potencial Total": "biogas_potential_m3_year",
                     "Total Agrícola": "agricultural_biogas_m3_year",
                     "Total Pecuária": "livestock_biogas_m3_year",
                     "Total Urbano": "urban_biogas_m3_year",
-                    "Resíduos Urbanos": "urban_waste_potential_m3_year",
-                    "Resíduos Poda": "rural_waste_potential_m3_year",
-                    "Energia (MWh/ano)": "energy_potential_mwh_year",
-                    "Redução CO₂ (ton/ano)": "co2_reduction_tons_year"
+
+                    # Individual Agricultural Residues
+                    "─── Agrícolas Individuais ───": None,  # Separator
+                    "🌾 Cana-de-Açúcar": "biogas_cana_m_ano",
+                    "☕ Café": "biogas_cafe_m_ano",
+                    "🍊 Citros": "biogas_citros_m_ano",
+                    "🌽 Milho": "biogas_milho_m_ano",
+                    "🫘 Soja": "biogas_soja_m_ano",
+
+                    # Individual Livestock Residues
+                    "─── Pecuários Individuais ───": None,  # Separator
+                    "🐄 Bovinos": "biogas_bovinos_m_ano",
+                    "🐷 Suínos": "biogas_suino_m_ano",
+                    "🐔 Aves": "biogas_aves_m_ano",
+                    "🐟 Piscicultura": "biogas_piscicultura_m_ano",
+
+                    # Urban Residues
+                    "─── Urbanos ───": None,  # Separator
+                    "🏙️ Resíduos Urbanos": "urban_waste_potential_m3_year",
+                    "🌳 Resíduos Poda": "rural_waste_potential_m3_year",
+
+                    # Metrics
+                    "─── Métricas ───": None,  # Separator
+                    "⚡ Energia (MWh/ano)": "energy_potential_mwh_year",
+                    "🌱 Redução CO₂ (ton/ano)": "co2_reduction_tons_year"
                 }
 
+                # Filter out separator items (None values) for selection
+                selectable_options = {k: v for k, v in data_options.items() if v is not None}
+
                 if config.filter_mode == "Individual":
-                    selected = st.selectbox("Resíduo:", list(data_options.keys()), key="data_select")
-                    config.data_column = data_options[selected]
+                    selected = st.selectbox("Resíduo:", list(selectable_options.keys()), key="data_select")
+                    config.data_column = selectable_options[selected]
                 else:
                     selected_list = st.multiselect(
                         "Resíduos:",
-                        list(data_options.keys()),
+                        list(selectable_options.keys()),
                         default=["Potencial Total"],
                         key="data_multi"
                     )
                     if selected_list:
-                        config.data_column = data_options[selected_list[0]]
+                        config.data_column = selectable_options[selected_list[0]]
                         config.selected_data = selected_list
 
                 # Municipality search
@@ -191,11 +215,5 @@ class SidebarRenderer:
             from src.accessibility.settings import AccessibilitySettings
             accessibility_settings = AccessibilitySettings()
             accessibility_settings.render_basic_settings()
-
-        # Panel 5: Informações sobre Substratos
-        with st.expander("🧪 Informações sobre Substratos", expanded=False):
-            st.info("📚 Dados técnicos sobre substratos para produção de biogás")
-            if st.button("📖 Ver Guia Completo de Substratos", use_container_width=True):
-                st.session_state['show_substrate_modal'] = True
 
         return config

@@ -75,15 +75,22 @@ class ProximityAnalysisPage:
             st.error("⚠️ Erro ao carregar análise de proximidade.")
 
     def _render_header(self) -> None:
-        """Render V1-style purple gradient header"""
+        """Render modern purple gradient header with stats"""
         st.markdown("""
-        <div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    color: white; padding: 2rem; margin: -1rem -1rem 2rem -1rem;
-                    text-align: center; border-radius: 0 0 20px 20px;'>
-            <h1 style='margin: 0; font-size: 2.5rem;'>🎯 Análise de Proximidade</h1>
-            <p style='margin: 10px 0 0 0; font-size: 1.2rem; opacity: 0.9;'>
+        <div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #9333ea 100%);
+                    color: white; padding: 2.5rem; margin: -1rem -1rem 2rem -1rem;
+                    text-align: center; border-radius: 0 0 25px 25px;
+                    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);'>
+            <h1 style='margin: 0; font-size: 2.8rem; font-weight: 700; font-family: "Montserrat", sans-serif;
+                       text-shadow: 2px 2px 4px rgba(0,0,0,0.2);'>
+                🎯 Análise de Proximidade
+            </h1>
+            <p style='margin: 15px 0 0 0; font-size: 1.3rem; opacity: 0.95; font-weight: 300;'>
                 Análise especializada de uso do solo e potencial de biogás por raio de captação
             </p>
+            <div style='margin-top: 15px; font-size: 0.95rem; opacity: 0.85;'>
+                📍 Geoanálise • 🗺️ MapBiomas • 🌾 Resíduos Agrícolas
+            </div>
         </div>
         """, unsafe_allow_html=True)
 
