@@ -315,9 +315,7 @@ def render_reference_button(ref_id: str, compact: bool = True, label: str = "�
                     st.code(ref.citation_abnt, language=None)
 
             if ref.url:
-                link_source = f"link_{ref_id}_{int(time.time() * 1000000)}"
-                link_key = f"lnk_{hashlib.md5(link_source.encode()).hexdigest()[:8]}"
-                st.link_button("🔗 Acessar Artigo", ref.url, type="primary", key=link_key)
+                st.link_button("🔗 Acessar Artigo", ref.url, type="primary")
 
     except Exception as e:
         logger.error(f"Error rendering reference button: {e}")
