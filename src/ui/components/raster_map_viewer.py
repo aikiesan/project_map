@@ -503,6 +503,7 @@ class RasterMapViewer:
                     if st.button("📥 Export Results"):
                         csv = df_display.to_csv(index=False)
                         st.download_button(
+                            key="download_raster_viewer_csv",
                             label="Download CSV",
                             data=csv,
                             file_name=f"raster_analysis_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}.csv",

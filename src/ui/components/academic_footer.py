@@ -97,6 +97,7 @@ def render_academic_footer() -> None:
             # ABNT format download
             abnt_citations = generate_abnt_citations()
             st.download_button(
+                key="download_abnt_full",
                 label="📥 Download ABNT",
                 data=abnt_citations,
                 file_name=f"cp2b_referencias_abnt_{datetime.datetime.now().strftime('%Y%m%d')}.txt",
@@ -107,6 +108,7 @@ def render_academic_footer() -> None:
             # APA format download
             apa_citations = generate_apa_citations()
             st.download_button(
+                key="download_apa_full",
                 label="📥 Download APA",
                 data=apa_citations,
                 file_name=f"cp2b_referencias_apa_{datetime.datetime.now().strftime('%Y%m%d')}.txt",
@@ -129,7 +131,7 @@ def render_academic_footer() -> None:
         st.error("⚠️ Erro ao carregar rodapé acadêmico")
 
 
-def render_compact_academic_footer() -> None:
+def render_compact_academic_footer(key_suffix: str = "") -> None:
     """
     Render compact version of academic footer (for pages with limited space)
     """
@@ -149,6 +151,7 @@ def render_compact_academic_footer() -> None:
             # Quick citation export
             abnt_citations = generate_abnt_citations()
             st.download_button(
+                key=f"download_refs_compact{key_suffix}",
                 label="📥 Referências",
                 data=abnt_citations,
                 file_name=f"cp2b_refs_{datetime.datetime.now().strftime('%Y%m%d')}.txt",

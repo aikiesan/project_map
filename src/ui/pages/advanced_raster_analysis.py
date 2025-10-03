@@ -618,6 +618,7 @@ class AdvancedRasterAnalysisPage:
                     if accessible_button("📥 Exportar CSV"):
                         csv = df_display.to_csv(index=False, encoding='utf-8')
                         st.download_button(
+                            key="download_raster_csv",
                             label="⬇️ Download CSV",
                             data=csv,
                             file_name=f"analise_raster_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}.csv",
@@ -628,6 +629,7 @@ class AdvancedRasterAnalysisPage:
                     if accessible_button("📋 Relatório Detalhado"):
                         report = self._generate_detailed_report(results, display_data)
                         st.download_button(
+                            key="download_raster_report",
                             label="⬇️ Download Relatório",
                             data=report,
                             file_name=f"relatorio_analise_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}.txt",

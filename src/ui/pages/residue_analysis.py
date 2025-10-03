@@ -85,7 +85,7 @@ class ResidueAnalysisPage:
                 self._render_seasonal_analysis(df)
 
             # Academic footer (reusing component)
-            render_compact_academic_footer()
+            render_compact_academic_footer("_residue_analysis")
 
         except Exception as e:
             self.logger.error(f"Error rendering residue analysis page: {e}", exc_info=True)
