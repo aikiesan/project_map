@@ -68,6 +68,12 @@ class MapConfig:
         }
         return display_names.get(self.data_column, "Potencial Total")
 
+    def enforce_layer_mutual_exclusion(self) -> None:
+        """Enforce mutual exclusion between MapBiomas and Biogas layers"""
+        if self.show_mapbiomas and self.show_biogas:
+            # MapBiomas takes priority - turn off biogas
+            self.show_biogas = False
+
     def has_active_filters(self) -> bool:
         """Check if any filters are active"""
         return (

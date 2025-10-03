@@ -46,6 +46,9 @@ class MapBuilder:
             Configured Folium map
         """
         try:
+            # Enforce layer mutual exclusion (prevent conflicts)
+            config.enforce_layer_mutual_exclusion()
+
             # Create base map
             m = folium.Map(
                 location=[config.center_lat, config.center_lon],
@@ -103,9 +106,9 @@ class MapBuilder:
             if config.show_urban_areas:
                 self._add_urban_areas(m)
 
-            # Add floating legend
+            # Add appropriate legend based on visualization type (prevent duplicates)
             if config.show_legend and config.show_biogas:
-                self._add_floating_legend(m, municipalities_df, config)
+                self._add_smart_legend(m, municipalities_df, config)
 
             return m
 
@@ -332,7 +335,8 @@ class MapBuilder:
         try:
             biogas_plants = shapefile_loader.load_biogas_plants()
             if biogas_plants is not None and len(biogas_plants) > 0:
-                display_plants = biogas_plants.head(100)
+                # Performance optimization: limit to 50 plants for faster rendering
+                display_plants = biogas_plants.head(50)
                 for _, plant in display_plants.iterrows():
                     folium.CircleMarker(
                         location=[plant.geometry.y, plant.geometry.x],
@@ -410,7 +414,7 @@ class MapBuilder:
                 overlay.add_to(raster_group)
                 raster_group.add_to(m)
 
-                # Add legend
+                # Add MapBiomas legend (positioned to avoid conflicts)
                 legend_html = self.mapbiomas_loader.create_legend_html(
                     selected_classes=all_agri_classes,
                     language='pt'
@@ -466,6 +470,11 @@ class MapBuilder:
         try:
             lines = shapefile_loader.load_transmission_lines()
             if lines is not None:
+                # Performance optimization: limit complex geometries for faster rendering
+                if len(lines) > 200:
+                    lines = lines.head(200)
+                    self.logger.debug("Limited transmission lines to 200 for performance")
+
                 folium.GeoJson(
                     lines,
                     style_function=lambda feature: {
@@ -522,6 +531,11 @@ class MapBuilder:
         try:
             urban = shapefile_loader.load_urban_areas()
             if urban is not None:
+                # Performance optimization: simplify urban areas and limit count
+                if len(urban) > 500:
+                    urban = urban.head(500)
+                    self.logger.debug("Limited urban areas to 500 for performance")
+
                 folium.GeoJson(
                     urban,
                     style_function=lambda feature: {
@@ -536,6 +550,27 @@ class MapBuilder:
                 self.logger.debug("Added urban areas to map")
         except Exception as e:
             self.logger.warning(f"Could not add urban areas: {e}")
+
+    def _add_smart_legend(self,
+                         m: folium.Map,
+                         df: pd.DataFrame,
+                         config: MapConfig) -> None:
+        """Add appropriate legend based on visualization type (prevents duplicates)"""
+        try:
+            # Only add legend if MapBiomas is not active (mutual exclusion)
+            if config.show_mapbiomas:
+                self.logger.debug("Skipping biogas legend - MapBiomas legend active")
+                return
+
+            # Choose legend type based on visualization
+            if config.viz_type == "Mapa de Preenchimento (Coroplético)":
+                self._add_choropleth_legend(m, df, config)
+            else:
+                # For circles, heatmap, clusters - use floating legend
+                self._add_floating_legend(m, df, config)
+
+        except Exception as e:
+            self.logger.warning(f"Could not add smart legend: {e}")
 
     def _add_floating_legend(self,
                             m: folium.Map,
@@ -688,8 +723,8 @@ class MapBuilder:
                 )
             ).add_to(m)
 
-            # Add custom compact legend for choropleth
-            self._add_choropleth_legend(m, df, config)
+            # Note: Legend will be added by _add_smart_legend() to prevent duplicates
+            # self._add_choropleth_legend(m, df, config)
 
             self.logger.info("Choropleth map created successfully")
 
