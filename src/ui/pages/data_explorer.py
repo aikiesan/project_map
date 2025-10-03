@@ -821,7 +821,7 @@ class ModernDataExplorer:
                 self.mathematical_insights.render(data, config)
 
             # Academic footer
-            render_compact_academic_footer("_data_explorer")
+            render_compact_academic_footer()
 
         except Exception as e:
             self.logger.error(f"Error rendering modern data explorer: {e}", exc_info=True)

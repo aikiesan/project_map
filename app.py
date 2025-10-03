@@ -163,7 +163,8 @@ def main():
         # Render content in tabs
         with tabs[0]:  # Home
             announce_page_change("Home")
-            accessibility_manager.create_accessible_heading("Página Inicial", level=2, id_attr="home-section")
+            # Hidden heading for accessibility only
+            st.markdown('<h2 style="position: absolute; left: -10000px;" id="home-section">Página Inicial</h2>', unsafe_allow_html=True)
             from src.ui.pages.home import HomePage
             home_page = HomePage()
             home_page.render()

@@ -149,12 +149,22 @@ class ShapefileLoader:
             trans = self.load_shapefile("Gasodutos_Transporte_SP", simplify_tolerance=0.0001)
 
             if dist is not None and trans is not None:
+                # Add type identifier to each shapefile
+                dist = dist.copy()
+                trans = trans.copy()
+                dist['TIPO'] = 'Distribuição'
+                trans['TIPO'] = 'Transporte'
+
                 # Combine both pipeline types
                 combined = pd.concat([dist, trans], ignore_index=True)
                 return gpd.GeoDataFrame(combined, crs=dist.crs)
             elif dist is not None:
+                dist = dist.copy()
+                dist['TIPO'] = 'Distribuição'
                 return dist
             elif trans is not None:
+                trans = trans.copy()
+                trans['TIPO'] = 'Transporte'
                 return trans
 
         return None
@@ -176,6 +186,60 @@ class ShapefileLoader:
             GeoDataFrame with intermediate region boundaries
         """
         return self.load_shapefile("SP_RG_Intermediarias_2024", simplify_tolerance=0.001)
+
+    def load_etes(self) -> Optional[gpd.GeoDataFrame]:
+        """
+        Load wastewater treatment plants (ETEs) shapefile
+
+        Returns:
+            GeoDataFrame with ETE locations
+        """
+        return self.load_shapefile("ETEs_2019_SP", simplify_tolerance=0)
+
+    def load_power_substations(self) -> Optional[gpd.GeoDataFrame]:
+        """
+        Load power substations shapefile
+
+        Returns:
+            GeoDataFrame with power substation locations
+        """
+        return self.load_shapefile("Subestacoes_Energia", simplify_tolerance=0)
+
+    def load_transmission_lines(self) -> Optional[gpd.GeoDataFrame]:
+        """
+        Load electricity transmission lines shapefile
+
+        Returns:
+            GeoDataFrame with transmission line geometries
+        """
+        return self.load_shapefile("Linhas_De_Transmissao_Energia", simplify_tolerance=0.0001)
+
+    def load_apps_hidrography(self) -> Optional[gpd.GeoDataFrame]:
+        """
+        Load permanent preservation areas and hydrography shapefile
+
+        Returns:
+            GeoDataFrame with APPs and hydrographic features
+        """
+        return self.load_shapefile("APPs_Hidrografia", simplify_tolerance=0.001)
+
+    def load_highways(self) -> Optional[gpd.GeoDataFrame]:
+        """
+        Load state highways shapefile
+
+        Returns:
+            GeoDataFrame with highway geometries
+        """
+        return self.load_shapefile("Rodovias_Estaduais_SP", simplify_tolerance=0.0001)
+
+    def load_urban_areas(self) -> Optional[gpd.GeoDataFrame]:
+        """
+        Load urban areas shapefile
+
+        Returns:
+            GeoDataFrame with urban area boundaries
+        """
+        return self.load_shapefile("Areas_Urbanas_SP", simplify_tolerance=0.001)
 
     def load_regional_boundaries(self, region_type: str = "both") -> Optional[gpd.GeoDataFrame]:
         """

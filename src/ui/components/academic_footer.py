@@ -61,74 +61,48 @@ def generate_apa_citations() -> str:
 
 def render_academic_footer() -> None:
     """
-    Render professional academic footer component
-    Single responsibility: Display methodology, data sources, and citation tools
+    Render professional academic footer with FAPESP branding
+    Single responsibility: Display methodology, data sources, and institutional information
     """
     try:
-        st.markdown("---")
-        st.markdown("### 📚 Informações Acadêmicas e Metodologia")
+        # Professional academic footer with FAPESP branding
+        st.markdown("""<div style='background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 2.5rem; margin: 3rem -1rem 0 -1rem; border-top: 4px solid #2E8B57; border-radius: 0;'><div style='display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-bottom: 2rem;'><div><h4 style='color: #2c3e50; margin: 0 0 1rem 0; font-size: 1rem; font-weight: 600; font-family: "Montserrat", sans-serif;'>Data Sources</h4><div style='color: #495057; font-size: 0.9rem; line-height: 1.8;'><strong>MapBIOMAS</strong> Collection 10.0<br><strong>IBGE</strong> Agricultural Census 2017<br><strong>EPE</strong> Energy Data 2024<br><strong>SEADE</strong> Socioeconomic Data<br><strong>Geospatial</strong> Shapefiles São Paulo</div></div><div><h4 style='color: #2c3e50; margin: 0 0 1rem 0; font-size: 1rem; font-weight: 600; font-family: "Montserrat", sans-serif;'>Methodology</h4><div style='color: #495057; font-size: 0.9rem; line-height: 1.8;'>Calibrated conversion factors for SP<br>Optimal C/N ratio: 20-30:1<br>Advanced GIS spatial analysis<br>Field data validation</div></div><div><h4 style='color: #2c3e50; margin: 0 0 1rem 0; font-size: 1rem; font-weight: 600; font-family: "Montserrat", sans-serif;'>Research Support</h4><div style='color: #495057; font-size: 0.9rem; line-height: 1.8;'><strong>FAPESP</strong><br>Fundação de Amparo à Pesquisa<br>do Estado de São Paulo<br><br><strong>Project:</strong> CP2B Maps V2<br>Biogas Potential Analysis Platform</div></div></div><div style='border-top: 1px solid #dee2e6; padding-top: 1.5rem; margin-top: 1.5rem;'><div style='display: flex; justify-content: space-between; align-items: center;'><div style='color: #6c757d; font-size: 0.85rem;'><strong>CP2B Maps V2</strong> | Version 2.0.0 | Last Updated: {update_date} | São Paulo State - 645 Municipalities</div><div style='color: #6c757d; font-size: 0.85rem;'>Powered by <strong>FAPESP</strong> Research Grant</div></div></div></div>""".format(
+            update_date=datetime.datetime.now().strftime('%d/%m/%Y')
+        ), unsafe_allow_html=True)
 
-        # Three-column layout for organized information
-        col1, col2, col3 = st.columns(3)
+        # Citation download section (separate, clean)
+        col1, col2, col3 = st.columns([2, 1, 1])
 
         with col1:
-            st.markdown("#### 📊 Fontes de Dados")
-            st.markdown("""
-            • **MapBIOMAS** Coleção 10.0
-            • **IBGE** Censo Agropecuário 2017
-            • **EPE** Dados Energéticos 2024
-            • **SEADE** Dados Socioeconômicos
-            • **Shapefiles** Geoespaciais SP
-            """)
+            st.markdown("**Academic Citations**")
 
         with col2:
-            st.markdown("#### 🔬 Metodologia")
-            st.markdown("""
-            • **Fatores de Conversão** calibrados para SP
-            • **Relação C/N Ótima**: 20-30:1
-            • **BMP Testing** validação laboratorial
-            • **Análise Geoespacial** SIG avançado
-            • **Validação** com dados de campo
-            """)
-
-        with col3:
-            st.markdown("#### 📝 Citações")
-
-            # ABNT format download
             abnt_citations = generate_abnt_citations()
             st.download_button(
-                key="download_abnt_full",
-                label="📥 Download ABNT",
+                label="Download ABNT",
                 data=abnt_citations,
                 file_name=f"cp2b_referencias_abnt_{datetime.datetime.now().strftime('%Y%m%d')}.txt",
                 mime="text/plain",
-                help="Baixar referências em formato ABNT"
+                help="Download references in ABNT format",
+                key="footer_abnt"
             )
 
-            # APA format download
+        with col3:
             apa_citations = generate_apa_citations()
             st.download_button(
-                key="download_apa_full",
-                label="📥 Download APA",
+                label="Download APA",
                 data=apa_citations,
                 file_name=f"cp2b_referencias_apa_{datetime.datetime.now().strftime('%Y%m%d')}.txt",
                 mime="text/plain",
-                help="Baixar referências em formato APA"
+                help="Download references in APA format",
+                key="footer_apa"
             )
-
-        # Version and update information
-        st.caption(
-            f"CP2B Maps V2 | "
-            f"Última atualização: {datetime.datetime.now().strftime('%d/%m/%Y')} | "
-            f"Versão 2.0.0 | "
-            f"São Paulo State - 645 municípios"
-        )
 
         logger.debug("Academic footer rendered successfully")
 
     except Exception as e:
         logger.error(f"Error rendering academic footer: {e}", exc_info=True)
-        st.error("⚠️ Erro ao carregar rodapé acadêmico")
+        st.error("Error loading academic footer")
 
 
 def render_compact_academic_footer(key_suffix: str = "") -> None:

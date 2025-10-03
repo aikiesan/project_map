@@ -37,58 +37,67 @@ class DashboardMetrics:
         self.calculator = calculator or get_biogas_calculator()
 
     def render(self) -> None:
-        """Render metrics dashboard strip"""
+        """Render professional metrics dashboard"""
         try:
-            st.markdown("---")
-            
             # Load municipality data
             municipalities_df = self.db_loader.load_municipalities_data()
-            
+
             if municipalities_df is not None and len(municipalities_df) > 0:
                 # Calculate state totals
                 stats = self.calculator.get_state_totals(municipalities_df)
-                db_status = "✅ Online" if self.db_loader.validate_database() else "❌ Error"
-                
-                # Prepare metrics data
-                metrics_data = [
-                    {
-                        'icon': '🏘️',
-                        'label': 'Municipalities',
-                        'value': f"{stats.get('total_municipalities', 0):,}",
-                        'delta': 'Complete Coverage'
-                    },
-                    {
-                        'icon': '⛽',
-                        'label': 'Daily Biogas',
-                        'value': f"{stats.get('total_biogas_m3_day', 0):,.0f} m³",
-                        'delta': 'Real-time Potential'
-                    },
-                    {
-                        'icon': '⚡',
-                        'label': 'Annual Energy',
-                        'value': f"{stats.get('total_energy_mwh_year', 0):,.0f} MWh",
-                        'delta': 'Clean Energy'
-                    },
-                    {
-                        'icon': '🌱',
-                        'label': 'CO₂ Reduction',
-                        'value': f"{stats.get('total_co2_reduction_tons_year', 0):,.0f} tons",
-                        'delta': 'Per Year'
-                    },
-                    {
-                        'icon': '🖥️',
-                        'label': 'System Status',
-                        'value': db_status,
-                        'delta': 'All Systems Operational'
-                    }
-                ]
-                
-                # Render using design system
-                render_styled_metrics(metrics_data, columns=5)
+                db_status = "Online" if self.db_loader.validate_database() else "Offline"
+
+                # Professional metrics section with clean design
+                st.markdown("""
+                <div style='background: linear-gradient(135deg, #2E8B57 0%, #228B22 100%);
+                            color: white; padding: 2rem; margin: 2rem 0 1rem 0;
+                            border-radius: 12px; box-shadow: 0 4px 20px rgba(46,139,87,0.2);'>
+                    <h3 style='margin: 0 0 1.5rem 0; font-size: 1.3rem; font-weight: 600;
+                               text-align: center; font-family: "Montserrat", sans-serif;'>
+                        São Paulo State Biogas Analysis Summary
+                    </h3>
+                    <div style='display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem;'>
+                        <div style='text-align: center;'>
+                            <div style='font-size: 2rem; font-weight: 700; margin-bottom: 0.3rem;'>
+                                {municipalities:,}
+                            </div>
+                            <div style='font-size: 0.9rem; opacity: 0.95;'>Municipalities Analyzed</div>
+                        </div>
+                        <div style='text-align: center;'>
+                            <div style='font-size: 2rem; font-weight: 700; margin-bottom: 0.3rem;'>
+                                {biogas:,.0f} m³
+                            </div>
+                            <div style='font-size: 0.9rem; opacity: 0.95;'>Daily Biogas Potential</div>
+                        </div>
+                        <div style='text-align: center;'>
+                            <div style='font-size: 2rem; font-weight: 700; margin-bottom: 0.3rem;'>
+                                {energy:,.0f} MWh
+                            </div>
+                            <div style='font-size: 0.9rem; opacity: 0.95;'>Annual Energy Generation</div>
+                        </div>
+                        <div style='text-align: center;'>
+                            <div style='font-size: 2rem; font-weight: 700; margin-bottom: 0.3rem;'>
+                                {co2:,.0f} t
+                            </div>
+                            <div style='font-size: 0.9rem; opacity: 0.95;'>CO₂ Reduction Potential</div>
+                        </div>
+                    </div>
+                    <div style='text-align: center; margin-top: 1rem; padding-top: 1rem;
+                               border-top: 1px solid rgba(255,255,255,0.2);'>
+                        <span style='font-size: 0.85rem; opacity: 0.9;'>System Status: {status}</span>
+                    </div>
+                </div>
+                """.format(
+                    municipalities=stats.get('total_municipalities', 0),
+                    biogas=stats.get('total_biogas_m3_day', 0),
+                    energy=stats.get('total_energy_mwh_year', 0),
+                    co2=stats.get('total_co2_reduction_tons_year', 0),
+                    status=db_status
+                ), unsafe_allow_html=True)
             else:
-                st.warning("⚠️ Unable to load municipality data. Please check the database connection.")
-        
+                st.warning("Unable to load municipality data. Please check the database connection.")
+
         except Exception as e:
             self.logger.error(f"Error rendering dashboard metrics: {e}", exc_info=True)
-            st.error("⚠️ Failed to load metrics. Check logs for details.")
+            st.error("Failed to load metrics. Check logs for details.")
 

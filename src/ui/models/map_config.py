@@ -27,6 +27,14 @@ class MapConfig:
     show_regioes_imediatas: bool = False
     show_regioes_intermediarias: bool = False
 
+    # Infrastructure layers
+    show_etes: bool = False
+    show_power_substations: bool = False
+    show_transmission_lines: bool = False
+    show_apps_hidrography: bool = False
+    show_highways: bool = False
+    show_urban_areas: bool = False
+
     # Data filtering
     data_column: str = "biogas_potential_m3_year"
     filter_mode: str = "Individual"
@@ -34,7 +42,7 @@ class MapConfig:
     search_term: str = ""
 
     # Visualization style
-    viz_type: str = "Círculos Proporcionais"
+    viz_type: str = "Mapa de Preenchimento (Coroplético)"
 
     # Map center and zoom (São Paulo State center, not city)
     center_lat: float = -22.5  # São Paulo State center latitude
