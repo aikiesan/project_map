@@ -194,7 +194,7 @@ class SidebarRenderer:
                 ["Círculos Proporcionais", "Mapa de Preenchimento (Coroplético)",
                  "Mapa de Calor (Heatmap)", "Agrupamentos (Clusters)"],
                 key="viz_type",
-                index=0
+                index=1  # Default to Choropleth map
             )
 
             # Info based on selection

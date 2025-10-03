@@ -28,10 +28,10 @@ class ProximityAnalyzer:
         Initialize analyzer with optional dependency injection
 
         Args:
-            raster_loader: Optional RasterLoader instance for dependency injection
+            raster_loader: Optional MapBiomasLoader instance for dependency injection
         """
         self.logger = logging.getLogger(self.__class__.__name__)
-        self.raster_loader = raster_loader
+        self.mapbiomas_loader = raster_loader  # Actually expects MapBiomasLoader
 
         # MapBiomas class mapping (comprehensive)
         self.class_map = {
@@ -99,7 +99,7 @@ class ProximityAnalyzer:
             List of raster file paths
         """
         project_root = Path(__file__).parent.parent.parent
-        raster_dir = project_root / "rasters"
+        raster_dir = project_root / "data" / "rasters"  # Fixed: was missing 'data'
 
         if not raster_dir.exists():
             self.logger.warning(f"Raster directory does not exist: {raster_dir}")
@@ -139,9 +139,9 @@ class ProximityAnalyzer:
             self.logger.error(f"Coordinate validation failed: {msg}")
             return None
 
-        # Check for raster loader
-        if self.raster_loader is None:
-            self.logger.error("No raster loader available")
+        # Check for mapbiomas loader
+        if self.mapbiomas_loader is None:
+            self.logger.error("No MapBiomas loader available")
             return None
 
         # Find raster files
@@ -156,22 +156,32 @@ class ProximityAnalyzer:
 
             self.logger.info(
                 f"Starting proximity analysis: center=({center_lat}, {center_lon}), "
-                f"radius={radius_km}km"
+                f"radius={radius_km}km, raster={raster_path}"
             )
 
-            # Use raster loader's analysis function
-            results = self.raster_loader.analyze_raster_in_radius(
+            # Use MapBiomas loader's analyze_radius_area method (NOT analyze_raster_in_radius!)
+            raw_results = self.mapbiomas_loader.analyze_radius_area(
                 raster_path=raster_path,
                 center_lat=center_lat,
                 center_lon=center_lon,
-                radius_km=radius_km,
-                class_map=self.class_map
+                radius_km=radius_km
             )
+
+            if not raw_results:
+                self.logger.warning("Analysis returned empty results")
+                return None
+
+            # Convert MapBiomas format to simple dict {class_name: area_ha}
+            results = {}
+            for class_name, data in raw_results.items():
+                if class_name != '_metadata' and isinstance(data, dict):
+                    # Extract area_ha from nested dict
+                    results[class_name] = data.get('area_ha', 0)
 
             if results:
                 self.logger.info(f"Analysis successful: found {len(results)} land use types")
             else:
-                self.logger.warning("Analysis returned empty results")
+                self.logger.warning("Analysis returned no valid land use types")
 
             return results
 
