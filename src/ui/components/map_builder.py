@@ -693,8 +693,8 @@ class MapBuilder:
             import json
             geojson_data = json.loads(municipalities_gdf.to_json())
 
-            # Create choropleth (without automatic legend to avoid crowding)
-            folium.Choropleth(
+            # Create choropleth (completely disable automatic legend)
+            choropleth = folium.Choropleth(
                 geo_data=geojson_data,
                 name='Potencial de Biogás',
                 data=df,
@@ -703,10 +703,18 @@ class MapBuilder:
                 fill_color='YlGn',  # Yellow to Green color scheme
                 fill_opacity=0.7,
                 line_opacity=0.3,
-                legend_name=None,  # Disable automatic legend (we'll add custom one)
+                legend_name='',  # Completely disable automatic legend
                 nan_fill_color='lightgray',
                 nan_fill_opacity=0.2
-            ).add_to(m)
+            )
+
+            # Remove the automatic legend completely
+            for key in choropleth._children:
+                if "color_map" in key:
+                    del choropleth._children[key]
+                    break
+
+            choropleth.add_to(m)
 
             # Add tooltips with municipality info
             folium.GeoJson(
@@ -722,6 +730,34 @@ class MapBuilder:
                     localize=True
                 )
             ).add_to(m)
+
+            # Add CSS to hide any remaining automatic legends (especially top-right horizontal bar)
+            css_hide_legends = """
+            <style>
+            /* Hide all automatic Folium legends and color bars */
+            .legend,
+            .leaflet-control-scale,
+            .folium-legend,
+            .leaflet-control-legend,
+            .branca-legend,
+            .leaflet-control.leaflet-control-legend,
+            .leaflet-control.branca-legend,
+            .leaflet-top.leaflet-right .leaflet-control,
+            .leaflet-top.leaflet-right .branca-legend,
+            div[style*="background: linear-gradient"][style*="top"][style*="right"],
+            div[class*="legend"][style*="position: absolute"],
+            div[style*="position: absolute"][style*="top"][style*="right"][style*="background"] {
+                display: none !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+            }
+            /* Specifically target horizontal legend bars */
+            .leaflet-control[style*="margin"] {
+                display: none !important;
+            }
+            </style>
+            """
+            m.get_root().html.add_child(folium.Element(css_hide_legends))
 
             # Note: Legend will be added by _add_smart_legend() to prevent duplicates
             # self._add_choropleth_legend(m, df, config)
