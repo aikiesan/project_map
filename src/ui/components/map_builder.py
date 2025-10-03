@@ -57,6 +57,13 @@ class MapBuilder:
             if config.show_boundary:
                 self._add_state_boundary(m)
 
+            # Add regional boundaries if enabled
+            if config.show_regioes_intermediarias:
+                self._add_intermediate_regions(m)
+
+            if config.show_regioes_imediatas:
+                self._add_immediate_regions(m)
+
             # Add municipality circles if biogas layer enabled
             if config.show_biogas and municipalities_df is not None:
                 self._add_municipality_layer(m, municipalities_df, config)
@@ -94,6 +101,72 @@ class MapBuilder:
                 ).add_to(m)
         except Exception as e:
             self.logger.warning(f"Could not add state boundary: {e}")
+
+    def _add_intermediate_regions(self, m: folium.Map) -> None:
+        """Add IBGE intermediate regions boundaries"""
+        try:
+            intermediate_regions = shapefile_loader.load_intermediate_regions()
+            if intermediate_regions is not None:
+                folium.GeoJson(
+                    intermediate_regions,
+                    style_function=lambda feature: {
+                        'color': '#1565C0',
+                        'weight': 3,
+                        'opacity': 0.8,
+                        'fillOpacity': 0.1,
+                        'fillColor': '#1976D2',
+                        'dashArray': '8, 4'
+                    },
+                    tooltip=folium.GeoJsonTooltip(
+                        fields=['NM_RGINT', 'AREA_KM2'],
+                        aliases=['Região Intermediária:', 'Área (km²):'],
+                        localize=True,
+                        sticky=False,
+                        labels=True,
+                        style="""
+                            background-color: white;
+                            border: 2px solid black;
+                            border-radius: 3px;
+                            box-shadow: 3px;
+                        """
+                    )
+                ).add_to(m)
+                self.logger.debug("Added intermediate regions to map")
+        except Exception as e:
+            self.logger.warning(f"Could not add intermediate regions: {e}")
+
+    def _add_immediate_regions(self, m: folium.Map) -> None:
+        """Add IBGE immediate regions boundaries"""
+        try:
+            immediate_regions = shapefile_loader.load_immediate_regions()
+            if immediate_regions is not None:
+                folium.GeoJson(
+                    immediate_regions,
+                    style_function=lambda feature: {
+                        'color': '#E65100',
+                        'weight': 2,
+                        'opacity': 0.7,
+                        'fillOpacity': 0.05,
+                        'fillColor': '#FF9800',
+                        'dashArray': '4, 2'
+                    },
+                    tooltip=folium.GeoJsonTooltip(
+                        fields=['NM_RGI', 'NM_RGINT', 'AREA_KM2'],
+                        aliases=['Região Imediata:', 'Região Intermediária:', 'Área (km²):'],
+                        localize=True,
+                        sticky=False,
+                        labels=True,
+                        style="""
+                            background-color: white;
+                            border: 2px solid black;
+                            border-radius: 3px;
+                            box-shadow: 3px;
+                        """
+                    )
+                ).add_to(m)
+                self.logger.debug("Added immediate regions to map")
+        except Exception as e:
+            self.logger.warning(f"Could not add immediate regions: {e}")
 
     def _add_municipality_layer(self,
                                 m: folium.Map,

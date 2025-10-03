@@ -92,10 +92,23 @@ class DatabaseLoader:
                     populacao_2022 as population,
                     rsu_potencial_m_ano as urban_waste_potential_m3_year,
                     rpo_potencial_m_ano as rural_waste_potential_m3_year,
+                    biogas_cana_m_ano,
+                    biogas_soja_m_ano,
+                    biogas_milho_m_ano,
+                    biogas_cafe_m_ano,
+                    biogas_citros_m_ano,
+                    biogas_bovinos_m_ano,
+                    biogas_suino_m_ano,
+                    biogas_aves_m_ano,
+                    biogas_piscicultura_m_ano,
                     area_km2,
                     densidade_demografica as population_density,
                     lat as latitude,
-                    lon as longitude
+                    lon as longitude,
+                    cd_rgi,
+                    nm_rgi,
+                    cd_rgint,
+                    nm_rgint
                 FROM municipalities
                 WHERE total_final_m_ano IS NOT NULL
                 ORDER BY nome_municipio

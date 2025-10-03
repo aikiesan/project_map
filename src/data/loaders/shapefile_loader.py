@@ -159,6 +159,59 @@ class ShapefileLoader:
 
         return None
 
+    def load_immediate_regions(self) -> Optional[gpd.GeoDataFrame]:
+        """
+        Load IBGE immediate regions shapefile (53 regions)
+
+        Returns:
+            GeoDataFrame with immediate region boundaries
+        """
+        return self.load_shapefile("SP_RG_Imediatas_2024", simplify_tolerance=0.001)
+
+    def load_intermediate_regions(self) -> Optional[gpd.GeoDataFrame]:
+        """
+        Load IBGE intermediate regions shapefile (11 regions)
+
+        Returns:
+            GeoDataFrame with intermediate region boundaries
+        """
+        return self.load_shapefile("SP_RG_Intermediarias_2024", simplify_tolerance=0.001)
+
+    def load_regional_boundaries(self, region_type: str = "both") -> Optional[gpd.GeoDataFrame]:
+        """
+        Load regional boundaries (immediate, intermediate, or both)
+
+        Args:
+            region_type: "immediate", "intermediate", or "both"
+
+        Returns:
+            GeoDataFrame with regional boundaries
+        """
+        if region_type == "immediate":
+            return self.load_immediate_regions()
+        elif region_type == "intermediate":
+            return self.load_intermediate_regions()
+        elif region_type == "both":
+            immediate = self.load_immediate_regions()
+            intermediate = self.load_intermediate_regions()
+
+            if immediate is not None and intermediate is not None:
+                # Add region type identifier
+                immediate = immediate.copy()
+                intermediate = intermediate.copy()
+                immediate['region_type'] = 'immediate'
+                intermediate['region_type'] = 'intermediate'
+
+                # Combine both region types
+                combined = pd.concat([intermediate, immediate], ignore_index=True)
+                return gpd.GeoDataFrame(combined, crs=immediate.crs)
+            elif immediate is not None:
+                return immediate
+            elif intermediate is not None:
+                return intermediate
+
+        return None
+
     def get_available_shapefiles(self) -> Dict[str, Dict[str, Any]]:
         """
         Get information about available shapefiles

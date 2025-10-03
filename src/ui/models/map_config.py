@@ -24,6 +24,8 @@ class MapConfig:
     show_regioes_admin: bool = False
     show_mapbiomas: bool = False
     show_boundary: bool = True
+    show_regioes_imediatas: bool = False
+    show_regioes_intermediarias: bool = False
 
     # Data filtering
     data_column: str = "biogas_potential_m3_year"

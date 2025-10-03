@@ -107,6 +107,8 @@ class SidebarRenderer:
             st.markdown("**Referência:**")
             config.show_rodovias = st.checkbox("🛣️ Rodovias", value=False, key="show_roads")
             config.show_regioes_admin = st.checkbox("🏛️ Regiões Admin.", value=False, key="show_regions")
+            config.show_regioes_intermediarias = st.checkbox("🗺️ Regiões Intermediárias", value=False, key="show_reg_inter")
+            config.show_regioes_imediatas = st.checkbox("📍 Regiões Imediatas", value=False, key="show_reg_imed")
 
             st.markdown("**Imagem de Satélite:**")
             config.show_mapbiomas = st.checkbox("🌾 MapBiomas - Uso do Solo", value=False, key="show_mapbiomas")
