@@ -316,3 +316,37 @@ def check_gemini_connection() -> Tuple[bool, str]:
         Tuple of (is_connected, message)
     """
     return GeminiAssistant.check_availability()
+
+
+# ============================================================================
+# CACHED INITIALIZATION
+# ============================================================================
+
+try:
+    import streamlit as st
+
+    @st.cache_resource
+    def get_gemini_assistant() -> Optional['GeminiAssistant']:
+        """
+        Get or create cached Gemini assistant instance
+
+        Returns:
+            GeminiAssistant instance or None if not available
+        """
+        try:
+            assistant = GeminiAssistant()
+            logger.info("✓ Gemini assistant initialized (cached)")
+            return assistant
+        except Exception as e:
+            logger.error(f"Failed to initialize Gemini assistant: {e}")
+            return None
+
+except ImportError:
+    # Streamlit not available (e.g., in tests)
+    def get_gemini_assistant() -> Optional['GeminiAssistant']:
+        """Fallback for non-Streamlit environments"""
+        try:
+            return GeminiAssistant()
+        except Exception as e:
+            logger.error(f"Failed to initialize Gemini assistant: {e}")
+            return None

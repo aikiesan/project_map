@@ -39,10 +39,45 @@ from src.accessibility.components.accessible_components import (
     create_accessible_alert
 )
 
-# Initialize logger and accessibility
+# Import scenario system
+from config.scenario_config import init_scenario_state
+
+# Initialize logger
 logger = get_logger(__name__)
-accessibility_manager = AccessibilityManager()
-accessibility_settings = AccessibilitySettings()
+
+
+# ============================================================================
+# CACHED INITIALIZATION - Prevents double loading
+# ============================================================================
+
+@st.cache_resource
+def initialize_accessibility():
+    """Initialize accessibility manager once and cache it"""
+    logger.info("Initializing accessibility manager (cached)")
+    return AccessibilityManager()
+
+
+@st.cache_resource
+def initialize_global_resources():
+    """Initialize global resources once"""
+    logger.info("Loading global CSS (cached)")
+    load_global_css()
+    return True
+
+
+# ============================================================================
+# SESSION STATE INITIALIZATION - Runs only once per session
+# ============================================================================
+
+def init_session_state():
+    """Initialize session state variables only once"""
+    if 'app_initialized' not in st.session_state:
+        logger.info("First session initialization")
+        st.session_state.app_initialized = True
+        st.session_state.accessibility_manager = initialize_accessibility()
+        st.session_state.global_resources_loaded = initialize_global_resources()
+        # Initialize scenario system
+        init_scenario_state()
 
 
 def main():
@@ -51,11 +86,14 @@ def main():
     Professional structure with accessibility and error handling
     """
     try:
+        # Initialize session state once
+        init_session_state()
+
+        # Get cached accessibility manager
+        accessibility_manager = st.session_state.accessibility_manager
+
         # Initialize accessibility features (WCAG Level A requirements)
         accessibility_manager.initialize()
-
-        # Load global CSS for V1 visual parity
-        load_global_css()
 
         # Log application start
         logger.info("Starting CP2B Maps V2 application with accessibility features")
@@ -162,7 +200,6 @@ def main():
 
         # Render content in tabs
         with tabs[0]:  # Home
-            announce_page_change("Home")
             # Hidden heading for accessibility only
             st.markdown('<h2 style="position: absolute; left: -10000px;" id="home-section">Página Inicial</h2>', unsafe_allow_html=True)
             from src.ui.pages.home import HomePage
@@ -170,7 +207,6 @@ def main():
             home_page.render()
 
         with tabs[1]:  # Explorar Dados (Enhanced Data Explorer with V1 charts)
-            announce_page_change("Explorar Dados")
             # Note: Data Explorer has its own styled banner header
 
             # Enhanced Data Explorer with V1's comprehensive chart library
@@ -179,7 +215,6 @@ def main():
             data_explorer.render()
 
         with tabs[2]:  # Análises Avançadas (Residue Analysis only)
-            announce_page_change("Análises Avançadas")
             # Note: Residue Analysis page has its own styled banner header
 
             # Direct render - no sub-tabs
@@ -187,7 +222,6 @@ def main():
             create_residue_analysis_page()
 
         with tabs[3]:  # Proximity Analysis (V1 UX with V2 Architecture)
-            announce_page_change("Análise de Proximidade")
             # Note: Proximity Analysis page has its own styled banner header
 
             from src.ui.pages.proximity_analysis import create_proximity_analysis_page
@@ -195,7 +229,6 @@ def main():
             proximity_page.render()
 
         with tabs[4]:  # Bagacinho AI Assistant
-            announce_page_change("Bagacinho IA")
             # Note: Bagacinho page has its own beautiful header, no need for duplicate heading here
 
             # Import and render Bagacinho assistant
@@ -203,14 +236,12 @@ def main():
             render_bagacinho_page()
 
         with tabs[5]:  # References (V1 style)
-            announce_page_change("Academic References")
             # Note: References page has its own styled banner header
 
             from src.ui.pages.references_v1 import render_references_v1_page
             render_references_v1_page()
 
         with tabs[6]:  # Sobre (About) - V1 Style
-            announce_page_change("Sobre o CP2B Maps")
             # Note: About page has its own styled banner header
 
             from src.ui.pages.about_v1 import render_about_v1_page

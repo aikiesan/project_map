@@ -38,40 +38,39 @@ except ImportError as e:
 
 
 # ============================================================================
-# DATABASE CONTEXT PREPARATION
+# DATABASE CONTEXT PREPARATION WITH CACHING
 # ============================================================================
 
-def get_database_path() -> Path:
-    """Get the database path"""
-    return Path(__file__).parent.parent.parent.parent / "data" / "cp2b_maps.db"
-
-
+@st.cache_resource
 def get_rag_instance() -> Optional['BagacinhoRAG']:
     """
-    Get or create BagacinhoRAG instance with caching
+    Get or create cached RAG instance
 
     Returns:
-        BagacinhoRAG instance or None if initialization fails
+        BagacinhoRAG instance or None if not available
     """
     if not HAS_RAG:
+        logger.warning("RAG not available")
         return None
 
-    if 'bagacinho_rag' not in st.session_state:
-        try:
-            db_path = get_database_path()
-            st.session_state.bagacinho_rag = BagacinhoRAG(db_path=db_path)
-            logger.info("BagacinhoRAG initialized successfully")
-        except Exception as e:
-            logger.error(f"Failed to initialize BagacinhoRAG: {e}")
-            st.session_state.bagacinho_rag = None
+    try:
+        # FIXED: Correct database path
+        db_path = Path(__file__).parent.parent.parent.parent / "data" / "database" / "cp2b_maps.db"
+        rag = BagacinhoRAG(db_path=db_path)
+        logger.info("✓ RAG instance initialized (cached)")
+        return rag
+    except Exception as e:
+        logger.error(f"Failed to initialize BagacinhoRAG: {e}")
+        return None
 
-    return st.session_state.bagacinho_rag
 
-
+@st.cache_data(ttl=3600)  # Cache for 1 hour
 def prepare_database_context() -> str:
     """
-    Prepare comprehensive context about the CP2B biogas database
-    to provide to the LLM for better question answering.
+    Prepare comprehensive context about the CP2B biogas database (cached to avoid repeated DB calls)
+
+    Returns:
+        Context string from database
     """
     context_parts = []
 
@@ -111,7 +110,8 @@ O sistema calcula o potencial de biogás de três categorias principais:
 
     # 2. Get database statistics
     try:
-        db_path = get_database_path()
+        # FIXED: Use correct database path
+        db_path = Path(__file__).parent.parent.parent.parent / "data" / "database" / "cp2b_maps.db"
         if db_path.exists():
             with sqlite3.connect(db_path) as conn:
                 cursor = conn.cursor()

@@ -12,6 +12,7 @@ import streamlit as st
 from contextlib import contextmanager
 
 from config.settings import settings
+from config.scenario_config import get_scenario_factor, get_current_scenario
 from src.utils.logging_config import get_logger
 
 logger = get_logger(__name__)
@@ -22,6 +23,35 @@ class DatabaseLoader:
     Professional SQLite database loader with connection pooling and optimization
     Handles 645 municipalities with biogas potential data
     """
+
+    # Colunas que devem ser ajustadas pelo fator de cenário
+    BIOGAS_COLUMNS = [
+        'biogas_potential_m3_year',
+        'biogas_potential_m3_day',
+        'urban_biogas_m3_year',
+        'agricultural_biogas_m3_year',
+        'livestock_biogas_m3_year',
+        'urban_waste_potential_m3_year',
+        'rural_waste_potential_m3_year',
+        'biogas_cana_m_ano',
+        'biogas_soja_m_ano',
+        'biogas_milho_m_ano',
+        'biogas_cafe_m_ano',
+        'biogas_citros_m_ano',
+        'biogas_bovinos_m_ano',
+        'biogas_suino_m_ano',
+        'biogas_aves_m_ano',
+        'biogas_piscicultura_m_ano',
+        'energy_potential_kwh_day',
+        'energy_potential_mwh_year',
+        'co2_reduction_tons_year',
+        'total_final_m_ano',
+        'total_urbano_m_ano',
+        'total_agricola_m_ano',
+        'total_pecuaria_m_ano',
+        'rsu_potencial_m_ano',
+        'rpo_potencial_m_ano'
+    ]
 
     def __init__(self, db_path: Optional[Path] = None):
         """
@@ -37,6 +67,33 @@ class DatabaseLoader:
             self.logger.error(f"Database not found: {self.db_path}")
         else:
             self.logger.info(f"Database initialized: {self.db_path}")
+
+    def apply_scenario_factor(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Aplica fator de cenário às colunas de biogás
+
+        Args:
+            df: DataFrame com dados de biogás
+
+        Returns:
+            DataFrame com valores ajustados pelo cenário
+        """
+        factor = get_scenario_factor()
+        scenario = get_current_scenario()
+
+        # Log apenas se não for cenário utópico (100%)
+        if scenario != 'utopian':
+            self.logger.debug(f"Applying scenario factor: {scenario} ({factor*100:.1f}%)")
+
+        # Criar cópia para não modificar o original
+        df_adjusted = df.copy()
+
+        # Aplicar fator às colunas de biogás
+        for col in self.BIOGAS_COLUMNS:
+            if col in df_adjusted.columns:
+                df_adjusted[col] = df_adjusted[col] * factor
+
+        return df_adjusted
 
     @contextmanager
     def get_connection(self):
@@ -70,15 +127,20 @@ class DatabaseLoader:
             if conn:
                 conn.close()
 
-    @st.cache_data(ttl=settings.CACHE_TTL)
+    @st.cache_data(ttl=settings.CACHE_TTL, show_spinner=False)
     def load_municipalities_data(_self) -> Optional[pd.DataFrame]:
         """
         Load all municipality data with biogas calculations
+        Cache automatically invalidates when scenario changes
 
         Returns:
             DataFrame with all 645 municipalities and their biogas potential data
         """
         try:
+            # Get current scenario to include in cache key
+            current_scenario = get_current_scenario()
+            scenario_factor = get_scenario_factor()
+
             with _self.get_connection() as conn:
                 # Load main municipality data with correct Portuguese column names
                 query = """
@@ -121,7 +183,12 @@ class DatabaseLoader:
                 df['energy_potential_mwh_year'] = (df['energy_potential_kwh_day'] * 365) / 1000
                 df['co2_reduction_tons_year'] = df['energy_potential_kwh_day'] * 0.45 * 365 / 1000  # kg CO2 per kWh
 
-                _self.logger.info(f"Loaded data for {len(df)} municipalities")
+                # Apply scenario factor to biogas data
+                df = _self.apply_scenario_factor(df)
+
+                _self.logger.info(
+                    f"Loaded data for {len(df)} municipalities with scenario '{current_scenario}' ({scenario_factor*100:.1f}%)"
+                )
                 return df
 
         except Exception as e:

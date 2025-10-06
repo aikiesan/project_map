@@ -26,8 +26,8 @@ class BagacinhoRAG:
             db_path: Caminho para o arquivo cp2b_maps.db
         """
         if db_path is None:
-            # V2 structure: data/ at project root
-            db_path = Path(__file__).parent.parent.parent / "data" / "cp2b_maps.db"
+            # V2 structure: data/database/ at project root
+            db_path = Path(__file__).parent.parent.parent / "data" / "database" / "cp2b_maps.db"
 
         self.db_path = db_path
 

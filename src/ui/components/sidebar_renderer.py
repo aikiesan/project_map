@@ -10,6 +10,7 @@ from pathlib import Path
 
 from src.utils.logging_config import get_logger
 from src.ui.models.map_config import MapConfig
+from src.ui.components.scenario_selector import render_scenario_selector
 
 logger = get_logger(__name__)
 
@@ -89,6 +90,9 @@ class SidebarRenderer:
             MapConfig with user selections
         """
         config = MapConfig()
+
+        # Scenario Selector (above Camadas no Mapa)
+        render_scenario_selector()
 
         # Panel 1: Camadas no Mapa (Ultra-Minimalistic Single Column)
         with st.expander("🗺️ Camadas no Mapa", expanded=False):
