@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - AI Integration Module
+CP2B Maps - AI Integration Module
 Bagacinho AI Assistant with RAG and Gemini
 """
 

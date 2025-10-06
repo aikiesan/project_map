@@ -1,5 +1,5 @@
 """
-Map Export Component for CP2B Maps V2
+Map Export Component for CP2B Maps
 Export map visualizations to various formats (PNG, HTML, PDF)
 SOLID: Single Responsibility - Handle map exports
 """

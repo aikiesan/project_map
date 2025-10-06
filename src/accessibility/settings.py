@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Accessibility Settings
+CP2B Maps - Accessibility Settings
 Basic accessibility preferences for WCAG 2.1 Level A compliance
 """
 

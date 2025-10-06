@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Bagacinho AI Assistant Page
+CP2B Maps - Bagacinho AI Assistant Page
 Full-page AI chatbot interface with RAG and Gemini integration
 WCAG 2.1 Level A compliant
 """

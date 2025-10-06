@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Technical Analysis Module
+CP2B Maps - Technical Analysis Module
 Technical feasibility assessment, infrastructure requirements, and implementation planning
 """
 

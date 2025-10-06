@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Environmental Analysis Module
+CP2B Maps - Environmental Analysis Module
 Environmental impact assessment, CO2 reduction calculations, and sustainability metrics
 """
 

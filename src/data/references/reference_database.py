@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Academic Reference Database
+CP2B Maps - Academic Reference Database
 Comprehensive citation management for biogas research and methodology
 """
 

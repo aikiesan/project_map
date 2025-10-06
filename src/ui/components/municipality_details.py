@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Municipality Details Component
+CP2B Maps - Municipality Details Component
 Detailed municipality information with biogas breakdown and analysis
 """
 

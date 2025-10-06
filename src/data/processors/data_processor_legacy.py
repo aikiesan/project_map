@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Data Processing Module
+CP2B Maps - Data Processing Module
 Comprehensive data processing utilities for database maintenance and updates
 Consolidated from V1 processing scripts with enhanced functionality
 """

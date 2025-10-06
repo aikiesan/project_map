@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - WCAG 2.1 Level A Compliance Validation
+CP2B Maps - WCAG 2.1 Level A Compliance Validation
 Comprehensive validation script for accessibility features
 """
 
@@ -19,7 +19,7 @@ logger = get_logger(__name__)
 
 class WCAGLevelAValidator:
     """
-    WCAG 2.1 Level A compliance validator for CP2B Maps V2
+    WCAG 2.1 Level A compliance validator for CP2B Maps
     """
 
     def __init__(self):
@@ -35,7 +35,7 @@ class WCAGLevelAValidator:
         Returns:
             Dict with validation results
         """
-        st.title("🔍 Validação WCAG 2.1 Nível A - CP2B Maps V2")
+        st.title("🔍 Validação WCAG 2.1 Nível A - CP2B Maps")
         st.markdown("### Verificação completa de conformidade de acessibilidade")
 
         # Initialize accessibility manager
@@ -248,7 +248,7 @@ class WCAGLevelAValidator:
 
         with st.expander("🔍 Detalhes da Validação"):
             st.markdown("**Título da Página:**")
-            st.code("CP2B Maps V2 - Análise de Potencial de Biogás | WCAG 2.1 Nível A")
+            st.code("CP2B Maps - Análise de Potencial de Biogás | WCAG 2.1 Nível A")
 
             for criterion, passed in criteria.items():
                 status = "✅ Aprovado" if passed else "❌ Reprovado"
@@ -471,7 +471,7 @@ class WCAGLevelAValidator:
             for criterion in failed_criteria:
                 st.markdown(f"- Revisar implementação do critério {criterion.replace('_', '.')}")
         else:
-            st.success("🎉 Parabéns! CP2B Maps V2 está totalmente conforme com WCAG 2.1 Nível A!")
+            st.success("🎉 Parabéns! CP2B Maps está totalmente conforme com WCAG 2.1 Nível A!")
 
         # Export results
         if st.button("📄 Exportar Relatório de Conformidade"):
@@ -500,7 +500,7 @@ class WCAGLevelAValidator:
 
         report = f"""
 # Relatório de Conformidade WCAG 2.1 Nível A
-# CP2B Maps V2 - Plataforma de Análise de Potencial de Biogás
+# CP2B Maps - Plataforma de Análise de Potencial de Biogás
 
 Data da Validação: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}
 Versão da Aplicação: 2.0.0
@@ -543,7 +543,7 @@ Padrão de Acessibilidade: WCAG 2.1 Nível A
         report += f"- Tratamento acessível de erros\n\n"
 
         report += f"---\n"
-        report += f"Relatório gerado automaticamente pelo CP2B Maps V2\n"
+        report += f"Relatório gerado automaticamente pelo CP2B Maps\n"
         report += f"Validação baseada em WCAG 2.1 Guidelines (W3C)\n"
 
         return report
@@ -552,7 +552,7 @@ Padrão de Acessibilidade: WCAG 2.1 Nível A
 def main():
     """Main validation function"""
     st.set_page_config(
-        page_title="Validação WCAG 2.1 Nível A - CP2B Maps V2",
+        page_title="Validação WCAG 2.1 Nível A - CP2B Maps",
         page_icon="🔍",
         layout="wide"
     )

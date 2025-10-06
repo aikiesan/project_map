@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Modern About Page
+CP2B Maps - Modern About Page
 Professional design with indigo gradient banner matching other pages
 """
 

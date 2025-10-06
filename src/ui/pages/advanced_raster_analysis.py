@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Advanced Raster Analysis Page
+CP2B Maps - Advanced Raster Analysis Page
 Comprehensive MapBiomas satellite data analysis with professional tools
 """
 
@@ -643,7 +643,7 @@ class AdvancedRasterAnalysisPage:
 
             report = f"""
 RELATÓRIO DE ANÁLISE DE DADOS DE SATÉLITE
-CP2B Maps V2 - Análise Avançada MapBiomas
+CP2B Maps - Análise Avançada MapBiomas
 
 Data: {pd.Timestamp.now().strftime('%d/%m/%Y %H:%M:%S')}
 
@@ -683,7 +683,7 @@ Valor Econômico Total: R$ {total_economic:,.0f}/ano
 - Análise preliminar para planejamento
 - Recomenda-se estudos detalhados para implementação
 
-Gerado pelo CP2B Maps V2 - Sistema de Análise de Potencial de Biogás
+Gerado pelo CP2B Maps - Sistema de Análise de Potencial de Biogás
 """
 
             return report

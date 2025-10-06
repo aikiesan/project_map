@@ -1,4 +1,4 @@
-# ðŸš€ CP2B Maps V2 - Deployment Guide
+# ðŸš€ CP2B Maps - Plataforma de Análise de Potencial de Geração de Biogás para Municípios Paulistas - Deployment Guide
 
 **Last Updated:** September 30, 2025
 **Platform:** Streamlit Community Cloud
@@ -303,6 +303,6 @@ Streamlit Cloud supports custom domains:
 
 ---
 
-**ðŸŽ‰ Congratulations! CP2B Maps V2 is now live in production!**
+**ðŸŽ‰ Congratulations! CP2B Maps - Plataforma de Análise de Potencial de Geração de Biogás para Municípios Paulistas is now live in production!**
 
 *For UI/UX improvements and future enhancements, see `NEXT_PHASE_DEVELOPMENT_GUIDE.md`*

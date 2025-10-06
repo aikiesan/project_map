@@ -1,6 +1,6 @@
 """
-CP2B Maps V2 - Home Page Component
-Refactored to use single-responsibility components (SOLID principles)
+CP2B Maps - Plataforma de Análise de Potencial de Geração de Biogás para Municípios Paulistas
+Home Page Component - Refactored to use single-responsibility components (SOLID principles)
 Orchestrates: SidebarRenderer, MapBuilder, DashboardMetrics
 """
 

@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Proximity Analysis Page
+CP2B Maps - Proximity Analysis Page
 100% V1 Parity - Current GitHub Version
 Professional layout with purple gradient header, 50/50 split, top controls
 """

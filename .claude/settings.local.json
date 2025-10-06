@@ -31,7 +31,9 @@
       "Read(//c/Users/Lucas/Documents/**)",
       "Bash(powershell:*)",
       "WebFetch(domain:api.github.com)",
-      "Bash(git fetch:*)"
+      "Bash(git fetch:*)",
+      "Bash(git log:*)",
+      "Bash(del update_project_name.py)"
     ],
     "deny": [],
     "ask": []

@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Data Migrator
+CP2B Maps - Data Migrator
 Focused on database optimization, fixes, and data migration
 Extracted from DataProcessor for Single Responsibility
 """

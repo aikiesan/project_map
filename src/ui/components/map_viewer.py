@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Advanced MapViewer Component
+CP2B Maps - Advanced MapViewer Component
 Professional multi-layer map with interactive municipality visualization
 """
 

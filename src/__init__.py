@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Professional Architecture
+CP2B Maps - Professional Architecture
 Core source package for biogas potential analysis platform
 """
 

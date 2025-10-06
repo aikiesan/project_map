@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Design Theme System
+CP2B Maps - Design Theme System
 Centralized color palette and styling constants from V1
 """
 

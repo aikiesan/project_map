@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Professional Raster Loader
+CP2B Maps - Professional Raster Loader
 High-performance geospatial raster processing with smart caching and optimization
 """
 

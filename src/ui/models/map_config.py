@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Map Configuration Model
+CP2B Maps - Map Configuration Model
 Dataclass for map visualization configuration state
 """
 

@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Analysis Orchestrator
+CP2B Maps - Analysis Orchestrator
 Main analysis page that coordinates all specialized analysis modules
 Enhanced with V1 design system
 """

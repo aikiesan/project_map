@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Professional Shapefile Loader
+CP2B Maps - Professional Shapefile Loader
 High-performance geospatial data loading with smart caching and optimization
 """
 

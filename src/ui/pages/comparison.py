@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Comparison Page
+CP2B Maps - Comparison Page
 Professional multi-municipality comparison and benchmarking analysis
 Enhanced with V1 design system
 """
@@ -698,7 +698,7 @@ class ComparisonPage:
                              comparison_results: Dict[str, Any]) -> str:
         """Generate text summary of comparison"""
         summary = f"""
-CP2B Maps V2 - Municipality Comparison Summary
+CP2B Maps - Municipality Comparison Summary
 Generated: {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}
 
 Selected Municipalities: {', '.join(selected_municipalities)}

@@ -1,5 +1,5 @@
 """
-Loading States Component for CP2B Maps V2
+Loading States Component for CP2B Maps
 Professional loading animations and progress indicators (V1 style)
 SOLID: Single Responsibility - Display loading states and progress
 """

@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Advanced Analysis Page
+CP2B Maps - Advanced Analysis Page
 SOLID Architecture - Professional comparative analysis of biogas potential
 Modular design with visual parity to Explorar Dados and Análise de Proximidade
 """

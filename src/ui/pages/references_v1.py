@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Modern Scientific References Page
+CP2B Maps - Modern Scientific References Page
 Professional design with teal gradient banner matching other pages
 """
 

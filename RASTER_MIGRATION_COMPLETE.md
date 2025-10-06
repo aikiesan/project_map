@@ -1,4 +1,4 @@
-# 🚀 CP2B Maps V2: Raster System Migration Complete
+# 🚀 CP2B Maps: Raster System Migration Complete
 
 ## Migration Summary
 

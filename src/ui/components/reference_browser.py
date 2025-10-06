@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Academic Reference Browser Component
+CP2B Maps - Academic Reference Browser Component
 Interactive interface for browsing, searching, and citing academic references
 """
 

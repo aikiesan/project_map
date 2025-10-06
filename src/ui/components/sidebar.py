@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Enhanced Sidebar Component
+CP2B Maps - Enhanced Sidebar Component
 Professional sidebar with municipality search, filters, and real-time results
 """
 
@@ -50,7 +50,7 @@ class Sidebar:
             Dictionary with search results and filter selections
         """
         try:
-            st.sidebar.markdown("# 🎛️ CP2B Maps V2")
+            st.sidebar.markdown("# 🎛️ CP2B Maps")
             st.sidebar.markdown("### Control Panel")
 
             # Search functionality

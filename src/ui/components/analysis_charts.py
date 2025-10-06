@@ -1,5 +1,5 @@
 """
-Analysis and Charts Module for CP2B Maps V2
+Analysis and Charts Module for CP2B Maps
 Enhanced chart library ported from V1 with improvements
 Professional data visualization for biogas analysis
 """

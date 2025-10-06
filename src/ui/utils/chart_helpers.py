@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Chart Utilities Module
+CP2B Maps - Chart Utilities Module
 Shared chart generation utilities to eliminate code duplication
 Standardized visualization components for consistent styling
 """

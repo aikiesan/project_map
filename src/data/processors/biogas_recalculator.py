@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Biogas Potential Recalculator
+CP2B Maps - Biogas Potential Recalculator
 Focused on biogas potential calculations and updates
 Extracted from DataProcessor for Single Responsibility
 """

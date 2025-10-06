@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Academic References Package
+CP2B Maps - Academic References Package
 Professional citation management and reference database
 """
 

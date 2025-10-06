@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Application Settings
+CP2B Maps - Plataforma de Análise de Potencial de Geração de Biogás para Municípios Paulistas
 Professional configuration management system
 """
 
@@ -12,14 +12,14 @@ from dataclasses import dataclass
 @dataclass
 class AppSettings:
     """
-    Central configuration class for CP2B Maps V2
+    Central configuration class for CP2B Maps
     Manages all application settings in one place
     """
 
     # Application Info
-    APP_NAME: str = "CP2B Maps V2"
+    APP_NAME: str = "CP2B Maps - Plataforma de Análise de Potencial de Geração de Biogás para Municípios Paulistas"
     APP_VERSION: str = "2.0.0"
-    APP_DESCRIPTION: str = "Professional biogas potential analysis platform"
+    APP_DESCRIPTION: str = "Plataforma profissional de análise de potencial de geração de biogás para municípios do Estado de São Paulo"
 
     # Directories
     BASE_DIR: Path = Path(__file__).parent.parent
@@ -30,7 +30,7 @@ class AppSettings:
     SHAPEFILE_DIR: Path = DATA_DIR / "shapefile"
 
     # Streamlit Configuration
-    PAGE_TITLE: str = "CP2B Maps V2 🗺️"
+    PAGE_TITLE: str = "CP2B Maps - Plataforma de Análise de Potencial de Geração de Biogás 🗺️"
     PAGE_ICON: str = "🗺️"
     LAYOUT: str = "wide"
     SIDEBAR_STATE: str = "expanded"

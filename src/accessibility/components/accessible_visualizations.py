@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Accessible Visualizations
+CP2B Maps - Accessible Visualizations
 WCAG 2.1 Level A compliant maps and charts with alternative text
 """
 

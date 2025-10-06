@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Professional Raster Map Viewer Component
+CP2B Maps - Professional Raster Map Viewer Component
 Advanced UI component for raster data visualization and analysis
 """
 
@@ -227,7 +227,7 @@ class RasterMapViewer:
                 location=[center_lat, center_lon],
                 zoom_start=settings.DEFAULT_ZOOM,
                 tiles=tiles,
-                attr='CP2B Maps V2' if controls['basemap'] == 'Satellite' else None
+                attr='CP2B Maps' if controls['basemap'] == 'Satellite' else None
             )
 
             # Add raster layer if selected

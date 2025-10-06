@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Accessibility Core Module
+CP2B Maps - Accessibility Core Module
 WCAG 2.1 Level A compliance implementation
 """
 

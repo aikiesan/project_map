@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Proximity Analyzer (Core Business Logic)
+CP2B Maps - Proximity Analyzer (Core Business Logic)
 SOLID Principles: Single Responsibility, Dependency Injection
 Clean separation of business logic from UI
 """

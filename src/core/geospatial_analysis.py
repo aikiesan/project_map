@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Geospatial Analysis Core Module
+CP2B Maps - Geospatial Analysis Core Module
 Professional geospatial processing and analysis functions
 """
 

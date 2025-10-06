@@ -1,10 +1,10 @@
-# CP2B Maps V2 - Professional Architecture
+# CP2B Maps - Plataforma de Análise de Potencial de Geração de Biogás para Municípios Paulistas
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.31+-red.svg)](https://streamlit.io)
 
-Professional biogas potential analysis platform for São Paulo municipalities.
+Plataforma profissional de análise de potencial de geração de biogás para municípios do Estado de São Paulo.
 
 ## 🚀 Features
 
@@ -61,8 +61,8 @@ Professional biogas potential analysis platform for São Paulo municipalities.
 
 ## 📊 Version History
 
-- **v2.0.0** - Professional architecture foundation
-- **v1.x** - Legacy version (separate repository)
+- **v2.0.0** - Arquitetura profissional com análise avançada de biogás
+- **v1.x** - Versão legada (repositório separado)
 
 ## 🤝 Contributing
 

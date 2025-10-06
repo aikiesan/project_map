@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Map Builder Component
+CP2B Maps - Map Builder Component
 Handles map creation with municipality data visualization
 Single Responsibility: Build Folium maps with configured layers
 """

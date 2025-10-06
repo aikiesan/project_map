@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Data Loaders Package
+CP2B Maps - Data Loaders Package
 Professional data loading modules for geospatial and tabular data
 """
 

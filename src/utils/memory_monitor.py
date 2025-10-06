@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Professional Memory Monitoring and Management
+CP2B Maps - Professional Memory Monitoring and Management
 Advanced memory tracking, optimization, and performance monitoring
 """
 

@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Economic Analysis Module
+CP2B Maps - Economic Analysis Module
 Financial calculations, ROI analysis, and economic feasibility for biogas projects
 """
 

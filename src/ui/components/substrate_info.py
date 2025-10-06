@@ -1,5 +1,5 @@
 """
-Substrate Information Component for CP2B Maps V2
+Substrate Information Component for CP2B Maps
 Educational component showing biogas potential from different substrates
 SOLID: Single Responsibility - Display substrate technical information
 """

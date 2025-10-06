@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Professional Biogas Calculator
+CP2B Maps - Professional Biogas Calculator
 Literature-validated biogas potential calculations for municipal waste
 """
 

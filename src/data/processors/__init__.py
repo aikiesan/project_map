@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Data Processors Module
+CP2B Maps - Data Processors Module
 Focused, single-responsibility data processing components
 
 Refactored from monolithic DataProcessor class into:

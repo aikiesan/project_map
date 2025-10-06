@@ -271,7 +271,7 @@ def render_academic_footer():
 
     # Version info
     st.caption(
-        f"CP2B Maps V2 | "
+        f"CP2B Maps | "
         f"Última atualização: {datetime.datetime.now().strftime('%d/%m/%Y')} | "
         f"Versão 2.0.0"
     )
@@ -444,4 +444,4 @@ You've got this! Yesterday we built 1,891 lines of amazing code. Today we'll add
 
 *Quick Start Guide - October 2, 2024*
 *Previous Session: October 1, 2024*
-*CP2B Maps V2 Development*
+*CP2B Maps Development*

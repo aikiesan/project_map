@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Accessibility Package
+CP2B Maps - Accessibility Package
 WCAG 2.1 Level A compliance implementation for Brazilian users
 """
 

@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Comprehensive Application Testing
+CP2B Maps - Comprehensive Application Testing
 Systematic functionality verification for all components
 """
 
@@ -22,7 +22,7 @@ logger = get_logger(__name__)
 
 class ApplicationTester:
     """
-    Comprehensive testing suite for CP2B Maps V2
+    Comprehensive testing suite for CP2B Maps
     Tests all functionality, accessibility, and performance
     """
 
@@ -34,7 +34,7 @@ class ApplicationTester:
 
     def run_comprehensive_tests(self):
         """Run all application tests"""
-        st.title("🧪 CP2B Maps V2 - Comprehensive Testing Suite")
+        st.title("🧪 CP2B Maps - Comprehensive Testing Suite")
         st.markdown("### Systematic verification of all application functionality")
 
         # Initialize accessibility
@@ -538,7 +538,7 @@ class ApplicationTester:
                         recommendations.append("♿ **Accessibility**: Review accessibility component implementations")
 
         if not recommendations:
-            st.success("🎉 **Excellent!** All major components are working correctly. CP2B Maps V2 is ready for production use!")
+            st.success("🎉 **Excellent!** All major components are working correctly. CP2B Maps is ready for production use!")
         else:
             for rec in recommendations:
                 st.markdown(f"- {rec}")
@@ -567,7 +567,7 @@ class ApplicationTester:
     def _generate_test_report(self):
         """Generate detailed test report"""
         report = f"""
-# CP2B Maps V2 - Comprehensive Test Report
+# CP2B Maps - Comprehensive Test Report
 Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 
 ## Executive Summary
@@ -610,7 +610,7 @@ Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 def main():
     """Main testing function"""
     st.set_page_config(
-        page_title="CP2B Maps V2 - Testing Suite",
+        page_title="CP2B Maps - Testing Suite",
         page_icon="🧪",
         layout="wide"
     )

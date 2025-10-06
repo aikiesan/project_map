@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Database Validator
+CP2B Maps - Database Validator
 Focused on database structure validation and data quality checks
 Extracted from DataProcessor for Single Responsibility
 """

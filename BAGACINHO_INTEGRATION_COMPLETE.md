@@ -373,4 +373,4 @@ app.py (lines 170-185)
 ---
 
 *Bagacinho IA Integration Complete - October 2, 2025*
-*CP2B Maps V2 - Now 95% V1 Parity ✨*
+*CP2B Maps - Now 95% V1 Parity ✨*

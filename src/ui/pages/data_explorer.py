@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Modern Residue-Based Data Explorer
+CP2B Maps - Modern Residue-Based Data Explorer
 Advanced biogas potential analysis by residue type with SOLID architecture
 """
 

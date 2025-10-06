@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - MapBiomas Integration Module
+CP2B Maps - MapBiomas Integration Module
 Professional satellite data processing for agricultural land use analysis
 """
 

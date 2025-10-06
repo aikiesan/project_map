@@ -1,4 +1,4 @@
-# 🌟 CP2B Maps V2 - Guia de Acessibilidade
+# 🌟 CP2B Maps - Plataforma de An�lise de Potencial de Gera��o de Biog�s para Munic�pios Paulistas - Guia de Acessibilidade
 
 **Conformidade WCAG 2.1 Nível A para Análise de Biogás**
 
@@ -6,7 +6,7 @@
 
 ## 📋 Visão Geral
 
-O CP2B Maps V2 foi desenvolvido com conformidade **WCAG 2.1 Nível A**, garantindo que todos os usuários brasileiros, incluindo pessoas com deficiências, possam acessar e utilizar completamente a plataforma de análise de potencial de biogás.
+O CP2B Maps - Plataforma de An�lise de Potencial de Gera��o de Biog�s para Munic�pios Paulistas foi desenvolvido com conformidade **WCAG 2.1 Nível A**, garantindo que todos os usuários brasileiros, incluindo pessoas com deficiências, possam acessar e utilizar completamente a plataforma de análise de potencial de biogás.
 
 ### ✅ Recursos de Acessibilidade Implementados
 
@@ -292,7 +292,7 @@ Sua opinião é fundamental para melhorarmos continuamente a acessibilidade do C
 
 ## 🎯 Conclusão
 
-O CP2B Maps V2 representa um marco na acessibilidade de ferramentas de análise geoespacial no Brasil. Nosso compromisso é garantir que **todos** os usuários, independentemente de suas habilidades, possam contribuir para o desenvolvimento sustentável do setor de biogás no país.
+O CP2B Maps - Plataforma de An�lise de Potencial de Gera��o de Biog�s para Munic�pios Paulistas representa um marco na acessibilidade de ferramentas de análise geoespacial no Brasil. Nosso compromisso é garantir que **todos** os usuários, independentemente de suas habilidades, possam contribuir para o desenvolvimento sustentável do setor de biogás no país.
 
 ### Nossos Compromissos:
 - **Melhoria Contínua**: Atualizações regulares baseadas em feedback
@@ -308,7 +308,7 @@ O CP2B Maps V2 representa um marco na acessibilidade de ferramentas de análise 
 
 ---
 
-**CP2B Maps V2 - Tornando a análise de biogás acessível para todos os brasileiros! 🌟**
+**CP2B Maps - Plataforma de An�lise de Potencial de Gera��o de Biog�s para Munic�pios Paulistas - Tornando a análise de biogás acessível para todos os brasileiros! 🌟**
 
 *Última atualização: 29 de setembro de 2024*
 *Versão do guia: 1.0*

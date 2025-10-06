@@ -1,4 +1,4 @@
-# CP2B Maps V2 - Phase 3 Progress
+# CP2B Maps - Phase 3 Progress
 **Date**: October 2, 2024
 **Status**: In Progress (Started)
 

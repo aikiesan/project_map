@@ -393,7 +393,7 @@ data/                  # Database and shapefiles
 
 ## 🏆 Achievement Unlocked
 
-**CP2B Maps V2** has successfully achieved **100% pixel-perfect visual parity** with V1 while also:
+**CP2B Maps** has successfully achieved **100% pixel-perfect visual parity** with V1 while also:
 
 1. ✨ Adding new AI capabilities (Bagacinho)
 2. ♿ Implementing full accessibility (WCAG 2.1 Level A)
@@ -406,5 +406,5 @@ data/                  # Database and shapefiles
 ---
 
 *Pixel-Perfect Visual Parity Achieved - October 2, 2025*
-*CP2B Maps V2 - Professional Biogas Analysis Platform*
+*CP2B Maps - Professional Biogas Analysis Platform*
 *Developed with ❤️ for UNICAMP CP2B*

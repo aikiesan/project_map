@@ -1,8 +1,8 @@
-# 🗺️ CP2B Maps V2 - Guia de Configuração de Dados Raster
+# 🗺️ CP2B Maps - Guia de Configuração de Dados Raster
 
 ## 📋 Visão Geral
 
-Este guia explica como configurar dados raster para análise geoespacial no CP2B Maps V2, incluindo dados do MapBiomas, imagens de satélite e outros dados georreferenciados.
+Este guia explica como configurar dados raster para análise geoespacial no CP2B Maps, incluindo dados do MapBiomas, imagens de satélite e outros dados georreferenciados.
 
 ---
 
@@ -129,7 +129,7 @@ ls -la data/rasters/
 ```
 
 ### **Passo 4: Verificar Configuração**
-1. **Abra o CP2B Maps V2**
+1. **Abra o CP2B Maps**
 2. **Navegue**: Raster Analysis
 3. **Verificar**: Lista de arquivos raster disponíveis
 
@@ -193,7 +193,7 @@ streamlit run test_application_functionality.py --server.port 8502
 ```
 
 ### **Verificação Manual**
-1. **Abrir CP2B Maps V2**: http://localhost:8501
+1. **Abrir CP2B Maps**: http://localhost:8501
 2. **Navegar**: Raster Analysis
 3. **Verificar**:
    - ✅ Lista de arquivos raster aparece
@@ -315,7 +315,7 @@ print("Arquivo de teste criado: data/rasters/teste_sp.tif")
 
 ---
 
-**🎯 Resultado Esperado**: Após seguir este guia, você terá dados raster funcionais no CP2B Maps V2, permitindo análises geoespaciais avançadas com dados do MapBiomas e outras fontes de satélite.
+**🎯 Resultado Esperado**: Após seguir este guia, você terá dados raster funcionais no CP2B Maps, permitindo análises geoespaciais avançadas com dados do MapBiomas e outras fontes de satélite.
 
 ---
 

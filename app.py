@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Professional Biogas Analysis Platform
+CP2B Maps - Plataforma de Análise de Potencial de Geração de Biogás para Municípios Paulistas
 Entry point for Streamlit application with modular architecture
 WCAG 2.1 Level A compliant accessibility implementation
 """
@@ -16,7 +16,7 @@ import streamlit as st
 from config.settings import settings
 
 st.set_page_config(
-    page_title="CP2B Maps V2 - Análise de Potencial de Biogás | WCAG 2.1 Nível A",
+    page_title="CP2B Maps - Plataforma de Análise de Potencial de Geração de Biogás para Municípios Paulistas | WCAG 2.1 Nível A",
     page_icon=settings.PAGE_ICON,
     layout=settings.LAYOUT,
     initial_sidebar_state=settings.SIDEBAR_STATE
@@ -96,7 +96,7 @@ def main():
         accessibility_manager.initialize()
 
         # Log application start
-        logger.info("Starting CP2B Maps V2 application with accessibility features")
+        logger.info("Starting CP2B Maps - Plataforma de Análise de Potencial de Geração de Biogás para Municípios Paulistas with accessibility features")
 
         # V1-style beautiful green gradient header
         render_green_header()

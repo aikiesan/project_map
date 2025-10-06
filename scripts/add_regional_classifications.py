@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Regional Classification Enhancement Script
+CP2B Maps - Regional Classification Enhancement Script
 Adds IBGE regional classification columns to the municipalities table
 """
 

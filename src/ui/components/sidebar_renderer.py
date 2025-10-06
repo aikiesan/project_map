@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Sidebar Renderer Component
+CP2B Maps - Sidebar Renderer Component
 Handles sidebar rendering with logo and collapsible panels
 Single Responsibility: Render sidebar UI and collect user selections
 """

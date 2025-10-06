@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Enhanced Map Visualizations
+CP2B Maps - Enhanced Map Visualizations
 Advanced visualization system with proportional circles, heat maps, and choropleth maps
 """
 
@@ -84,7 +84,7 @@ class EnhancedMapVisualizations:
                 location=[center_lat, center_lon],
                 zoom_start=zoom,
                 tiles=tiles,
-                attr='CP2B Maps V2' if config.get('basemap') == 'Satellite' else None
+                attr='CP2B Maps' if config.get('basemap') == 'Satellite' else None
             )
 
             # Apply visualization based on type
@@ -428,7 +428,7 @@ class EnhancedMapVisualizations:
                 </table>
 
                 <div style="margin-top: 10px; padding-top: 5px; border-top: 1px solid #ddd; font-size: 10px; color: #666;">
-                    CP2B Maps V2 - Análise de Biogás
+                    CP2B Maps - Análise de Biogás
                 </div>
             </div>
             """

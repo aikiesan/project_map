@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Accessible Components Package
+CP2B Maps - Accessible Components Package
 WCAG 2.1 Level A compliant UI components
 """
 

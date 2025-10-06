@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Charts Component
+CP2B Maps - Charts Component
 Professional data visualization with Plotly charts for biogas analysis
 """
 

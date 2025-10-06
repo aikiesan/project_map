@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Accessible Components
+CP2B Maps - Accessible Components
 WCAG 2.1 Level A compliant Streamlit components
 """
 

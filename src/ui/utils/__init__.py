@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - UI Utilities Module
+CP2B Maps - UI Utilities Module
 Shared utilities for UI components
 """
 

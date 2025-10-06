@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Regional Analysis Module
+CP2B Maps - Regional Analysis Module
 Regional development analysis, investment prioritization, and policy recommendations
 """
 

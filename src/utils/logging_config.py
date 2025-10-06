@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Logging Configuration
+CP2B Maps - Logging Configuration
 Professional logging setup for development and production
 """
 

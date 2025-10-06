@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Dashboard Metrics Component
+CP2B Maps - Dashboard Metrics Component
 Handles metrics dashboard rendering
 Single Responsibility: Display state-wide biogas statistics
 """

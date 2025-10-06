@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - UI Styles Module
+CP2B Maps - UI Styles Module
 Design system and theming
 """
 

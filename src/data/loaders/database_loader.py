@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Professional Database Loader
+CP2B Maps - Professional Database Loader
 High-performance SQLite database access with connection pooling and optimization
 """
 

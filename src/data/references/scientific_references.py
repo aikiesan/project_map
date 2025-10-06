@@ -1,5 +1,5 @@
 """
-Academic Reference System for CP2B Maps V2
+Academic Reference System for CP2B Maps
 Enhanced reference database ported from V1 with improvements
 Comprehensive database of research citations for biogas potential analysis
 """

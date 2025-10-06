@@ -1,5 +1,5 @@
 """
-Beautiful Design Components for CP2B Maps V2
+Beautiful Design Components for CP2B Maps
 Ported from V1 - Minimalistic and modern UI components following design best practices
 """
 

@@ -1,5 +1,5 @@
 """
-CP2B Maps V2 - Coordinate Updater
+CP2B Maps - Coordinate Updater
 Focused on municipality coordinate management and updates
 Extracted from DataProcessor for Single Responsibility
 """

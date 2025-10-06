@@ -1,5 +1,5 @@
 """
-UI Models for CP2B Maps V2
+UI Models for CP2B Maps
 Data classes and configuration objects
 """
 
