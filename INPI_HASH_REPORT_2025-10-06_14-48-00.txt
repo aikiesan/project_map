@@ -1,0 +1,308 @@
+================================================================================
+RELATÓRIO DE HASH SHA-256 PARA REGISTRO INPI
+CP2B Maps - Plataforma de Análise de Potencial de Geração de Biogás
+para Municípios Paulistas
+================================================================================
+
+Data/Hora da Geração: 06/10/2025 14:48:00
+Total de Arquivos Processados: 91
+
+================================================================================
+HASH SHA-256 DO PROJETO (RESUMO DIGITAL)
+================================================================================
+
+1230617ff9c6b3c5e50f9db2d3499ca8c7aef09113540984de7023f589ce2814
+
+================================================================================
+DETALHAMENTO DOS ARQUIVOS
+================================================================================
+
+.claude\settings.local.json
+  SHA-256: 6d081140babebb39217f8cedaa0c96d3d0cba461ac4e227e34e2f6b85e570507
+
+.streamlit\secrets.toml
+  SHA-256: 5290d49f9e7e90fb6e239cffaa389c766148a0df387b1659a59c2f4c9bf5d8b9
+
+ACCESSIBILITY_GUIDE.md
+  SHA-256: 066864f4ca0f78a12ea9cd8f1e99d1c9ffbe10abe4d1c5d9a3be750741a3d3d2
+
+app.py
+  SHA-256: 8d99b52b40257dc1f67026929b0fa6d02e32507dfde320f11ca6653aa02d9f9b
+
+config\__init__.py
+  SHA-256: dad2d1c9e4b094316f960cb4db952455f641d61fea7acad04255d7b0d88485ab
+
+config\scenario_config.py
+  SHA-256: e28e5be79b7f16f8467de2c527639f763e92022491128ab0bcdeff78e343cd17
+
+config\settings.py
+  SHA-256: 17375082aafa47d7daffeda69747089de17f283c15f0945d31698cdf817967bc
+
+DEPLOYMENT.md
+  SHA-256: 1620f507e31409c7c57bb05dafe2731935d613c336928004040b75008184d3f7
+
+DEVELOPMENT_STATUS.md
+  SHA-256: 137e818bd1fe62e43d2e548f277919ce41bb9f035ab40eacc56db7758eaee906
+
+packages.txt
+  SHA-256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+
+README.md
+  SHA-256: adc7c47f962f6feb8bbbc47c862916c63545c3b7e8d6bb5d2528638410ba3111
+
+requirements.txt
+  SHA-256: b928f89ff827fd485162931d9068c9947697750ca132ddee7e3d821225afdd45
+
+requirements_simple.txt
+  SHA-256: 30bf987d4be137e7d82d0fe7bc0a9754385980ea91886dc5053a94e702966b06
+
+scripts\add_regional_classifications.py
+  SHA-256: 8a4ad63347302e9744e3331eff79aa29f162769436a8b543e0bcebd068efb296
+
+src\__init__.py
+  SHA-256: 835334a5780649a7df98977da7f7c8835bbf475bffbb61132021864ee34dcb5d
+
+src\accessibility\__init__.py
+  SHA-256: ed470198a92b531613e224fe06aa08e2fb8a97c12098607e9793c31c386ca9ea
+
+src\accessibility\components\__init__.py
+  SHA-256: e86e357f8825e9a5cc08b69cf00ef03d280e01cf79b1f77dd7f371b791ea918d
+
+src\accessibility\components\accessible_components.py
+  SHA-256: 1362df56573d3b7b19f2163dce33ada64f0db28c431d7b5d3438f9caef4a8bfe
+
+src\accessibility\components\accessible_visualizations.py
+  SHA-256: f6a5dcb4d72c0be20abcfeceeb9b42e221adc8ab2baa4842c9874f6f10094c0a
+
+src\accessibility\core.py
+  SHA-256: 8cdf5c9d1064a98d0c05cbe248f03e380f53d8f82ad320479a39743f24629312
+
+src\accessibility\settings.py
+  SHA-256: 95ff3df112240fecfd2936c256b6d6ea498d5f1d73642a4b863a02fabe706d12
+
+src\ai\__init__.py
+  SHA-256: 81c24fd8124a2cfb5b14c00428adb7c7ce484f90c2da1db02e11aa770ea14b57
+
+src\ai\bagacinho_rag.py
+  SHA-256: 39360e1d1c53a9001defe9f591a32c3140b114e9bb0c1ba5d9a443c724e821d0
+
+src\ai\gemini_integration.py
+  SHA-256: 9f6f469ea1bb6c251387bd2c08a9a1244daf8446ad048c2530484a601d635ee2
+
+src\core\__init__.py
+  SHA-256: c7e4f7a13b882877aa9698f79bd2fed23506bb067ba2ae7d892af0aeb5ccb52a
+
+src\core\biogas_calculator.py
+  SHA-256: 3ead41b62e83fe4320935f2f04ececcd1694d85ec6d4cd773aa4d6b3f36855ba
+
+src\core\geospatial_analysis.py
+  SHA-256: d365fd61810cea3da4b1f3f7ac5489f22cd857f0351cd004f516246559993105
+
+src\core\proximity_analyzer.py
+  SHA-256: c198f0517deec4b29a066ed4b0310bae23f9107a425c0487d89231c0cb25874b
+
+src\data\__init__.py
+  SHA-256: 10836e41a4164ba5a725c79b0a2dcc7f88366e6123af1fd56c374aea730b2c27
+
+src\data\cache\__init__.py
+  SHA-256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+
+src\data\loaders\__init__.py
+  SHA-256: a025c65d6631e102057f5fd42f9849827b515205685a0013946b17cfc71c93cc
+
+src\data\loaders\database_loader.py
+  SHA-256: ac524086c55b7ad545babc5008c0411f24178f5dbc653dbd067b10b3773cbe67
+
+src\data\loaders\mapbiomas_loader.py
+  SHA-256: ba623a85a8810dfffa22ba5101095f6a359614cb2bfbbdfbaaff0d787a300410
+
+src\data\loaders\raster_loader.py
+  SHA-256: 7019b606aba489d7344ca64bd6972e7c5ffc06058f69b42bd3900c86270f329b
+
+src\data\loaders\shapefile_loader.py
+  SHA-256: cf2da9a3becbc17329cd030b5f1b84a54be14456afbf08ad794960db66fde172
+
+src\data\processors\__init__.py
+  SHA-256: e128419f85ed700e7e48a05f4e8095f6f5175f29fb494b3ac6cec5159331cf0e
+
+src\data\processors\biogas_recalculator.py
+  SHA-256: ae521da9ffbd379c6b7a17d2e9fe478f3e326eb5a18278a78d13bacf1fcf9635
+
+src\data\processors\coordinate_updater.py
+  SHA-256: 2626b550e584932af29d045f499e52692476fa567e99c3ab3c1d0a2d4287fa18
+
+src\data\processors\data_migrator.py
+  SHA-256: 75b7dbc0c740e5af1700a0a5cd78818b25e680b24137aeeb773236e34dce2bbb
+
+src\data\processors\data_processor_legacy.py
+  SHA-256: cdc7adf6b36ad8a60671b8d8dac8aadbc702c6b8e174d1a257effa124513820c
+
+src\data\processors\database_validator.py
+  SHA-256: 07964ed47f0490d67dd1f0cd8d68d27afb8762bc1dbf6f28a8d2e0e945029765
+
+src\data\references\__init__.py
+  SHA-256: 64a56ca18e464c0f46cc0742975a22755f5b935e990f7dc1562efeb7d317745d
+
+src\data\references\reference_database.py
+  SHA-256: e7d834663980c0fa192afe43099a56e19cb689f50f53a60b22e417ec8672be23
+
+src\data\references\scientific_references.py
+  SHA-256: d1dd2f7ece0fffeee40c6936baba6df15a566486c646c8d9af142a77020c912a
+
+src\ui\__init__.py
+  SHA-256: 4e2a106dbbb2680d5f359a440f468b47d2a72170cf83668182c8245a06ecf749
+
+src\ui\components\__init__.py
+  SHA-256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+
+src\ui\components\academic_footer.py
+  SHA-256: e591b101bde6ddaaf5b8092d2df982f5c1044b4f940a03fce31ef81f58dc6425
+
+src\ui\components\analysis_charts.py
+  SHA-256: 0cdb88bedcd22b9eb7f17b6eebe66afe6d884dcf76b9b1eb0c8c2ecedac23def
+
+src\ui\components\charts.py
+  SHA-256: 1dbe50adee9e87b754ed621128cc12da24b1575c999b414387a57b025d6b3791
+
+src\ui\components\dashboard_metrics.py
+  SHA-256: 54c70bb6e1a2081fa73150b34dc50b4f49b60874695e8a292c14c91603d918fb
+
+src\ui\components\design_system.py
+  SHA-256: a4c1589c2e0d3db01928e5d99e4dfb80f00520e8989554987ed719c66ae897b5
+
+src\ui\components\enhanced_map_visualizations.py
+  SHA-256: 9b3cfb713d3a6880dec2c6523059d99e5d0bffbe44e4dca10179f1bed4bb4834
+
+src\ui\components\export.py
+  SHA-256: c50c513b86f370d689754c95c44ea512b7cb953c50cb1a2ce531f27a42ba128e
+
+src\ui\components\loading_states.py
+  SHA-256: d537840300251c4bca29ef0ab9c1e29936bf257e2390193b90527ef686f559d9
+
+src\ui\components\map_builder.py
+  SHA-256: 75ad55d86dcfa80f4b86e6fba43802ce7be82a33d5de8a90b5e31a7965681cd6
+
+src\ui\components\map_export.py
+  SHA-256: d72f332de89946025931c680adfa0290fd2f141176393030a82312d0663a3e21
+
+src\ui\components\map_viewer.py
+  SHA-256: 0445df173d9f786d5c082fc504d6c615c0f3e86bc4204d420eb07e1d22aa0bdd
+
+src\ui\components\municipality_details.py
+  SHA-256: 3f7f0ce1eae1efcdd0482457fb53834f942bb77ea1b176e23f425798b8f9353f
+
+src\ui\components\raster_map_viewer.py
+  SHA-256: 4b95267f1bfc1bfcc7999ec9a15c6797228cb187ef6b933e96e7fd82792f2e15
+
+src\ui\components\reference_browser.py
+  SHA-256: a6e6fe3f99153bd0e14f502efbeb9105a324f01dbd4523697a120476290c0000
+
+src\ui\components\scenario_selector.py
+  SHA-256: 8385d44edd36af5aaf8721169e5659091a730867a97bc7d31625201ae56ac8ae
+
+src\ui\components\sidebar.py
+  SHA-256: 9cceeae81d65fa2c66397415611d90faa504624006c0d9ef1b088467a1382cfa
+
+src\ui\components\sidebar_renderer.py
+  SHA-256: b6fe27e026bc87957eb76aeb25a9a2aadf74cd907e3f272ae2355f7911c2d289
+
+src\ui\components\substrate_info.py
+  SHA-256: 2b60ddf8c231ee1f0d4435bec739d2b5485ac800e1a57a77dca3b7974b58fbb0
+
+src\ui\models\__init__.py
+  SHA-256: 13a685c9e61e9d8641e8898c4e9b233b86454f0a3bf9f4249b52ce7dda91412c
+
+src\ui\models\map_config.py
+  SHA-256: 5d11ef2ddfb89348c9b5e369a364652fac6284ccbe542d290c80545ea9c3cef3
+
+src\ui\pages\__init__.py
+  SHA-256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+
+src\ui\pages\about_v1.py
+  SHA-256: ba5a340d895cf85a5abb2a2224bf6a52e40dbe8737618cf918eced9a5497cad5
+
+src\ui\pages\advanced_raster_analysis.py
+  SHA-256: cb1b64b7caed84cddd487d9a28a836bb97fbf3a3c0ac58cc24a36caead7ea6ec
+
+src\ui\pages\analysis.py
+  SHA-256: 63a106f0f1cf83d75dc4ff9e0487e5377a91e3fc7d776587c805c3d3e07ac7b7
+
+src\ui\pages\bagacinho_assistant.py
+  SHA-256: 1f04f71f076480cc6d9bf29c41714ea7b531251c45f94b765db00608d95cb168
+
+src\ui\pages\comparison.py
+  SHA-256: 30b5420c29af5f4b31f6f177b9cf926fe23c6980e1156a4ec1fe59e0c088c561
+
+src\ui\pages\data_explorer.py
+  SHA-256: 52d642715bc5df087549f62d9cb0e2aac18f9b16074252ef10d7b74a76847e38
+
+src\ui\pages\economic_analysis.py
+  SHA-256: bbaf2ef9cc59c27269c5c9e8666b2320d496a9133920bd17e93344d694f4e0e7
+
+src\ui\pages\environmental_analysis.py
+  SHA-256: 06d5fcbd0ead0bb74ff24908256cdaf38d7b76a1ec7fb52071bcca70c4263f0b
+
+src\ui\pages\home.py
+  SHA-256: d34e9f41ec38e2618335c9effad8b843713af0a1de58fc1f664c20ccc379388a
+
+src\ui\pages\proximity_analysis.py
+  SHA-256: 7ad2c588b6c5c28ee3f0c20ee5d7a45de2064b26cba7e9690be464ca5a1dd25f
+
+src\ui\pages\references_v1.py
+  SHA-256: f6d72c741a49116420eaf34430f135465d8577c13e2b1ecc6caaab4f2deae34a
+
+src\ui\pages\regional_analysis.py
+  SHA-256: a35c43612de971d0e27b8de66d60f3e78bc3087bc809ed10dd43f440c4472434
+
+src\ui\pages\residue_analysis.py
+  SHA-256: 252c154e2fdd1111232ef0d1bb7755393c8c4eec5eed0d9fd65c9f540aa7e863
+
+src\ui\pages\technical_analysis.py
+  SHA-256: 1c033171d89224dc04a1335eae2ff908b2ffe3eb2fffc9c2366ed38b06794d21
+
+src\ui\styles\__init__.py
+  SHA-256: f7343a9d918743175618f05e5594bc25051de0592fd705a5338b2c021b6a12bc
+
+src\ui\styles\global.css
+  SHA-256: d2ff9ac3a1dc9fbbbac3426f8711c3bb7ade942781f672c498e421f7db398152
+
+src\ui\styles\theme.py
+  SHA-256: 8cc845044787762f1cb5663ff60b3ff0e92c71a7a47fe9eaa5a3a7118b649bd2
+
+src\ui\utils\__init__.py
+  SHA-256: bcf4c6edf96f09191a7ac0e425ca1056c74fdb1a4928096d3a5c3a54a4407af3
+
+src\ui\utils\chart_helpers.py
+  SHA-256: 769e7b5db3e46d88c52d37e429fa2a937c3ac18128fd26d5ebf492c9d8f0b0d7
+
+src\utils\__init__.py
+  SHA-256: 94d2828b0d0fb517867a444203909da7d8495bcc1e99f5d33f87e7c136822bc5
+
+src\utils\logging_config.py
+  SHA-256: 3a9631db72ec01eb2cdb2f57d410c6283f74122c970ba579374f935e1d762658
+
+src\utils\memory_monitor.py
+  SHA-256: 2b9038715c540c143c945622be9dbf3a3d767f6fb8fdeb09c868612478d98346
+
+static\css\accessibility.css
+  SHA-256: b58295961a4c1558417a5ccdf6d142e0226b6dc3b880366578b1d3de679593d1
+
+test.py
+  SHA-256: 34acb6b696a54dc39ae2175162ab89de075d4e8c2d77dabaf4a17cb2bd7026b6
+
+
+================================================================================
+INSTRUÇÕES PARA REGISTRO INPI
+================================================================================
+
+1. O hash SHA-256 acima é o RESUMO DIGITAL do programa de computador
+   conforme Art. 2º da Instrução Normativa INPI.
+
+2. Este hash identifica univocamente o código-fonte do software.
+
+3. Guarde este relatório e o código-fonte original em local seguro,
+   conforme Lei 9.609/98 Art. 3º § 1º inciso III.
+
+4. Em caso de necessidade de comprovação, o hash pode ser regenerado
+   a partir do código-fonte original para validação.
+
