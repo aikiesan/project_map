@@ -30,7 +30,8 @@
       "Bash(del srcuicomponentsproximity_results.py)",
       "Read(//c/Users/Lucas/Documents/**)",
       "Bash(powershell:*)",
-      "WebFetch(domain:api.github.com)"
+      "WebFetch(domain:api.github.com)",
+      "Bash(git fetch:*)"
     ],
     "deny": [],
     "ask": []

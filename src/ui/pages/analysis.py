@@ -350,6 +350,7 @@ class AnalysisOrchestrator:
                     if not economic_data.empty:
                         csv = economic_data.to_csv(index=False)
                         st.download_button(
+                            key="download_economic_csv",
                             label="Download Economic Data (CSV)",
                             data=csv,
                             file_name=f"economic_analysis_{datetime.datetime.now().strftime('%Y%m%d_%H%M')}.csv",
@@ -362,6 +363,7 @@ class AnalysisOrchestrator:
                     if not environmental_data.empty:
                         csv = environmental_data.to_csv(index=False)
                         st.download_button(
+                            key="download_environmental_csv",
                             label="Download Environmental Data (CSV)",
                             data=csv,
                             file_name=f"environmental_analysis_{datetime.datetime.now().strftime('%Y%m%d_%H%M')}.csv",
@@ -374,6 +376,7 @@ class AnalysisOrchestrator:
                     if not regional_data.empty:
                         csv = regional_data.to_csv(index=False)
                         st.download_button(
+                            key="download_regional_csv",
                             label="Download Regional Data (CSV)",
                             data=csv,
                             file_name=f"regional_analysis_{datetime.datetime.now().strftime('%Y%m%d_%H%M')}.csv",
@@ -384,6 +387,7 @@ class AnalysisOrchestrator:
             if st.button("📋 Generate Comprehensive Report", type="primary"):
                 report_data = self._generate_comprehensive_report(results, data)
                 st.download_button(
+                    key="download_comprehensive_report",
                     label="Download Complete Analysis Report (CSV)",
                     data=report_data,
                     file_name=f"cp2b_comprehensive_analysis_{datetime.datetime.now().strftime('%Y%m%d_%H%M')}.csv",
