@@ -683,7 +683,7 @@ Valor Econômico Total: R$ {total_economic:,.0f}/ano
 - Análise preliminar para planejamento
 - Recomenda-se estudos detalhados para implementação
 
-Gerado pelo CP2B Maps - Sistema de Análise de Potencial de Biogás
+Gerado pelo CP2B Maps - Plataforma de Análise de Potencial de Geração de Biogás para Municípios Paulistas
 """
 
             return report

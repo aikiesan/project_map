@@ -185,7 +185,7 @@ def render_green_header():
         </h1>
         <h2 style='margin: 0 0 0.6rem 0; font-size: 1.4rem; font-weight: 400; color: #fff2e6;
                    font-family: Montserrat, system-ui, sans-serif;'>
-            Análise de Potencial de Biogás
+            Plataforma de Análise de Potencial de Geração de Biogás para Municípios Paulistas
         </h2>
         <p style='margin: 0.5rem 0; font-size: 1rem; opacity: 0.95; font-family: Montserrat, system-ui, sans-serif;'>
             📍 <strong>645 municípios</strong> de São Paulo • ⚡ <strong>Energia Renovável</strong> • 🌱 <strong>Base Científica</strong>

@@ -248,7 +248,7 @@ class WCAGLevelAValidator:
 
         with st.expander("🔍 Detalhes da Validação"):
             st.markdown("**Título da Página:**")
-            st.code("CP2B Maps - Análise de Potencial de Biogás | WCAG 2.1 Nível A")
+            st.code("CP2B Maps - Plataforma de Análise de Potencial de Geração de Biogás para Municípios Paulistas | WCAG 2.1 Nível A")
 
             for criterion, passed in criteria.items():
                 status = "✅ Aprovado" if passed else "❌ Reprovado"
@@ -500,7 +500,7 @@ class WCAGLevelAValidator:
 
         report = f"""
 # Relatório de Conformidade WCAG 2.1 Nível A
-# CP2B Maps - Plataforma de Análise de Potencial de Biogás
+# CP2B Maps - Plataforma de Análise de Potencial de Geração de Biogás para Municípios Paulistas
 
 Data da Validação: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}
 Versão da Aplicação: 2.0.0

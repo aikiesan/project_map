@@ -76,7 +76,7 @@ def prepare_database_context() -> str:
 
     # 1. System Overview
     context_parts.append("""
-# CP2B Maps - Sistema de Análise de Potencial de Biogás
+# CP2B Maps - Plataforma de Análise de Potencial de Geração de Biogás para Municípios Paulistas
 
 ## Visão Geral
 O CP2B Maps é uma plataforma WebGIS desenvolvida pelo Centro Paulista de Estudos em Biogás e Bioprodutos (UNICAMP).
