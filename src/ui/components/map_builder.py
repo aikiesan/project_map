@@ -659,7 +659,7 @@ class MapBuilder:
             geojson_data = json.loads(municipalities_gdf.to_json())
 
             # Create choropleth (without automatic legend to avoid crowding)
-            folium.Choropleth(
+            choropleth = folium.Choropleth(
                 geo_data=geojson_data,
                 name='Potencial de Biogás',
                 data=df,
@@ -672,6 +672,12 @@ class MapBuilder:
                 nan_fill_color='lightgray',
                 nan_fill_opacity=0.2
             ).add_to(m)
+
+            # Remove the automatic color legend created by Choropleth
+            for child in m._children.values():
+                if hasattr(child, '_name') and 'color_map' in child._name:
+                    m._children.pop(list(m._children.keys())[list(m._children.values()).index(child)])
+                    break
 
             # Add tooltips with municipality info
             folium.GeoJson(

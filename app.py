@@ -72,7 +72,7 @@ def main():
             "🔍 Explorar Dados",
             "📊 Análises Avançadas",
             "🎯 Análise de Proximidade",
-            "🍊 Bagacinho",
+            "🍊 Bagacinho IA",
             "📚 Referências Científicas",
             "ℹ️ Sobre o CP2B Maps"
         ])
@@ -171,7 +171,7 @@ def main():
 
         with tabs[1]:  # Explorar Dados (Enhanced Data Explorer with V1 charts)
             announce_page_change("Explorar Dados")
-            accessibility_manager.create_accessible_heading("Explorar Dados", level=2, id_attr="explore-section")
+            # Note: Data Explorer has its own styled banner header
 
             # Enhanced Data Explorer with V1's comprehensive chart library
             from src.ui.pages.data_explorer import create_data_explorer_page
@@ -180,7 +180,7 @@ def main():
 
         with tabs[2]:  # Análises Avançadas (Residue Analysis only)
             announce_page_change("Análises Avançadas")
-            accessibility_manager.create_accessible_heading("Análises Avançadas", level=2, id_attr="advanced-section")
+            # Note: Residue Analysis page has its own styled banner header
 
             # Direct render - no sub-tabs
             from src.ui.pages.residue_analysis import create_residue_analysis_page
@@ -188,42 +188,30 @@ def main():
 
         with tabs[3]:  # Proximity Analysis (V1 UX with V2 Architecture)
             announce_page_change("Análise de Proximidade")
-            accessibility_manager.create_accessible_heading("Análise de Proximidade", level=2, id_attr="proximity-section")
+            # Note: Proximity Analysis page has its own styled banner header
 
             from src.ui.pages.proximity_analysis import create_proximity_analysis_page
             proximity_page = create_proximity_analysis_page()
             proximity_page.render()
 
-        with tabs[4]:  # Bagacinho (Standby)
+        with tabs[4]:  # Bagacinho AI Assistant
             announce_page_change("Bagacinho IA")
-            accessibility_manager.create_accessible_heading("Bagacinho IA - Em Breve", level=2, id_attr="bagacinho-section")
+            # Note: Bagacinho page has its own beautiful header, no need for duplicate heading here
 
-            # Standby message
-            st.info("🍊 **Bagacinho IA** está temporariamente em standby e será implementado em breve.")
-            st.markdown("""
-            ### O que é o Bagacinho?
-
-            O Bagacinho é um assistente de IA especializado em análise de potencial de biogás,
-            capaz de responder perguntas sobre:
-
-            - 📊 Potencial de biogás por município
-            - 🌾 Tipos de resíduos e substratos
-            - 📈 Comparações e rankings
-            - 🔍 Análise de dados específicos
-
-            Esta funcionalidade será ativada em uma próxima atualização do CP2B Maps.
-            """)
+            # Import and render Bagacinho assistant
+            from src.ui.pages.bagacinho_assistant import render_bagacinho_page
+            render_bagacinho_page()
 
         with tabs[5]:  # References (V1 style)
             announce_page_change("Academic References")
-            accessibility_manager.create_accessible_heading("Referências Científicas", level=2, id_attr="references-section")
+            # Note: References page has its own styled banner header
 
             from src.ui.pages.references_v1 import render_references_v1_page
             render_references_v1_page()
 
         with tabs[6]:  # Sobre (About) - V1 Style
             announce_page_change("Sobre o CP2B Maps")
-            accessibility_manager.create_accessible_heading("Sobre o CP2B Maps", level=2, id_attr="about-section")
+            # Note: About page has its own styled banner header
 
             from src.ui.pages.about_v1 import render_about_v1_page
             render_about_v1_page()

@@ -1284,7 +1284,7 @@ class AdvancedAnalysisPage:
                 self.seasonal_analysis.render(df, config)
 
             # Academic footer
-            render_compact_academic_footer()
+            render_compact_academic_footer(key_suffix="residue_analysis")
 
         except Exception as e:
             self.logger.error(f"Error rendering advanced analysis page: {e}", exc_info=True)

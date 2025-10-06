@@ -260,79 +260,9 @@ def query_ai(
 # FULL-PAGE CHATBOT UI
 # ============================================================================
 
-def render_bagacinho_page() -> None:
-    """
-    Render full-page Bagacinho chatbot interface with beautiful bubble design.
-    """
-    # Modern header with green gradient and stats
-    st.markdown("""
-    <div style='background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
-                color: white; padding: 2.5rem; margin: -1rem -1rem 0 -1rem;
-                text-align: center; border-radius: 0 0 25px 25px;
-                box-shadow: 0 8px 32px rgba(16, 185, 129, 0.3);'>
-        <h1 style='margin: 0; font-size: 2.8rem; font-weight: 700; font-family: "Montserrat", sans-serif;
-                   text-shadow: 2px 2px 4px rgba(0,0,0,0.2);'>
-            🍊 Bagacinho IA
-        </h1>
-        <p style='margin: 15px 0 0 0; font-size: 1.3rem; opacity: 0.95; font-weight: 300;'>
-            Assistente IA Especialista em Biogás do CP2B Maps
-        </p>
-        <div style='margin-top: 15px; font-size: 0.95rem; opacity: 0.85;'>
-            🤖 Gemini AI • 📊 RAG • 🔬 Análise Científica
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    # Stats banner
-    st.markdown("<div style='margin-top: 1.5rem;'></div>", unsafe_allow_html=True)
-    col1, col2, col3, col4 = st.columns(4)
-
-    with col1:
-        st.markdown("""
-        <div style='background: white; border-radius: 12px; padding: 1.2rem;
-                    box-shadow: 0 2px 8px rgba(16,185,129,0.15); border: 1px solid #e5e7eb;
-                    text-align: center;'>
-            <div style='font-size: 2rem; margin-bottom: 0.3rem;'>🤖</div>
-            <div style='color: #10b981; font-size: 1.8rem; font-weight: 700; margin-bottom: 0.2rem;'>Gemini</div>
-            <div style='color: #6b7280; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;'>Google AI</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    with col2:
-        st.markdown("""
-        <div style='background: white; border-radius: 12px; padding: 1.2rem;
-                    box-shadow: 0 2px 8px rgba(16,185,129,0.15); border: 1px solid #e5e7eb;
-                    text-align: center;'>
-            <div style='font-size: 2rem; margin-bottom: 0.3rem;'>📚</div>
-            <div style='color: #059669; font-size: 1.8rem; font-weight: 700; margin-bottom: 0.2rem;'>RAG</div>
-            <div style='color: #6b7280; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;'>Contexto Dinâmico</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    with col3:
-        st.markdown("""
-        <div style='background: white; border-radius: 12px; padding: 1.2rem;
-                    box-shadow: 0 2px 8px rgba(16,185,129,0.15); border: 1px solid #e5e7eb;
-                    text-align: center;'>
-            <div style='font-size: 2rem; margin-bottom: 0.3rem;'>🗺️</div>
-            <div style='color: #047857; font-size: 1.8rem; font-weight: 700; margin-bottom: 0.2rem;'>645</div>
-            <div style='color: #6b7280; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;'>Municípios</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    with col4:
-        st.markdown("""
-        <div style='background: white; border-radius: 12px; padding: 1.2rem;
-                    box-shadow: 0 2px 8px rgba(16,185,129,0.15); border: 1px solid #e5e7eb;
-                    text-align: center;'>
-            <div style='font-size: 2rem; margin-bottom: 0.3rem;'>⚡</div>
-            <div style='color: #10b981; font-size: 1.8rem; font-weight: 700; margin-bottom: 0.2rem;'>24/7</div>
-            <div style='color: #6b7280; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;'>Disponível</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    st.markdown("<div style='margin-bottom: 2rem;'></div>", unsafe_allow_html=True)
-
+@st.fragment
+def chat_interface():
+    """Chat interface as a fragment to avoid full page reload"""
     # AI Provider check
     if 'ai_provider_fullpage' not in st.session_state:
         st.session_state.ai_provider_fullpage = "gemini"
@@ -480,6 +410,37 @@ def render_bagacinho_page() -> None:
                     "role": "assistant",
                     "content": answer
                 })
+                # Force a rerun to show the new messages (fragment will handle this)
                 st.rerun()
             else:
                 create_accessible_alert(f"Erro: {answer}", "error")
+
+
+def render_bagacinho_page() -> None:
+    """
+    Main page render function with header and chat interface
+    """
+    # Modern header with green gradient
+    st.markdown("""
+    <div style='background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+                color: white; padding: 2.5rem; margin: -1rem -1rem 0 -1rem;
+                text-align: center; border-radius: 0 0 25px 25px;
+                box-shadow: 0 8px 32px rgba(16, 185, 129, 0.3);'>
+        <h1 style='margin: 0; font-size: 2.8rem; font-weight: 700; font-family: "Montserrat", sans-serif;
+                   text-shadow: 2px 2px 4px rgba(0,0,0,0.2);'>
+            🍊 Bagacinho IA
+        </h1>
+        <p style='margin: 15px 0 0 0; font-size: 1.3rem; opacity: 0.95; font-weight: 300;'>
+            Assistente IA Especialista em Biogás do CP2B Maps
+        </p>
+        <div style='margin-top: 15px; font-size: 0.95rem; opacity: 0.85;'>
+            🤖 Gemini AI • 📊 RAG • 🔬 Análise Científica
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Add spacing after header
+    st.markdown("<div style='margin-bottom: 1.5rem;'></div>", unsafe_allow_html=True)
+
+    # Render chat interface as fragment
+    chat_interface()

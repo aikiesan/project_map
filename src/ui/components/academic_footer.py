@@ -105,9 +105,12 @@ def render_academic_footer() -> None:
         st.error("Error loading academic footer")
 
 
-def render_compact_academic_footer() -> None:
+def render_compact_academic_footer(key_suffix: str) -> None:
     """
     Render compact version of academic footer (for pages with limited space)
+
+    Args:
+        key_suffix: Unique suffix for button key (e.g., page name) to avoid duplicate keys
     """
     try:
         st.markdown("---")
@@ -129,7 +132,8 @@ def render_compact_academic_footer() -> None:
                 data=abnt_citations,
                 file_name=f"cp2b_refs_{datetime.datetime.now().strftime('%Y%m%d')}.txt",
                 mime="text/plain",
-                help="Baixar referências completas"
+                help="Baixar referências completas",
+                key=f"compact_footer_download_button_{key_suffix}"
             )
 
     except Exception as e:

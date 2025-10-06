@@ -56,8 +56,8 @@ class GeminiAssistant:
         # Configure Gemini
         genai.configure(api_key=self.api_key)
 
-        # Use Gemini Flash (free tier, very capable)
-        self.model = genai.GenerativeModel('gemini-1.5-flash-latest')
+        # Use Gemini 2.5 Flash (fast, efficient, current generation model)
+        self.model = genai.GenerativeModel('gemini-2.5-flash')
 
         # Load Bagacinho training examples (if available)
         self.training_examples = self._load_training_data()
@@ -202,11 +202,9 @@ Lembre-se: CURTO e CONVERSACIONAL é melhor que LONGO e TÉCNICO! 🍊
                 "parts": [question]
             })
 
-            # Create chat session
-            chat = self.model.start_chat(history=messages[:-1])
-
-            # Send message and get response
-            response = chat.send_message(question)
+            # Use stateless generate_content method (v1 API)
+            # The 'messages' list already contains the full conversation history
+            response = self.model.generate_content(messages)
 
             return response.text, True
 
