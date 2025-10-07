@@ -42,7 +42,7 @@ def accessible_button(
             key=key,
             help=help_text,
             disabled=disabled,
-            use_container_width=False
+            width='content'
         )
 
         # Add ARIA label via JavaScript if different from label
@@ -463,7 +463,7 @@ def create_accessible_table(
         # Create accessible table using st.dataframe with enhancements
         st.dataframe(
             data,
-            use_container_width=True,
+            width='stretch',
             hide_index=False
         )
 

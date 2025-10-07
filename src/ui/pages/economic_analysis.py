@@ -307,7 +307,7 @@ class EconomicAnalyzer:
                     color_discrete_sequence=['#1f77b4']
                 )
                 fig_payback.update_layout(height=400)
-                st.plotly_chart(fig_payback, use_container_width=True)
+                st.plotly_chart(fig_payback, width='stretch')
 
             with col2:
                 # Economic viability pie chart
@@ -320,7 +320,7 @@ class EconomicAnalyzer:
                         color_discrete_sequence=px.colors.qualitative.Set3
                     )
                     fig_viability.update_layout(height=400)
-                    st.plotly_chart(fig_viability, use_container_width=True)
+                    st.plotly_chart(fig_viability, width='stretch')
 
             # Investment vs Revenue scatter plot
             fig_scatter = px.scatter(
@@ -347,7 +347,7 @@ class EconomicAnalyzer:
                 line=dict(color='red', dash='dash'),
             )
             fig_scatter.update_layout(height=500)
-            st.plotly_chart(fig_scatter, use_container_width=True)
+            st.plotly_chart(fig_scatter, width='stretch')
 
             return {
                 'payback_distribution': fig_payback,
@@ -377,7 +377,7 @@ class EconomicAnalyzer:
                 display_data['total_annual_revenue'] = display_data['total_annual_revenue'].apply(lambda x: f"R$ {x/1e6:.2f}M" if not pd.isna(x) else "N/A")
 
                 display_data.columns = ['Municipality', 'NPV', 'Payback (years)', 'Annual Revenue']
-                st.dataframe(display_data, use_container_width=True)
+                st.dataframe(display_data, width='stretch')
 
                 # NPV vs Investment chart
                 fig_npv = px.scatter(
@@ -395,7 +395,7 @@ class EconomicAnalyzer:
                 )
                 fig_npv.add_hline(y=0, line_dash="dash", line_color="red", annotation_text="Break-even")
                 fig_npv.update_layout(height=500)
-                st.plotly_chart(fig_npv, use_container_width=True)
+                st.plotly_chart(fig_npv, width='stretch')
 
             return {
                 'top_municipalities': top_municipalities if 'npv' in data.columns else pd.DataFrame(),
@@ -443,7 +443,7 @@ class EconomicAnalyzer:
                         'Alto Risco': '#DC143C'
                     }
                 )
-                st.plotly_chart(fig_risk, use_container_width=True)
+                st.plotly_chart(fig_risk, width='stretch')
 
             with col2:
                 # Risk metrics table
@@ -455,7 +455,7 @@ class EconomicAnalyzer:
 
                 risk_summary.columns = ['Municipalities', 'Total Biogas (m³/year)', 'Total Investment (BRL)']
                 st.markdown("##### Risk Summary by Category")
-                st.dataframe(risk_summary, use_container_width=True)
+                st.dataframe(risk_summary, width='stretch')
 
             # Sensitivity analysis
             st.markdown("##### 🔄 Sensitivity Analysis")
@@ -528,7 +528,7 @@ class EconomicAnalyzer:
             fig_sensitivity.add_hline(y=0, line_dash="dash", line_color="red", annotation_text="Break-even")
             fig_sensitivity.add_vline(x=0, line_dash="dash", line_color="gray", annotation_text="Base Case")
 
-            st.plotly_chart(fig_sensitivity, use_container_width=True)
+            st.plotly_chart(fig_sensitivity, width='stretch')
 
         except Exception as e:
             self.logger.error(f"Error rendering sensitivity chart: {e}")

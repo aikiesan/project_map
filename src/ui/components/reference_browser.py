@@ -102,7 +102,7 @@ class ReferenceBrowser:
 
                 if category_data:
                     df_categories = pd.DataFrame(category_data)
-                    st.dataframe(df_categories, use_container_width=True, hide_index=True)
+                    st.dataframe(df_categories, width='stretch', hide_index=True)
 
             st.markdown("---")
 

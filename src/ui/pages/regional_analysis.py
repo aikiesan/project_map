@@ -383,7 +383,7 @@ class RegionalAnalyzer:
                             'Low Priority': '#DC143C'
                         }
                     )
-                    st.plotly_chart(fig_category, use_container_width=True)
+                    st.plotly_chart(fig_category, width='stretch')
 
             with col2:
                 # Regional development dimensions radar
@@ -412,7 +412,7 @@ class RegionalAnalyzer:
                     title="Regional Development Dimensions",
                     height=400
                 )
-                st.plotly_chart(fig_radar, use_container_width=True)
+                st.plotly_chart(fig_radar, width='stretch')
 
         except Exception as e:
             self.logger.error(f"Error rendering regional overview: {e}")
@@ -450,7 +450,7 @@ class RegionalAnalyzer:
                 display_data.columns = ['Municipality', 'Priority Score', 'Economic Impact',
                                       'Jobs Created', 'CO2 Reduction (tons/year)', 'Investment Readiness']
 
-                st.dataframe(display_data, use_container_width=True)
+                st.dataframe(display_data, width='stretch')
 
             # Investment portfolio optimization
             col1, col2 = st.columns(2)
@@ -472,7 +472,7 @@ class RegionalAnalyzer:
                         size='total_economic_impact'
                     )
                     fig_portfolio.update_layout(height=400)
-                    st.plotly_chart(fig_portfolio, use_container_width=True)
+                    st.plotly_chart(fig_portfolio, width='stretch')
 
             with col2:
                 # Cumulative impact analysis
@@ -492,7 +492,7 @@ class RegionalAnalyzer:
                         }
                     )
                     fig_cumulative.update_layout(height=400)
-                    st.plotly_chart(fig_cumulative, use_container_width=True)
+                    st.plotly_chart(fig_cumulative, width='stretch')
 
             return {
                 'top_priority': top_priority if 'municipio' in data.columns else pd.DataFrame(),
@@ -573,7 +573,7 @@ class RegionalAnalyzer:
                         title=f'Job Creation Timeline - {selected_scenario} Scenario',
                         markers=True
                     )
-                    st.plotly_chart(fig_jobs, use_container_width=True)
+                    st.plotly_chart(fig_jobs, width='stretch')
 
                 with col2:
                     # Multi-metric timeline
@@ -604,7 +604,7 @@ class RegionalAnalyzer:
                     )
 
                     fig_multi.update_layout(height=500, title_text=f"Development Timeline - {selected_scenario}")
-                    st.plotly_chart(fig_multi, use_container_width=True)
+                    st.plotly_chart(fig_multi, width='stretch')
 
                 # Scenario summary
                 final_year = timeline_df.iloc[-1]
@@ -700,7 +700,7 @@ class RegionalAnalyzer:
                     })
 
                 policy_df = pd.DataFrame(policy_urgency)
-                st.dataframe(policy_df, use_container_width=True)
+                st.dataframe(policy_df, width='stretch')
 
             return {
                 'policy_recommendations': policy_recommendations,
@@ -760,7 +760,7 @@ class RegionalAnalyzer:
                         names=cluster_counts.index,
                         title='Regional Cluster Distribution'
                     )
-                    st.plotly_chart(fig_cluster_dist, use_container_width=True)
+                    st.plotly_chart(fig_cluster_dist, width='stretch')
 
                 with col2:
                     # Cluster characteristics
@@ -773,13 +773,13 @@ class RegionalAnalyzer:
                             title='Cluster Characteristics',
                             hover_data=['municipio'] if 'municipio' in data.columns else None
                         )
-                        st.plotly_chart(fig_cluster_scatter, use_container_width=True)
+                        st.plotly_chart(fig_cluster_scatter, width='stretch')
 
                 # Cluster summary statistics
                 cluster_summary = data.groupby('cluster_label')[available_features].mean().round(2)
 
                 st.markdown("##### 📊 Cluster Characteristics Summary")
-                st.dataframe(cluster_summary, use_container_width=True)
+                st.dataframe(cluster_summary, width='stretch')
 
                 # Strategic recommendations by cluster
                 cluster_strategies = {

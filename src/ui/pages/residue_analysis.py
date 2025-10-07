@@ -174,7 +174,7 @@ class TypeComparisonAnalyzer(AnalysisVisualization):
             hovertemplate='<b>%{label}</b><br>%{value:,.0f} m³/ano<br>%{percent}<extra></extra>'
         )
         fig.update_layout(height=400)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
 
     def _render_waterfall_chart(self, agri: float, livestock: float, urban: float, total: float) -> None:
         """Render waterfall chart showing contribution breakdown"""
@@ -196,7 +196,7 @@ class TypeComparisonAnalyzer(AnalysisVisualization):
             showlegend=False,
             height=400
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
 
     def _render_detailed_breakdown(self, data: pd.DataFrame) -> None:
         """Render detailed breakdown by specific residue types"""
@@ -229,9 +229,9 @@ class TypeComparisonAnalyzer(AnalysisVisualization):
                         color_continuous_scale='Oranges'
                     )
                     fig.update_layout(height=300, showlegend=False)
-                    st.plotly_chart(fig, use_container_width=True)
+                    st.plotly_chart(fig, width='stretch')
 
-                    st.dataframe(df_agri, use_container_width=True, hide_index=True)
+                    st.dataframe(df_agri, width='stretch', hide_index=True)
 
         with col2:
             # Livestock breakdown
@@ -260,9 +260,9 @@ class TypeComparisonAnalyzer(AnalysisVisualization):
                         color_continuous_scale='Reds'
                     )
                     fig.update_layout(height=300, showlegend=False)
-                    st.plotly_chart(fig, use_container_width=True)
+                    st.plotly_chart(fig, width='stretch')
 
-                    st.dataframe(df_livestock, use_container_width=True, hide_index=True)
+                    st.dataframe(df_livestock, width='stretch', hide_index=True)
 
     def _render_top_municipalities(self, data: pd.DataFrame) -> None:
         """Render top municipalities by type"""
@@ -294,7 +294,7 @@ class TypeComparisonAnalyzer(AnalysisVisualization):
                     color_continuous_scale='Oranges'
                 )
                 fig.update_layout(height=500, yaxis={'categoryorder': 'total ascending'})
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, width='stretch')
 
             with col2:
                 st.markdown("**📋 Ranking:**")
@@ -302,7 +302,7 @@ class TypeComparisonAnalyzer(AnalysisVisualization):
                 top_data['Potencial (Bi m³/ano)'] = (top_data['Potencial (m³/ano)'] / 1e9).round(3)
                 st.dataframe(
                     top_data[['Ranking', 'Município', 'Potencial (Bi m³/ano)']],
-                    use_container_width=True,
+                    width='stretch',
                     hide_index=True,
                     height=500
                 )
@@ -334,7 +334,7 @@ class TypeComparisonAnalyzer(AnalysisVisualization):
                 )
                 fig.update_layout(showlegend=False, height=400)
                 fig.update_yaxes(type='log')
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, width='stretch')
 
         with col2:
             # Statistical metrics table
@@ -358,7 +358,7 @@ class TypeComparisonAnalyzer(AnalysisVisualization):
 
             if stats_data:
                 df_stats = pd.DataFrame(stats_data)
-                st.dataframe(df_stats, use_container_width=True, hide_index=True)
+                st.dataframe(df_stats, width='stretch', hide_index=True)
 
                 # Concentration index
                 st.markdown("**🎯 Índice de Concentração:**")
@@ -490,7 +490,7 @@ class RegionalAnalyzer(AnalysisVisualization):
                 height=max(400, len(regional_sorted) * 25)
             )
             fig.update_layout(showlegend=False)
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width='stretch')
 
     def _render_regional_map(self, shapefile_name: str, regional_data: pd.DataFrame, regional_col: str, residue_type: str) -> None:
         """Render Folium choropleth map"""
@@ -631,7 +631,7 @@ class MunicipalPortfolioAnalyzer(AnalysisVisualization):
                 yaxis_title='Potencial de Biogás (m³/ano)',
                 showlegend=True
             )
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width='stretch')
 
         with col2:
             st.markdown("#### 📈 Métricas")
@@ -698,7 +698,7 @@ class MunicipalPortfolioAnalyzer(AnalysisVisualization):
                 color='total_biogas',
                 color_continuous_scale='Oranges'
             )
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width='stretch')
 
         with col2:
             # Residue type breakdown comparison
@@ -724,14 +724,14 @@ class MunicipalPortfolioAnalyzer(AnalysisVisualization):
                 barmode='group',
                 yaxis_title='Biogás (m³/ano)'
             )
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width='stretch')
 
         # Comparison table
         st.markdown("#### 📋 Tabela Comparativa")
         st.dataframe(comparison_data[[name_col, 'agricultural_biogas_m3_year',
                                       'livestock_biogas_m3_year', 'urban_biogas_m3_year', 'total_biogas']]
                     .sort_values('total_biogas', ascending=False),
-                    use_container_width=True,
+                    width='stretch',
                     hide_index=True)
 
 
@@ -918,7 +918,7 @@ class SeasonalAnalyzer(AnalysisVisualization):
             height=500,
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
 
         # Summary insights
         col1, col2, col3 = st.columns(3)
@@ -973,7 +973,7 @@ class SeasonalAnalyzer(AnalysisVisualization):
             showlegend=True,
             height=450
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
 
         # Crop details table
         st.markdown("##### 📋 Detalhes das Culturas")
@@ -987,7 +987,7 @@ class SeasonalAnalyzer(AnalysisVisualization):
             })
 
         df_details = pd.DataFrame(details_data)
-        st.dataframe(df_details, use_container_width=True, hide_index=True)
+        st.dataframe(df_details, width='stretch', hide_index=True)
 
         # Heatmap visualization
         st.markdown("##### 🌡️ Mapa de Calor - Disponibilidade Mensal")
@@ -1020,7 +1020,7 @@ class SeasonalAnalyzer(AnalysisVisualization):
             showlegend=True,
             height=450
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
 
         # Characteristics
         st.markdown("##### 📋 Características de Produção")
@@ -1034,7 +1034,7 @@ class SeasonalAnalyzer(AnalysisVisualization):
             })
 
         df_details = pd.DataFrame(details_data)
-        st.dataframe(df_details, use_container_width=True, hide_index=True)
+        st.dataframe(df_details, width='stretch', hide_index=True)
 
         st.success("""
         **✅ Vantagens das Fontes Contínuas:**
@@ -1072,7 +1072,7 @@ class SeasonalAnalyzer(AnalysisVisualization):
             height=max(300, len(crops_dict) * 40)
         )
 
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
 
     def _render_storage_calculator(self) -> None:
         """Render strategic analysis"""

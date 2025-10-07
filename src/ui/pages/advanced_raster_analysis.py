@@ -609,7 +609,7 @@ class AdvancedRasterAnalysisPage:
 
             if display_data:
                 df_display = pd.DataFrame(display_data)
-                st.dataframe(df_display, use_container_width=True)
+                st.dataframe(df_display, width='stretch')
 
                 # Export options
                 col1, col2 = st.columns(2)

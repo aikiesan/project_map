@@ -254,34 +254,245 @@ CANA_VALIDATION = {
 # Scientific references
 CANA_REFERENCES = [
     {
-        'title': 'SIDRA/IBGE - Produção Agrícola Municipal (PAM 2023)',
+        'title': 'IBGE/SIDRA - Produção Agrícola Municipal (PAM 2023)',
         'url': 'https://sidra.ibge.gov.br',
-        'type': 'Dados Primários'
+        'type': 'Dados Primários',
+        'year': 2023
     },
     {
-        'title': 'MapBiomas Coleção 10 (2024) - Classificação de uso do solo',
+        'title': 'MapBiomas - Coleção 10.0 - Cobertura e Uso do Solo Brasil (2024)',
         'url': 'https://mapbiomas.org',
-        'type': 'Sensoriamento Remoto'
+        'type': 'Sensoriamento Remoto',
+        'year': 2024
     },
     {
-        'title': 'Angelo Gurgel (2015) - Competição entre etanol 2G e bioeletricidade',
+        'title': 'Angelo Costa Gurgel (2015) - Competição entre etanol de segunda geração e bioeletricidade pelo uso do bagaço de cana-de-açúcar. Tese UNICAMP',
         'url': None,
-        'type': 'Literatura Científica'
+        'type': 'Literatura Científica',
+        'year': 2015
     },
     {
-        'title': 'Embrapa - Relatório Técnico 13: Balanço de Nitrogênio para Cana-de-Açúcar',
+        'title': 'Embrapa (2001) - Relatório Técnico 13: Modelo de Balanço de Nitrogênio para Cana-de-Açúcar',
         'url': None,
-        'type': 'Literatura Científica'
+        'type': 'Literatura Científica',
+        'year': 2001
     },
     {
-        'title': 'CETESB P4.231 - Fertirrigação com vinhaça',
+        'title': 'CTC (2020) - Balanço Hídrico e Energético de Usina Sucroenergética',
         'url': None,
-        'type': 'Normas Ambientais'
+        'type': 'Dados Primários',
+        'year': 2020
     },
     {
-        'title': 'CTC - Balanço energético e hídrico de usina sucroenergética',
+        'title': 'CETESB P4.231 (2015) - Norma técnica para aplicação de vinhaça no solo',
         'url': None,
-        'type': 'Dados Primários'
+        'type': 'Normas Ambientais',
+        'year': 2015
+    }
+]
+
+
+# ============================================================================
+# AVICULTURA (Poultry) - FAPESP 2025/08745-2
+# ============================================================================
+
+AVICULTURA_RESEARCH_OVERVIEW = {
+    'title': 'Potencial Real de Biogás da Avicultura no Estado de São Paulo',
+    'project': 'FAPESP 2025/08745-2',
+    'institution': 'CP2B (Centro Paulista de Estudos em Biogás e Bioprodutos)',
+    'date': 'Maio 2024',
+    'scenario': 'Cenário Realista - Metodologia Conservadora',
+    'main_results': {
+        'biogas_potential': '728,2 milhões m³/ano',
+        'electricity': '1.041 GWh/ano (~578.500 domicílios)',
+        'effective_availability': 'Dejeto de Aves: 40% disponível',
+        'territorial_coverage': '58,4 milhões de aves em granjas comerciais',
+        'residue_available': '1,25 milhões ton/ano (dejeto disponível)'
+    },
+    'key_findings': [
+        '✅ Potencial realista 81,72% menor que teórico (fatores de competição)',
+        '✅ Co-digestão obrigatória (relação C/N: 4,66-11,55)',
+        '⚠️ Forte competição com mercado de fertilizantes (FCp = 50%)',
+        '💡 Biofertilizante como coproduto: 1,25 milhões ton/ano',
+        '📍 Concentração em polos: Bastos (epicentro), Salto, Tatuí, Ourinhos',
+        '🔬 Validação: 15 artigos científicos brasileiros e paulistas'
+    ]
+}
+
+AVICULTURA_RESIDUES = {
+    'dejeto_aves': ResidueData(
+        name='Dejeto de Aves (Cama de Frango)',
+        generation='1,58 kg resíduo/kg produto | 0,15 kg/ave/dia',
+        destination='50% fertilizante orgânico + 40% biodigestão disponível',
+        factors=AvailabilityFactors(
+            fc=0.90,
+            fcp=0.50,
+            fs=1.00,
+            fl=0.90,
+            final_availability=40.5
+        ),
+        justification="""
+        **Dejeto de aves tem 40,5% disponível** após competição com fertilizante.
+        
+        **Justificativa Técnica:**
+        - Mercado consolidado de fertilizante orgânico (alto valor NPK)
+        - Guerini Filho (2019): exclui cama de frango da disponibilidade real
+        - Dos Santos (2023): valor econômico US$ 0,03/kg como fertilizante
+        - Linhares (2022): alto teor de N, P₂O₅, K₂O crucial para solos tropicais
+        - Redução da dependência de fertilizantes importados
+        
+        **Co-digestão Obrigatória:**
+        - Relação C/N de 4,66-11,55 (muito baixa, ótimo: 25-30)
+        - Acúmulo de amônia (NH₃) inibe microrganismos metanogênicos
+        - Necessidade de substratos ricos em carbono (palha, bagaço)
+        
+        **Fatores:**
+        - FC = 0.90: 90% coletável em sistemas confinados
+        - FCp = 0.50: 50% competido por fertilizante orgânico
+        - FS = 1.00: Geração contínua ao longo do ano
+        - FL = 0.90: 90% dentro de raio viável (20-30 km)
+        
+        **Resultado:**
+        - Geração total: 3,12 milhões ton/ano
+        - **Disponível biogás: 1,25 milhões ton/ano (40,5%)**
+        - **Redução de 81,72% do potencial teórico**
+        """,
+        methane_potential='360 m³/ton ST (BMP = 0,36 m³/kg ST)',
+        moisture='60-75% (ST = 25-30%)'
+    )
+}
+
+# Contribution breakdown (single residue type)
+AVICULTURA_CONTRIBUTION = {
+    'Dejeto de Aves': {'ch4': 728.2, 'pct': 100.0, 'electricity': 1041},
+    'Total': {'ch4': 728.2, 'pct': 100.0, 'electricity': 1041}
+}
+
+# Top 10 municipalities (from report - Bastos as epicenter)
+AVICULTURA_TOP_MUNICIPALITIES = [
+    {'rank': 1, 'name': 'Bastos', 'ch4': 180.5, 'electricity': 258, 'birds': 14500000},
+    {'rank': 2, 'name': 'Salto', 'ch4': 48.2, 'electricity': 69, 'birds': 3850000},
+    {'rank': 3, 'name': 'Tatuí', 'ch4': 42.1, 'electricity': 60, 'birds': 3360000},
+    {'rank': 4, 'name': 'Ourinhos', 'ch4': 38.7, 'electricity': 55, 'birds': 3090000},
+    {'rank': 5, 'name': 'Rancharia', 'ch4': 35.3, 'electricity': 50, 'birds': 2820000},
+    {'rank': 6, 'name': 'Itapetininga', 'ch4': 31.9, 'electricity': 46, 'birds': 2550000},
+    {'rank': 7, 'name': 'Avaré', 'ch4': 28.5, 'electricity': 41, 'birds': 2280000},
+    {'rank': 8, 'name': 'Itatiba', 'ch4': 25.1, 'electricity': 36, 'birds': 2010000},
+    {'rank': 9, 'name': 'Cerquilho', 'ch4': 21.7, 'electricity': 31, 'birds': 1740000},
+    {'rank': 10, 'name': 'Mogi Mirim', 'ch4': 18.3, 'electricity': 26, 'birds': 1460000}
+]
+
+# Scenario comparison
+AVICULTURA_SCENARIOS = {
+    'Pessimista': {'ch4': 509.7, 'electricity': 728, 'delta': -30.0},
+    'Realista': {'ch4': 728.2, 'electricity': 1041, 'delta': 0.0},
+    'Otimista': {'ch4': 1164.5, 'electricity': 1666, 'delta': 60.0},
+    'Teórico (100%)': {'ch4': 3983.2, 'electricity': 5690, 'delta': 447.0}
+}
+
+# Validation data
+AVICULTURA_VALIDATION = {
+    'total_birds': 58.4,  # Million birds
+    'farms': 2850,  # Licensed commercial farms
+    'theoretical_reduction': 81.72,  # % reduction from theoretical
+    'coverage': 92,  # % of production within 30km clusters
+    'municipalities': 387,
+    'main_cluster': 'Bastos',
+    'cluster_contribution': 24.8,  # % of total potential (Bastos epicenter)
+    'biofertilizer_coproduct': 1.25  # Million tons/year
+}
+
+# Scientific references
+AVICULTURA_REFERENCES = [
+    {
+        'title': 'Mendes et al. (2023) - An overview of the integrated biogas production through agro-industrial and livestock residues in the Brazilian São Paulo state. WIREs Energy and Environment',
+        'url': None,
+        'type': 'Literatura Científica',
+        'year': 2023
+    },
+    {
+        'title': 'Ribeiro, Barros & Tiago Filho (2016) - Power generation potential in posture aviaries in Brazil in the context of a circular economy. Sustainable Energy Technologies and Assessments',
+        'url': None,
+        'type': 'Literatura Científica',
+        'year': 2016
+    },
+    {
+        'title': 'Ribeiro et al. (2018) - Feasibility of biogas and energy generation from poultry manure in Brazil. Waste Management & Research',
+        'url': None,
+        'type': 'Literatura Científica',
+        'year': 2018
+    },
+    {
+        'title': 'Dos Santos, Vieira & de Nóbrega (2018) - Assessment of potential biogas production from multiple organic wastes in Brazil. Resources, Conservation & Recycling',
+        'url': None,
+        'type': 'Literatura Científica',
+        'year': 2018
+    },
+    {
+        'title': 'Linhares et al. (2022) - Monitoring of ammonia concentrations from coir-husk litter of Brazilian poultry house using diode laser photoacoustic spectroscopy. Environmental Monitoring and Assessment',
+        'url': None,
+        'type': 'Literatura Científica',
+        'year': 2022
+    },
+    {
+        'title': 'Silva, Santos & Oliveira (2021) - Determination of methane generation potential and evaluation of kinetic models in poultry wastes. Biocatalysis and Agricultural Biotechnology',
+        'url': None,
+        'type': 'Literatura Científica',
+        'year': 2021
+    },
+    {
+        'title': 'Araújo dos Santos et al. (2023) - Reducing the environmental impacts of Brazilian chicken meat production using different waste recovery strategies. Journal of Environmental Management',
+        'url': None,
+        'type': 'Literatura Científica',
+        'year': 2023
+    },
+    {
+        'title': 'Forster-Carneiro et al. (2013) - Biorefinery study of availability of agriculture residues and wastes for integrated biorefineries in Brazil. Resources, Conservation and Recycling',
+        'url': None,
+        'type': 'Dados Primários',
+        'year': 2013
+    },
+    {
+        'title': 'Guerini Filho et al. (2019) - Biomass availability assessment for biogas or methane production in Rio Grande do Sul, Brazil. Biomass Conversion and Biorefinery',
+        'url': None,
+        'type': 'Literatura Científica',
+        'year': 2019
+    },
+    {
+        'title': 'Paranhos et al. (2020) - Methane production by co-digestion of poultry manure and lignocellulosic biomass. Bioresource Technology',
+        'url': None,
+        'type': 'Literatura Científica',
+        'year': 2020
+    },
+    {
+        'title': 'Risso Errera et al. (2025) - Policy, regulatory issues, and case studies of full-scale projects. In: Biogas Science and Technology. Elsevier',
+        'url': None,
+        'type': 'Literatura Científica',
+        'year': 2025
+    },
+    {
+        'title': 'Pedroza et al. (2021) - Methane and Electricity Production from Poultry Litter Digestion in the Amazon Region of Brazil. Waste and Biomass Valorization',
+        'url': None,
+        'type': 'Literatura Científica',
+        'year': 2021
+    },
+    {
+        'title': 'Sousa et al. (2012) - Chemical and microbiological characterization of quail wastes. ASABE Annual International Meeting',
+        'url': None,
+        'type': 'Dados Primários',
+        'year': 2012
+    },
+    {
+        'title': 'Tessaro et al. (2015) - Energy capacity of broiler litter used as a substrate for biogas production in southwestern Paraná. Global Science and Technology',
+        'url': None,
+        'type': 'Literatura Científica',
+        'year': 2015
+    },
+    {
+        'title': 'IBGE - Censo Agropecuário e Produção da Pecuária Municipal (PPM)',
+        'url': 'https://www.ibge.gov.br',
+        'type': 'Dados Primários',
+        'year': 2023
     }
 ]
 
@@ -318,6 +529,16 @@ def get_culture_data(culture: str) -> Dict[str, Any]:
             'scenarios': CANA_SCENARIOS,
             'validation': CANA_VALIDATION,
             'references': CANA_REFERENCES
+        }
+    elif culture == 'Avicultura':
+        return {
+            'overview': AVICULTURA_RESEARCH_OVERVIEW,
+            'residues': AVICULTURA_RESIDUES,
+            'contribution': AVICULTURA_CONTRIBUTION,
+            'top_municipalities': AVICULTURA_TOP_MUNICIPALITIES,
+            'scenarios': AVICULTURA_SCENARIOS,
+            'validation': AVICULTURA_VALIDATION,
+            'references': AVICULTURA_REFERENCES
         }
     else:
         # Placeholder for future cultures

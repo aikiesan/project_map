@@ -43,7 +43,7 @@ class ValidatedResearchPage:
                 📚 Dados Validados de Pesquisa
             </h1>
             <p style='margin: 15px 0 0 0; font-size: 1.3rem; opacity: 0.95; font-weight: 300;'>
-                Fatores de disponibilidade real baseados em pesquisa FAPESP
+                Fatores de Disponibilidade real de resíduos
             </p>
             <div style='margin-top: 15px; font-size: 0.95rem; opacity: 0.8;'>
                 🔬 Metodologia Conservadora • 📊 Dados Validados • 🌾 Agricultura • 🐄 Pecuária • 🏙️ RSU
@@ -51,39 +51,32 @@ class ValidatedResearchPage:
         </div>
         """, unsafe_allow_html=True)
 
-    def _render_category_selector(self) -> tuple[str, str]:
-        """Render category and culture selector"""
+    def _render_culture_selector(self) -> str:
+        """Render simplified culture/residue selector"""
         st.markdown("### 🎯 Selecione a Fonte de Resíduo")
 
-        col1, col2 = st.columns(2)
+        # Get all available cultures across all categories
+        all_cultures = []
+        categories = get_available_categories()
+        
+        for category in categories:
+            cultures = get_cultures_by_category(category)
+            for culture in cultures:
+                if get_culture_data(culture) is not None:
+                    all_cultures.append(culture)
+        
+        if not all_cultures:
+            st.warning("⏳ Nenhum dado disponível no momento")
+            return None
 
-        with col1:
-            categories = get_available_categories()
-            selected_category = st.selectbox(
-                "**📂 Categoria:**",
-                categories,
-                format_func=lambda x: f"{get_category_icon(x)} {x}",
-                key='research_category_selector'
-            )
+        selected_culture = st.selectbox(
+            "**🌾 Cultura/Resíduo:**",
+            all_cultures,
+            format_func=lambda x: f"{get_culture_icon(x)} {x}",
+            key='research_culture_selector'
+        )
 
-        with col2:
-            cultures = get_cultures_by_category(selected_category)
-
-            # Filter only cultures with data available
-            available_cultures = [c for c in cultures if get_culture_data(c) is not None]
-
-            if not available_cultures:
-                st.info(f"⏳ Dados para {selected_category} em desenvolvimento")
-                return selected_category, None
-
-            selected_culture = st.selectbox(
-                "**🌾 Cultura/Resíduo:**",
-                available_cultures,
-                format_func=lambda x: f"{get_culture_icon(x)} {x}",
-                key='research_culture_selector'
-            )
-
-            return selected_category, selected_culture
+        return selected_culture
 
     def _render_overview_cards(self, overview: dict) -> None:
         """Render key research metrics as cards"""
@@ -96,30 +89,58 @@ class ValidatedResearchPage:
         with col1:
             st.metric(
                 "💨 Potencial de Biogás",
-                results['biogas_potential'],
+                results.get('biogas_potential', 'N/A'),
                 help="Cenário realista validado"
             )
 
         with col2:
+            electricity = results.get('electricity', 'N/A')
+            # Safely extract electricity value
+            if '(' in electricity:
+                electricity_value = electricity.split('(')[0].strip()
+            else:
+                electricity_value = electricity
+            
             st.metric(
                 "⚡ Energia Equivalente",
-                results['electricity'].split('(')[0].strip(),
-                help=results['electricity']
+                electricity_value,
+                help=electricity
             )
 
         with col3:
+            territorial = results.get('territorial_coverage', 'N/A')
+            # Safely extract first part if comma exists
+            if ',' in territorial:
+                territorial_value = territorial.split(',')[0]
+            else:
+                territorial_value = territorial
+            
             st.metric(
                 "📍 Cobertura Territorial",
-                results['territorial_coverage'].split(',')[0],
-                help=results['territorial_coverage']
+                territorial_value,
+                help=territorial
             )
 
         with col4:
-            st.metric(
-                "🌾 Base de Cálculo",
-                results['cane_processed'],
-                help="Total processado no Estado de São Paulo (2023)"
-            )
+            # Different metrics for different cultures
+            if 'cane_processed' in results:
+                st.metric(
+                    "🌾 Base de Cálculo",
+                    results['cane_processed'],
+                    help="Total processado no Estado de São Paulo (2023)"
+                )
+            elif 'residue_available' in results:
+                st.metric(
+                    "♻️ Resíduo Disponível",
+                    results['residue_available'],
+                    help="Resíduo disponível após fatores de correção"
+                )
+            else:
+                st.metric(
+                    "📊 Disponibilidade",
+                    results.get('effective_availability', 'N/A'),
+                    help="Disponibilidade efetiva do resíduo"
+                )
 
         # Key findings banner
         st.info(f"""
@@ -190,7 +211,7 @@ class ValidatedResearchPage:
         # Style the dataframe
         st.dataframe(
             df,
-            use_container_width=True,
+            width='stretch',
             hide_index=True,
             column_config={
                 'Resíduo': st.column_config.TextColumn('Resíduo', width='medium'),
@@ -243,7 +264,7 @@ class ValidatedResearchPage:
                 hovertemplate='<b>%{label}</b><br>%{value:.1f}%<br>%{customdata} Mi m³/ano<extra></extra>',
                 customdata=[contribution[k]['ch4'] for k in residues]
             )
-            st.plotly_chart(fig_pie, use_container_width=True)
+            st.plotly_chart(fig_pie, width='stretch')
 
         with col2:
             # Bar chart for absolute values
@@ -258,7 +279,7 @@ class ValidatedResearchPage:
                 color_continuous_scale='Oranges'
             )
             fig_bar.update_layout(showlegend=False)
-            st.plotly_chart(fig_bar, use_container_width=True)
+            st.plotly_chart(fig_bar, width='stretch')
 
         # Total summary
         total = contribution['Total']
@@ -269,7 +290,7 @@ class ValidatedResearchPage:
         - 🏠 Residências: **~{total['electricity']/166/12:.1f} milhões de domicílios** (consumo 166 kWh/mês)
         """)
 
-    def _render_top_municipalities(self, top_munis: list) -> None:
+    def _render_top_municipalities(self, top_munis: list, culture: str = 'Cana-de-açúcar') -> None:
         """Render top municipalities by potential"""
         st.markdown("### 🏆 Top 10 Municípios Produtores")
 
@@ -297,26 +318,40 @@ class ValidatedResearchPage:
                 height=500,
                 showlegend=False
             )
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width='stretch')
 
         with col2:
             st.markdown("**📋 Ranking Detalhado:**")
 
-            # Format dataframe for display
+            # Format dataframe for display - handle different data types
             display_df = df.copy()
             display_df['Potencial (Mi m³/ano)'] = display_df['ch4']
             display_df['Eletricidade (GWh/ano)'] = display_df['electricity']
-            display_df['Área Cana (ha)'] = display_df['area'].apply(lambda x: f"{x:,}")
+            
+            # Check if 'area' or 'birds' column exists
+            if 'area' in display_df.columns:
+                display_df['Área Cana (ha)'] = display_df['area'].apply(lambda x: f"{x:,}")
+                columns_to_show = ['#', 'Município', 'Potencial (Mi m³/ano)', 'Eletricidade (GWh/ano)']
+            elif 'birds' in display_df.columns:
+                display_df['Plantel (Mi aves)'] = (display_df['birds'] / 1000000).apply(lambda x: f"{x:.1f}")
+                columns_to_show = ['#', 'Município', 'Potencial (Mi m³/ano)', 'Plantel (Mi aves)']
+            else:
+                columns_to_show = ['#', 'Município', 'Potencial (Mi m³/ano)', 'Eletricidade (GWh/ano)']
+            
             display_df = display_df.rename(columns={'rank': '#', 'name': 'Município'})
 
             st.dataframe(
-                display_df[['#', 'Município', 'Potencial (Mi m³/ano)', 'Eletricidade (GWh/ano)']],
-                use_container_width=True,
+                display_df[columns_to_show],
+                width='stretch',
                 hide_index=True,
                 height=500
             )
 
-        st.caption("💡 Top 10 municípios representam 10,4% do potencial estadual em 10,3% da área cultivada")
+        # Culture-specific caption
+        if culture == 'Avicultura':
+            st.caption("💡 Top 10 municípios concentram 68,4% do potencial avícola estadual (Bastos: 24,8%)")
+        else:
+            st.caption("💡 Top 10 municípios representam 10,4% do potencial estadual em 10,3% da área cultivada")
 
     def _render_scenario_comparison(self, scenarios: dict) -> None:
         """Render scenario comparison"""
@@ -385,73 +420,145 @@ class ValidatedResearchPage:
         - 📉 **72% menor que teórico** (devido a fatores de competição operacionais)
         """)
 
-    def _render_validation_section(self, validation: dict) -> None:
+    def _render_validation_section(self, validation: dict, culture: str = 'Cana-de-açúcar') -> None:
         """Render validation and quality assurance section"""
         st.markdown("### ✅ Validação dos Dados")
 
         col1, col2, col3 = st.columns(3)
 
-        with col1:
-            st.metric(
-                "🗺️ SIDRA - Área Colhida",
-                f"{validation['sidra_area']:.2f} Mi ha",
-                help="Base oficial IBGE para cálculo"
-            )
-            st.metric(
-                "🛰️ MapBiomas - Área Plantada",
-                f"{validation['mapbiomas_area']:.2f} Mi ha",
-                delta=f"+{validation['divergence']}% (esperado)",
-                help="Validação via sensoriamento remoto"
-            )
+        # Different validation metrics based on culture type
+        if 'sidra_area' in validation:  # Cana-de-açúcar (agriculture)
+            with col1:
+                st.metric(
+                    "🗺️ SIDRA - Área Colhida",
+                    f"{validation['sidra_area']:.2f} Mi ha",
+                    help="Base oficial IBGE para cálculo"
+                )
+                st.metric(
+                    "🛰️ MapBiomas - Área Plantada",
+                    f"{validation['mapbiomas_area']:.2f} Mi ha",
+                    delta=f"+{validation['divergence']}% (esperado)",
+                    help="Validação via sensoriamento remoto"
+                )
 
-        with col2:
-            st.metric(
-                "📍 Municípios Produtores",
-                f"{validation['municipalities']}",
-                help="Municípios com produção de cana registrada"
-            )
-            st.metric(
-                "🏭 Usinas Mapeadas",
-                f"{validation['plants']}",
-                help="Infraestrutura existente georreferenciada"
-            )
+            with col2:
+                st.metric(
+                    "📍 Municípios Produtores",
+                    f"{validation['municipalities']}",
+                    help="Municípios com produção de cana registrada"
+                )
+                st.metric(
+                    "🏭 Usinas Mapeadas",
+                    f"{validation['plants']}",
+                    help="Infraestrutura existente georreferenciada"
+                )
 
-        with col3:
-            st.metric(
-                "💨 Usinas de Biogás",
-                f"{validation['plants_biogas']}",
-                help="Usinas com biodigestores operacionais"
-            )
-            st.metric(
-                "📡 Cobertura Territorial",
-                f"{validation['coverage']}%",
-                help="% da cana dentro de 20km de uma usina"
-            )
+            with col3:
+                st.metric(
+                    "💨 Usinas de Biogás",
+                    f"{validation['plants_biogas']}",
+                    help="Usinas com biodigestores operacionais"
+                )
+                st.metric(
+                    "📡 Cobertura Territorial",
+                    f"{validation['coverage']}%",
+                    help="% da cana dentro de 20km de uma usina"
+                )
 
-        # Validation explanation
-        with st.expander("📊 Metodologia de Validação", expanded=False):
-            st.markdown(f"""
-            **Validação Cruzada SIDRA × MapBiomas:**
+            # Validation explanation (Cana)
+            with st.expander("📊 Metodologia de Validação", expanded=False):
+                st.markdown(f"""
+                **Validação Cruzada SIDRA × MapBiomas:**
 
-            A divergência de **+{validation['divergence']}%** (MapBiomas > SIDRA) é metodologicamente esperada:
+                A divergência de **+{validation['divergence']}%** (MapBiomas > SIDRA) é metodologicamente esperada:
 
-            - **SIDRA**: Registra área **colhida** (retrospectiva, safra completada)
-            - **MapBiomas**: Classifica área **plantada** (presente/futuro, sensoriamento remoto)
-            - **Ciclo cana**: 12-18 meses semi-perene (plantio 2023 → colheita 2024)
+                - **SIDRA**: Registra área **colhida** (retrospectiva, safra completada)
+                - **MapBiomas**: Classifica área **plantada** (presente/futuro, sensoriamento remoto)
+                - **Ciclo cana**: 12-18 meses semi-perene (plantio 2023 → colheita 2024)
 
-            **Para biogás, o dado correto é área colhida** (geração de resíduos ocorre na colheita).
+                **Para biogás, o dado correto é área colhida** (geração de resíduos ocorre na colheita).
 
-            ---
+                ---
 
-            **Cobertura Espacial ({validation['coverage']}%):**
+                **Cobertura Espacial ({validation['coverage']}%):**
 
-            Análise GEE revelou que {validation['coverage']}% da cana SP está a <20km de uma usina existente:
+                Análise GEE revelou que {validation['coverage']}% da cana SP está a <20km de uma usina existente:
 
-            ✅ Infraestrutura bem distribuída
-            ✅ Potencial de retrofit em usinas existentes
-            ✅ Redução de custos de transporte
-            ⚠️ Necessidade de novas plantas em {100-validation['coverage']}% da área (greenfield)
-            """)
+                ✅ Infraestrutura bem distribuída
+                ✅ Potencial de retrofit em usinas existentes
+                ✅ Redução de custos de transporte
+                ⚠️ Necessidade de novas plantas em {100-validation['coverage']}% da área (greenfield)
+                """)
+        
+        elif 'total_birds' in validation:  # Avicultura (poultry)
+            with col1:
+                st.metric(
+                    "🐔 Plantel Total",
+                    f"{validation['total_birds']:.1f} Mi aves",
+                    help="Total de aves em granjas comerciais"
+                )
+                st.metric(
+                    "🏭 Granjas Licenciadas",
+                    f"{validation['farms']:,}",
+                    help="Granjas comerciais mapeadas"
+                )
+
+            with col2:
+                st.metric(
+                    "📍 Municípios Produtores",
+                    f"{validation['municipalities']}",
+                    help="Municípios com produção avícola"
+                )
+                st.metric(
+                    "📡 Cobertura em Clusters",
+                    f"{validation['coverage']}%",
+                    help="% da produção dentro de 30km de clusters"
+                )
+
+            with col3:
+                st.metric(
+                    "🎯 Polo Principal",
+                    f"{validation['main_cluster']}",
+                    delta=f"{validation['cluster_contribution']:.1f}% do total",
+                    help="Epicentro da produção avícola"
+                )
+                st.metric(
+                    "📉 Redução do Teórico",
+                    f"{validation['theoretical_reduction']:.1f}%",
+                    help="Diferença entre potencial teórico e real"
+                )
+
+            # Validation explanation (Avicultura)
+            with st.expander("📊 Metodologia de Validação", expanded=False):
+                st.markdown(f"""
+                **Validação de Dados Avícolas:**
+
+                A redução de **{validation['theoretical_reduction']:.1f}%** do potencial teórico para o real é resultado de:
+
+                - **Fonte de dados**: IBGE - Censo Agropecuário e Produção da Pecuária Municipal (PPM)
+                - **Plantel mapeado**: {validation['total_birds']:.1f} milhões de aves em {validation['farms']:,} granjas comerciais
+                - **Municípios**: {validation['municipalities']} municípios produtores
+                - **Validação cruzada**: 15 artigos científicos brasileiros e paulistas
+
+                ---
+
+                **Distribuição Espacial:**
+
+                A produção avícola está concentrada em **clusters produtivos**:
+
+                ✅ **Bastos** é o epicentro: {validation['cluster_contribution']:.1f}% do potencial estadual
+                ✅ {validation['coverage']}% da produção dentro de raios logísticos viáveis (30 km)
+                ✅ Outros polos: Salto, Tatuí, Ourinhos, Rancharia
+                
+                ---
+
+                **Coproduto Valorizado:**
+
+                💡 **Biofertilizante**: {validation['biofertilizer_coproduct']:.2f} milhões ton/ano
+                - Substituto de fertilizantes químicos importados
+                - Menor carga patogênica que dejeto bruto
+                - Economia circular no agronegócio
+                """)
 
     def _render_references(self, references: list) -> None:
         """Render scientific references"""
@@ -505,18 +612,19 @@ class ValidatedResearchPage:
             # Modern header
             self._render_modern_header()
 
-            # Category and culture selector
-            selected_category, selected_culture = self._render_category_selector()
+            # Simplified culture selector (no category needed)
+            selected_culture = self._render_culture_selector()
 
             if not selected_culture:
-                st.warning("⏳ Dados em desenvolvimento. Atualmente disponível: **Cana-de-açúcar**")
+                st.warning("⏳ Dados em desenvolvimento. Atualmente disponível: **Cana-de-açúcar** e **Avicultura**")
                 st.info("""
                 **🚧 Em breve:**
                 - ☕ Café
                 - 🍊 Citros
                 - 🌽 Milho
                 - 🫘 Soja
-                - 🐄 Pecuária (Bovinos, Suínos, Aves)
+                - 🐄 Bovinocultura
+                - 🐷 Suinocultura
                 - 🏙️ RSU
                 """)
                 return
@@ -547,7 +655,7 @@ class ValidatedResearchPage:
 
             st.markdown("---")
 
-            self._render_top_municipalities(culture_data['top_municipalities'])
+            self._render_top_municipalities(culture_data['top_municipalities'], selected_culture)
 
             st.markdown("---")
 
@@ -555,7 +663,7 @@ class ValidatedResearchPage:
 
             st.markdown("---")
 
-            self._render_validation_section(culture_data['validation'])
+            self._render_validation_section(culture_data['validation'], selected_culture)
 
             st.markdown("---")
 

@@ -150,7 +150,7 @@ class HomePage:
         if st.session_state.get('show_substrate_modal', False):
             with st.expander("🧪 Guia Completo de Substratos para Biogás", expanded=True):
                 render_substrate_information()
-                if st.button("✖️ Fechar Guia", use_container_width=True):
+                if st.button("✖️ Fechar Guia", width='stretch'):
                     st.session_state.show_substrate_modal = False
                     st.rerun()
 

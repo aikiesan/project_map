@@ -190,12 +190,12 @@ class Charts:
         with col1:
             # Total biogas potential by population category
             fig_population = self._create_population_biogas_chart(data)
-            st.plotly_chart(fig_population, use_container_width=True)
+            st.plotly_chart(fig_population, width='stretch')
 
         with col2:
             # Energy vs biogas potential scatter
             fig_scatter = self._create_energy_biogas_scatter(data)
-            st.plotly_chart(fig_scatter, use_container_width=True)
+            st.plotly_chart(fig_scatter, width='stretch')
 
         # Summary statistics
         summary_stats = self._calculate_summary_statistics(data)
@@ -216,16 +216,16 @@ class Charts:
         with col1:
             # Biogas potential histogram
             fig_biogas_hist = self._create_biogas_distribution_chart(data)
-            st.plotly_chart(fig_biogas_hist, use_container_width=True)
+            st.plotly_chart(fig_biogas_hist, width='stretch')
 
         with col2:
             # Population distribution
             fig_pop_hist = self._create_population_distribution_chart(data)
-            st.plotly_chart(fig_pop_hist, use_container_width=True)
+            st.plotly_chart(fig_pop_hist, width='stretch')
 
         # Box plots for detailed distribution
         fig_box = self._create_distribution_box_plots(data)
-        st.plotly_chart(fig_box, use_container_width=True)
+        st.plotly_chart(fig_box, width='stretch')
 
         return {
             'biogas_distribution': fig_biogas_hist,
@@ -254,11 +254,11 @@ class Charts:
 
         # Top 20 chart
         fig_top = self._create_top_municipalities_chart(data, selected_metric, limit=20)
-        st.plotly_chart(fig_top, use_container_width=True)
+        st.plotly_chart(fig_top, width='stretch')
 
         # Performance comparison
         fig_comparison = self._create_performance_comparison_chart(data)
-        st.plotly_chart(fig_comparison, use_container_width=True)
+        st.plotly_chart(fig_comparison, width='stretch')
 
         return {
             'top_municipalities': fig_top,
@@ -272,11 +272,11 @@ class Charts:
 
         # Correlation matrix
         fig_corr = self._create_correlation_matrix(data)
-        st.plotly_chart(fig_corr, use_container_width=True)
+        st.plotly_chart(fig_corr, width='stretch')
 
         # Scatter matrix for key variables
         fig_scatter_matrix = self._create_scatter_matrix(data)
-        st.plotly_chart(fig_scatter_matrix, use_container_width=True)
+        st.plotly_chart(fig_scatter_matrix, width='stretch')
 
         return {
             'correlation_matrix': fig_corr,
@@ -295,12 +295,12 @@ class Charts:
         with col1:
             # Regional biogas potential
             fig_regional = self._create_regional_chart(regional_data, 'biogas')
-            st.plotly_chart(fig_regional, use_container_width=True)
+            st.plotly_chart(fig_regional, width='stretch')
 
         with col2:
             # Regional efficiency
             fig_efficiency = self._create_regional_chart(regional_data, 'efficiency')
-            st.plotly_chart(fig_efficiency, use_container_width=True)
+            st.plotly_chart(fig_efficiency, width='stretch')
 
         return {
             'regional_data': regional_data,
@@ -314,11 +314,11 @@ class Charts:
 
         # Projected growth scenarios
         fig_projection = self._create_projection_chart(data)
-        st.plotly_chart(fig_projection, use_container_width=True)
+        st.plotly_chart(fig_projection, width='stretch')
 
         # Performance indicators over time (simulated)
         fig_indicators = self._create_performance_indicators_chart(data)
-        st.plotly_chart(fig_indicators, use_container_width=True)
+        st.plotly_chart(fig_indicators, width='stretch')
 
         return {
             'projection_chart': fig_projection,

@@ -645,7 +645,7 @@ def render_reference_button(ref_id: str, compact: bool = True, label: str = "�
         key_source = f"ref_btn_{ref_id}_{int(time.time() * 1000000)}"
         button_key = f"ref_{hashlib.md5(key_source.encode()).hexdigest()[:8]}"
 
-        with st.popover(label, help=f"Ver referência: {ref.title}", use_container_width=False):
+        with st.popover(label, help=f"Ver referência: {ref.title}", width='content'):
             st.markdown(f"**{ref.title}**")
             st.markdown(f"*{ref.authors}* ({ref.year})")
             st.markdown(f"**Revista:** {ref.journal}")

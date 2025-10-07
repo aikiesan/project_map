@@ -198,18 +198,18 @@ class MunicipalityDetails:
         with col1:
             # Pie chart for waste composition
             fig_pie = self._create_waste_composition_chart(biogas_breakdown)
-            st.plotly_chart(fig_pie, use_container_width=True)
+            st.plotly_chart(fig_pie, width='stretch')
 
         with col2:
             # Bar chart for biogas sources
             fig_bar = self._create_biogas_sources_chart(biogas_breakdown)
-            st.plotly_chart(fig_bar, use_container_width=True)
+            st.plotly_chart(fig_bar, width='stretch')
 
         # Detailed breakdown table
         st.markdown("##### 📋 Detailed Breakdown")
         breakdown_df = pd.DataFrame(biogas_breakdown['sources']).T
         breakdown_df.columns = ['Waste Type', 'Volume (m³/day)', 'Percentage (%)']
-        st.dataframe(breakdown_df, use_container_width=True)
+        st.dataframe(breakdown_df, width='stretch')
 
         return biogas_breakdown
 
@@ -231,7 +231,7 @@ class MunicipalityDetails:
 
             # Create comparison chart
             fig_comparison = self._create_comparison_chart(municipality_stats, state_stats)
-            st.plotly_chart(fig_comparison, use_container_width=True)
+            st.plotly_chart(fig_comparison, width='stretch')
 
             # Similar municipalities analysis
             similar_municipalities = self._find_similar_municipalities(
@@ -243,7 +243,7 @@ class MunicipalityDetails:
                 similar_df = similar_municipalities[['nome_municipio', 'biogas_potential_m3_day',
                                                    'energy_potential_kwh_day', 'population']].copy()
                 similar_df.columns = ['Municipality', 'Biogas (m³/day)', 'Energy (kWh/day)', 'Population']
-                st.dataframe(similar_df, use_container_width=True)
+                st.dataframe(similar_df, width='stretch')
 
             return {
                 'state_stats': state_stats,
@@ -307,7 +307,7 @@ class MunicipalityDetails:
             showlegend=False,
             height=400
         )
-        st.plotly_chart(fig_impact, use_container_width=True)
+        st.plotly_chart(fig_impact, width='stretch')
 
         return {
             'co2_reduction_annual': co2_reduction_annual,

@@ -291,7 +291,7 @@ class TechnicalAnalyzer:
                             'Não Viável': '#DC143C'
                         }
                     )
-                    st.plotly_chart(fig_feasibility, use_container_width=True)
+                    st.plotly_chart(fig_feasibility, width='stretch')
 
                 with col2:
                     # Plant capacity distribution
@@ -304,7 +304,7 @@ class TechnicalAnalyzer:
                             title='Plant Capacity Distribution (Viable Plants)',
                             labels={'recommended_plant_capacity': 'Plant Capacity (m³/day)', 'count': 'Number of Plants'}
                         )
-                        st.plotly_chart(fig_capacity, use_container_width=True)
+                        st.plotly_chart(fig_capacity, width='stretch')
 
         except Exception as e:
             self.logger.error(f"Error rendering technical overview: {e}")
@@ -343,7 +343,7 @@ class TechnicalAnalyzer:
                     yaxis_title='Gas Engine Capacity (kW)',
                     height=400
                 )
-                st.plotly_chart(fig_equipment, use_container_width=True)
+                st.plotly_chart(fig_equipment, width='stretch')
 
             with col2:
                 # Digester sizing chart
@@ -359,7 +359,7 @@ class TechnicalAnalyzer:
                     hover_data=['municipio'] if 'municipio' in viable_plants.columns else None
                 )
                 fig_digester.update_layout(height=400)
-                st.plotly_chart(fig_digester, use_container_width=True)
+                st.plotly_chart(fig_digester, width='stretch')
 
             # Technology recommendations table
             st.markdown("##### 🎯 Plant Design Recommendations")
@@ -397,7 +397,7 @@ class TechnicalAnalyzer:
 
             if recommendations:
                 recommendations_df = pd.DataFrame(recommendations)
-                st.dataframe(recommendations_df, use_container_width=True)
+                st.dataframe(recommendations_df, width='stretch')
 
             return {
                 'equipment_sizing_chart': fig_equipment,
@@ -472,7 +472,7 @@ class TechnicalAnalyzer:
                         color='technical_feasibility'
                     )
                     fig_complexity.update_layout(height=400)
-                    st.plotly_chart(fig_complexity, use_container_width=True)
+                    st.plotly_chart(fig_complexity, width='stretch')
 
             return {
                 'technology_options': technology_options,
@@ -500,7 +500,7 @@ class TechnicalAnalyzer:
                 })
 
             requirements_df = pd.DataFrame(requirements_data)
-            st.dataframe(requirements_df, use_container_width=True)
+            st.dataframe(requirements_df, width='stretch')
 
             # Infrastructure readiness assessment
             col1, col2 = st.columns(2)
@@ -524,7 +524,7 @@ class TechnicalAnalyzer:
                         labels={'infrastructure_readiness': 'Infrastructure Readiness Score', 'count': 'Number of Plants'}
                     )
                     fig_infrastructure.update_layout(height=400)
-                    st.plotly_chart(fig_infrastructure, use_container_width=True)
+                    st.plotly_chart(fig_infrastructure, width='stretch')
 
             with col2:
                 # Infrastructure investment requirements
@@ -546,7 +546,7 @@ class TechnicalAnalyzer:
                         hover_data=['municipio'] if 'municipio' in viable_plants.columns else None
                     )
                     fig_investment.update_layout(height=400)
-                    st.plotly_chart(fig_investment, use_container_width=True)
+                    st.plotly_chart(fig_investment, width='stretch')
 
             return {
                 'requirements': requirements_df,
@@ -639,7 +639,7 @@ class TechnicalAnalyzer:
                             'Low Priority': '#DC143C'
                         }
                     )
-                    st.plotly_chart(fig_priority, use_container_width=True)
+                    st.plotly_chart(fig_priority, width='stretch')
 
                 with col2:
                     # Priority vs capacity scatter
@@ -655,7 +655,7 @@ class TechnicalAnalyzer:
                         color='priority_category',
                         hover_data=['municipio']
                     )
-                    st.plotly_chart(fig_priority_scatter, use_container_width=True)
+                    st.plotly_chart(fig_priority_scatter, width='stretch')
 
                 # Top priority projects
                 top_priority = viable_plants.nlargest(10, 'priority_score')[
@@ -668,7 +668,7 @@ class TechnicalAnalyzer:
                 display_priority['Biogas (m³/day)'] = display_priority['Biogas (m³/day)'].round(0)
                 display_priority['Engine (kW)'] = display_priority['Engine (kW)'].round(0)
                 display_priority['Priority Score'] = display_priority['Priority Score'].round(3)
-                st.dataframe(display_priority, use_container_width=True)
+                st.dataframe(display_priority, width='stretch')
 
             return {
                 'phases': phases,

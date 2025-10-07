@@ -239,7 +239,7 @@ class ComparisonPage:
 
         # Performance radar chart
         radar_chart = self._create_comparison_radar_chart(comparison_data)
-        st.plotly_chart(radar_chart, use_container_width=True)
+        st.plotly_chart(radar_chart, width='stretch')
 
         return {
             'comparison_data': comparison_data,
@@ -276,7 +276,7 @@ class ComparisonPage:
         # Display with styling
         st.dataframe(
             display_data,
-            use_container_width=True,
+            width='stretch',
             hide_index=True
         )
 
@@ -335,7 +335,7 @@ class ComparisonPage:
                 xaxis_tickangle=-45,
                 height=400
             )
-            st.plotly_chart(fig_biogas, use_container_width=True)
+            st.plotly_chart(fig_biogas, width='stretch')
 
         with col2:
             # Per capita comparison
@@ -353,11 +353,11 @@ class ComparisonPage:
                 xaxis_tickangle=-45,
                 height=400
             )
-            st.plotly_chart(fig_per_capita, use_container_width=True)
+            st.plotly_chart(fig_per_capita, width='stretch')
 
         # Multi-metric comparison
         fig_multi = self._create_multi_metric_comparison(data)
-        st.plotly_chart(fig_multi, use_container_width=True)
+        st.plotly_chart(fig_multi, width='stretch')
 
         return {
             'biogas_comparison': fig_biogas,
@@ -386,7 +386,7 @@ class ComparisonPage:
 
         # Benchmark comparison chart
         benchmark_chart = self._create_benchmark_comparison_chart(selected_data, state_benchmarks)
-        st.plotly_chart(benchmark_chart, use_container_width=True)
+        st.plotly_chart(benchmark_chart, width='stretch')
 
         # Performance categories
         self._render_performance_categories(selected_data, state_benchmarks)
@@ -442,11 +442,11 @@ class ComparisonPage:
         ranking_data = selected_data[ranking_columns].copy()
         ranking_data.columns = ['Municipality', 'Biogas Rank', 'Energy Rank', 'Efficiency Rank']
 
-        st.dataframe(ranking_data, use_container_width=True, hide_index=True)
+        st.dataframe(ranking_data, width='stretch', hide_index=True)
 
         # Ranking visualization
         ranking_chart = self._create_ranking_visualization(selected_data)
-        st.plotly_chart(ranking_chart, use_container_width=True)
+        st.plotly_chart(ranking_chart, width='stretch')
 
         return {
             'ranking_data': ranking_data,

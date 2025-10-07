@@ -497,7 +497,7 @@ class RasterMapViewer:
 
                 if display_data:
                     df_display = pd.DataFrame(display_data)
-                    st.dataframe(df_display, use_container_width=True)
+                    st.dataframe(df_display, width='stretch')
 
                     # Export option
                     if st.button("📥 Export Results"):

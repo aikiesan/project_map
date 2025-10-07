@@ -32,7 +32,6 @@ st.markdown("""
 
 # Import after page config
 from src.utils.logging_config import get_logger
-from src.ui.pages.home import HomePage
 
 # Import design system for V1 styling
 from src.ui.components.design_system import render_green_header, load_global_css
@@ -50,6 +49,17 @@ from src.accessibility.components.accessible_components import (
 # Import scenario system
 from config.scenario_config import init_scenario_state
 
+# CRITICAL: Import all page modules at startup to prevent re-imports on tab rendering
+# This eliminates multiple reruns caused by lazy imports inside tab blocks
+from src.ui.pages.home import HomePage
+from src.ui.pages.data_explorer import create_data_explorer_page
+from src.ui.pages.residue_analysis import create_residue_analysis_page
+from src.ui.pages.proximity_analysis import create_proximity_analysis_page
+from src.ui.pages.bagacinho_assistant import render_bagacinho_page
+from src.ui.pages.references_v1 import render_references_v1_page
+from src.ui.pages.validated_research import create_validated_research_page
+from src.ui.pages.about_v1 import render_about_v1_page
+
 # Initialize logger
 logger = get_logger(__name__)
 
@@ -65,56 +75,6 @@ def initialize_accessibility():
     return AccessibilityManager()
 
 
-@st.cache_resource
-def initialize_global_resources():
-    """Initialize global resources once"""
-    logger.info("Loading global CSS (cached)")
-    load_global_css()
-    return True
-
-
-@st.cache_resource
-def load_tab_navigation_css():
-    """Load critical CSS for tabs and accessibility (cached, minimal)"""
-    st.markdown("""
-        <style>
-        /* Hide accessibility skip links visually (but keep for screen readers) */
-        a[href="#main-content"],
-        a[href="#sidebar"],
-        a[href^="Pular"] {
-            position: absolute !important;
-            left: -10000px !important;
-            top: auto !important;
-            width: 1px !important;
-            height: 1px !important;
-            overflow: hidden !important;
-        }
-        /* Show on keyboard focus for accessibility */
-        a[href="#main-content"]:focus,
-        a[href="#sidebar"]:focus {
-            position: static !important;
-            width: auto !important;
-            height: auto !important;
-            background: #2E8B57;
-            color: white;
-            padding: 0.5rem 1rem;
-            z-index: 9999;
-        }
-
-        /* Remove purple lines from sidebar headers */
-        .stMarkdown h3 {
-            border-bottom: none !important;
-        }
-        section[data-testid="stSidebar"] h1,
-        section[data-testid="stSidebar"] h2,
-        section[data-testid="stSidebar"] h3 {
-            border-bottom: none !important;
-        }
-        /* Note: Tab styles now in global.css for better performance */
-        </style>
-        """, unsafe_allow_html=True)
-
-
 # ============================================================================
 # SESSION STATE INITIALIZATION - Runs only once per session
 # ============================================================================
@@ -123,12 +83,24 @@ def init_session_state():
     """Initialize session state variables only once"""
     if 'app_initialized' not in st.session_state:
         logger.info("First session initialization")
+
+        # CRITICAL: Load CSS ONCE at session initialization
+        # This prevents multiple reruns caused by module-level CSS loading
+        load_global_css()
+
         st.session_state.app_initialized = True
         st.session_state.accessibility_manager = initialize_accessibility()
-        st.session_state.global_resources_loaded = initialize_global_resources()
         # Initialize scenario system
         init_scenario_state()
-        # CSS will be loaded in main() before components render
+        
+        # CRITICAL: Initialize OBJECT-BASED page instances ONCE and cache in session state
+        # Prevents creating new page objects on every rerun
+        # Note: Functional pages (that render on creation) are not cached here
+        logger.info("Initializing cached page instances...")
+        st.session_state.home_page = HomePage()
+        st.session_state.data_explorer_page = create_data_explorer_page()
+        st.session_state.proximity_analysis_page = create_proximity_analysis_page()
+        logger.info("Page instances cached successfully")
 
 
 def main():
@@ -149,12 +121,6 @@ def main():
         # Log application start
         logger.info("Starting CP2B Maps - Plataforma de Análise de Potencial de Geração de Biogás para Municípios Paulistas with accessibility features")
 
-        # CRITICAL: Load CSS BEFORE any components render (prevents visual reflow)
-        # This must happen before render_green_header() and st.tabs()
-        if 'css_loaded' not in st.session_state:
-            load_tab_navigation_css()
-            st.session_state.css_loaded = True
-
         # V1-style beautiful green gradient header
         render_green_header()
 
@@ -162,7 +128,7 @@ def main():
         st.markdown('<div lang="pt-BR">', unsafe_allow_html=True)
 
         # V1-Style Tab Navigation (8 tabs - Added Validated Research Data)
-        # CSS already loaded above, so tabs render with correct styles immediately
+        # CSS loaded at startup via st.components.v1.html, so tabs render with correct styles immediately
         tabs = st.tabs([
             "🏠 Mapa Principal",
             "🔍 Explorar Dados",
@@ -177,56 +143,41 @@ def main():
         # Main content area with landmark (WCAG 1.3.1)
         st.markdown('<main role="main" id="main-content" aria-label="Conteúdo principal">', unsafe_allow_html=True)
 
-        # Render content in tabs (with loading indicator for Home tab)
+        # Render content in tabs (using cached page instances from session state)
         with tabs[0]:  # Home
             # Hidden heading for accessibility only
             st.markdown('<h2 style="position: absolute; left: -10000px;" id="home-section">Página Inicial</h2>', unsafe_allow_html=True)
-
-            # Show loading spinner for initial map load
-            with st.spinner('🗺️ Carregando mapa e dados...'):
-                from src.ui.pages.home import HomePage
-                home_page = HomePage()
-                home_page.render()
+            
+            # Use cached page instance
+            st.session_state.home_page.render()
 
         with tabs[1]:  # Explorar Dados (Enhanced Data Explorer with V1 charts)
             # Note: Data Explorer has its own styled banner header
-            with st.spinner('📊 Carregando explorador de dados...'):
-                from src.ui.pages.data_explorer import create_data_explorer_page
-                data_explorer = create_data_explorer_page()
-                data_explorer.render()
+            st.session_state.data_explorer_page.render()
 
         with tabs[2]:  # Análises Avançadas (Residue Analysis only)
             # Note: Residue Analysis page has its own styled banner header
-            with st.spinner('📈 Carregando análises avançadas...'):
-                from src.ui.pages.residue_analysis import create_residue_analysis_page
-                create_residue_analysis_page()
+            # Functional page - renders on creation
+            create_residue_analysis_page()
 
         with tabs[3]:  # Proximity Analysis (V1 UX with V2 Architecture)
             # Note: Proximity Analysis page has its own styled banner header
-            with st.spinner('🎯 Carregando análise de proximidade...'):
-                from src.ui.pages.proximity_analysis import create_proximity_analysis_page
-                proximity_page = create_proximity_analysis_page()
-                proximity_page.render()
+            st.session_state.proximity_analysis_page.render()
 
         with tabs[4]:  # Bagacinho AI Assistant
-            # Note: Bagacinho page has its own beautiful header, no need for duplicate heading here
-            with st.spinner('🍊 Carregando Bagacinho IA...'):
-                from src.ui.pages.bagacinho_assistant import render_bagacinho_page
-                render_bagacinho_page()
+            # Note: Bagacinho page has its own beautiful header
+            render_bagacinho_page()
 
         with tabs[5]:  # References (V1 style)
             # Note: References page has its own styled banner header
-            from src.ui.pages.references_v1 import render_references_v1_page
             render_references_v1_page()
 
         with tabs[6]:  # Validated Research Data (NEW)
             # Note: Validated Research page has its own styled banner header
-            from src.ui.pages.validated_research import create_validated_research_page
             create_validated_research_page()
 
         with tabs[7]:  # Sobre (About) - V1 Style
             # Note: About page has its own styled banner header
-            from src.ui.pages.about_v1 import render_about_v1_page
             render_about_v1_page()
 
         # Close main content landmark

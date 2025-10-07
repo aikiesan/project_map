@@ -4,6 +4,45 @@
  */
 
 /* ============================================================================
+   ACCESSIBILITY - Skip Links and WCAG Compliance
+   ============================================================================ */
+
+/* Hide accessibility skip links visually (but keep for screen readers) */
+a[href="#main-content"],
+a[href="#sidebar"],
+a[href^="Pular"] {
+    position: absolute !important;
+    left: -10000px !important;
+    top: auto !important;
+    width: 1px !important;
+    height: 1px !important;
+    overflow: hidden !important;
+}
+
+/* Show on keyboard focus for accessibility */
+a[href="#main-content"]:focus,
+a[href="#sidebar"]:focus {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    background: #2E8B57;
+    color: white;
+    padding: 0.5rem 1rem;
+    z-index: 9999;
+}
+
+/* Remove purple lines from sidebar headers */
+.stMarkdown h3 {
+    border-bottom: none !important;
+}
+
+section[data-testid="stSidebar"] h1,
+section[data-testid="stSidebar"] h2,
+section[data-testid="stSidebar"] h3 {
+    border-bottom: none !important;
+}
+
+/* ============================================================================
    BUTTONS - Enhanced with V1 Styling
    ============================================================================ */
 

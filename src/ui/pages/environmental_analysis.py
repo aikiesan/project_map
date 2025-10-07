@@ -242,7 +242,7 @@ class EnvironmentalAnalyzer:
                         color_discrete_sequence=px.colors.qualitative.Set3
                     )
                     fig_sources.update_layout(height=400)
-                    st.plotly_chart(fig_sources, use_container_width=True)
+                    st.plotly_chart(fig_sources, width='stretch')
 
             with col2:
                 # Cumulative CO2 reduction over time
@@ -263,7 +263,7 @@ class EnvironmentalAnalyzer:
                     yaxis_title='CO2 Equivalent Reduction (tons)',
                     height=400
                 )
-                st.plotly_chart(fig_cumulative, use_container_width=True)
+                st.plotly_chart(fig_cumulative, width='stretch')
 
             # Top municipalities by environmental impact
             if 'municipio' in data.columns:
@@ -275,7 +275,7 @@ class EnvironmentalAnalyzer:
                 display_data = top_env_municipalities.copy()
                 display_data.columns = ['Municipality', 'CO2 Reduction (tons/year)', 'Water Saving (M liters/year)', 'Fertilizer Replacement (tons/year)']
                 display_data = display_data.round(2)
-                st.dataframe(display_data, use_container_width=True)
+                st.dataframe(display_data, width='stretch')
 
             return {
                 'source_distribution': fig_sources if source_data else None,
@@ -363,7 +363,7 @@ class EnvironmentalAnalyzer:
                     title="Sustainability Performance Score",
                     height=400
                 )
-                st.plotly_chart(fig_radar, use_container_width=True)
+                st.plotly_chart(fig_radar, width='stretch')
 
             return {
                 'sdg_metrics': sdg_metrics,
@@ -445,7 +445,7 @@ class EnvironmentalAnalyzer:
                 # Rotate x-axis labels for better readability
                 fig_multi.update_xaxes(tickangle=45)
 
-                st.plotly_chart(fig_multi, use_container_width=True)
+                st.plotly_chart(fig_multi, width='stretch')
 
             # Environmental value vs biogas potential scatter
             fig_scatter = px.scatter(
@@ -464,7 +464,7 @@ class EnvironmentalAnalyzer:
                 size_max=20
             )
             fig_scatter.update_layout(height=500)
-            st.plotly_chart(fig_scatter, use_container_width=True)
+            st.plotly_chart(fig_scatter, width='stretch')
 
             return {
                 'multi_metric_chart': fig_multi if 'municipio' in data.columns else None,
@@ -501,7 +501,7 @@ class EnvironmentalAnalyzer:
                                          'Municipalities']
 
                 st.markdown("##### 📍 Environmental Impact by Region")
-                st.dataframe(regional_impact, use_container_width=True)
+                st.dataframe(regional_impact, width='stretch')
 
                 # Regional comparison chart
                 fig_regional = px.bar(
@@ -513,7 +513,7 @@ class EnvironmentalAnalyzer:
                     color_continuous_scale='Viridis'
                 )
                 fig_regional.update_layout(height=400)
-                st.plotly_chart(fig_regional, use_container_width=True)
+                st.plotly_chart(fig_regional, width='stretch')
 
                 return {
                     'regional_impact': regional_impact,

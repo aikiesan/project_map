@@ -163,7 +163,10 @@ def render_page_header(
     st.markdown(header_html, unsafe_allow_html=True)
 
 def render_green_header():
-    """Render V1's signature green gradient header at the top of the page"""
+    """
+    Render V1's signature green gradient header at the top of the page
+    Note: This must render on every script execution to remain visible
+    """
     st.markdown("""
     <style>
     /* Push main content down to accommodate header */
@@ -545,7 +548,7 @@ def render_styled_table(dataframe, title: str = "", max_height: int = 400):
     # Style the dataframe
     st.dataframe(
         dataframe,
-        use_container_width=True,
+        width='stretch',
         height=max_height
     )
 
@@ -631,13 +634,15 @@ def render_gradient_button(label: str, key: str, on_click=None, button_type: str
 
 def load_global_css():
     """
-    Load global CSS styling from file
+    Load global CSS styling from file using st.components.v1.html
+    This method does NOT trigger Streamlit reruns (unlike st.markdown)
     """
     css_path = Path(__file__).parent.parent / "styles" / "global.css"
 
     if css_path.exists():
-        with open(css_path, 'r') as f:
+        with open(css_path, 'r', encoding='utf-8') as f:
             css_content = f.read()
-            st.markdown(f"<style>{css_content}</style>", unsafe_allow_html=True)
+            # Use st.components.v1.html instead of st.markdown to prevent reruns
+            st.components.v1.html(f"<style>{css_content}</style>", height=0)
     else:
         logger.warning(f"Global CSS file not found at {css_path}")

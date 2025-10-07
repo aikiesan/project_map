@@ -136,7 +136,7 @@ class ProximityAnalysisPage:
                 center_lat, center_lon = st.session_state.proximity_center
                 st.success(f"📍 Centro: {center_lat:.4f}, {center_lon:.4f}")
 
-                if st.button("🗑️ Limpar Centro", use_container_width=True):
+                if st.button("🗑️ Limpar Centro", width='stretch'):
                     st.session_state.proximity_center = None
                     st.session_state.proximity_results = None
                     st.rerun()
@@ -405,7 +405,7 @@ class ProximityAnalysisPage:
                 ]).sort_values('Área (ha)', ascending=False)
 
                 # Display table
-                st.dataframe(df, use_container_width=True, hide_index=True)
+                st.dataframe(df, width='stretch', hide_index=True)
 
                 # Summary metrics
                 total_area = df['Área (ha)'].sum()

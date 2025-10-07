@@ -37,7 +37,7 @@ class AccessibleChart:
         self,
         fig: go.Figure,
         data_summary: str,
-        use_container_width: bool = True
+        width: str = 'stretch'
     ):
         """
         Render Plotly chart with WCAG 2.1 Level A compliance
@@ -45,7 +45,7 @@ class AccessibleChart:
         Args:
             fig: Plotly figure
             data_summary: Summary of chart data for screen readers
-            use_container_width: Whether to use container width
+            width: Chart width ('stretch' or 'content')
         """
         try:
             # Update layout for accessibility (WCAG 2.4.6)
@@ -60,7 +60,7 @@ class AccessibleChart:
             )
 
             # Main chart display
-            st.plotly_chart(fig, use_container_width=use_container_width)
+            st.plotly_chart(fig, width=width)
 
             # Alternative text for screen readers (WCAG 1.1.1)
             alt_text_html = f"""
@@ -83,11 +83,11 @@ class AccessibleChart:
                 chart_data = self._extract_chart_data(fig)
                 if chart_data is not None and not chart_data.empty:
                     st.markdown("**Dados do Gráfico em Formato de Tabela:**")
-                    st.dataframe(chart_data, use_container_width=True)
+                    st.dataframe(chart_data, width='stretch')
 
         except Exception as e:
             self.logger.error(f"Error rendering accessible chart: {e}")
-            st.plotly_chart(fig, use_container_width=use_container_width)
+            st.plotly_chart(fig, width=width)
 
     def _extract_chart_data(self, fig: go.Figure) -> Optional[pd.DataFrame]:
         """
@@ -269,7 +269,7 @@ class AccessibleMap:
                 # Tabular alternative
                 if alternative_data is not None and not alternative_data.empty:
                     st.markdown("**Dados do Mapa em Formato de Tabela:**")
-                    st.dataframe(alternative_data, use_container_width=True)
+                    st.dataframe(alternative_data, width='stretch')
 
                     # Summary statistics
                     self._render_data_summary(alternative_data)

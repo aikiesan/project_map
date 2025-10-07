@@ -71,7 +71,7 @@ def create_map_screenshot_button(map_obj: folium.Map) -> None:
                 file_name=f"cp2b_map_{timestamp}.html",
                 mime="text/html",
                 help="Exportar mapa interativo em HTML",
-                use_container_width=True
+                width='stretch'
             )
 
         with col2:
