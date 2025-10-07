@@ -75,11 +75,9 @@ def initialize_global_resources():
 
 @st.cache_resource
 def load_tab_navigation_css():
-    """Load tab navigation CSS once (cached)"""
+    """Load critical CSS for tabs and accessibility (cached, minimal)"""
     st.markdown("""
         <style>
-        /* Montserrat font already preloaded via <link> in <head> */
-
         /* Hide accessibility skip links visually (but keep for screen readers) */
         a[href="#main-content"],
         a[href="#sidebar"],
@@ -112,45 +110,7 @@ def load_tab_navigation_css():
         section[data-testid="stSidebar"] h3 {
             border-bottom: none !important;
         }
-
-        /* Compact navigation tabs - 60% of V1 size */
-        .stTabs [data-baseweb="tab-list"] {
-            gap: 7px;
-            background-color: #f8f9fa;
-            padding: 5px 7px;
-            border-radius: 6px;
-            margin-bottom: 10px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .stTabs [data-baseweb="tab"] {
-            margin-right: 4px;
-            padding: 6px 11px;
-            border-radius: 5px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
-            font-family: 'Montserrat', system-ui, sans-serif;
-        }
-        .stTabs [data-baseweb="tab"]:hover {
-            background-color: #e3f2fd;
-            transform: translateY(-1px);
-            box-shadow: 0 1px 5px rgba(0,0,0,0.15);
-        }
-        .stTabs [aria-selected="true"] {
-            background-color: #2E8B57 !important;
-            color: white !important;
-            border-color: #2E8B57;
-            box-shadow: 0 2px 6px rgba(46,139,87,0.3);
-        }
-        .stTabs [aria-selected="true"]:hover {
-            background-color: #257a4a !important;
-        }
-        .stTabs [data-baseweb="tab"] p {
-            font-size: 11px;
-            margin: 0;
-            font-weight: 600;
-            font-family: 'Montserrat', system-ui, sans-serif;
-        }
+        /* Note: Tab styles now in global.css for better performance */
         </style>
         """, unsafe_allow_html=True)
 
@@ -168,8 +128,7 @@ def init_session_state():
         st.session_state.global_resources_loaded = initialize_global_resources()
         # Initialize scenario system
         init_scenario_state()
-        # Load tab navigation CSS once
-        load_tab_navigation_css()
+        # CSS will be loaded in main() before components render
 
 
 def main():
@@ -190,6 +149,12 @@ def main():
         # Log application start
         logger.info("Starting CP2B Maps - Plataforma de Análise de Potencial de Geração de Biogás para Municípios Paulistas with accessibility features")
 
+        # CRITICAL: Load CSS BEFORE any components render (prevents visual reflow)
+        # This must happen before render_green_header() and st.tabs()
+        if 'css_loaded' not in st.session_state:
+            load_tab_navigation_css()
+            st.session_state.css_loaded = True
+
         # V1-style beautiful green gradient header
         render_green_header()
 
@@ -197,6 +162,7 @@ def main():
         st.markdown('<div lang="pt-BR">', unsafe_allow_html=True)
 
         # V1-Style Tab Navigation (8 tabs - Added Validated Research Data)
+        # CSS already loaded above, so tabs render with correct styles immediately
         tabs = st.tabs([
             "🏠 Mapa Principal",
             "🔍 Explorar Dados",
@@ -207,8 +173,6 @@ def main():
             "🔬 Dados Validados",
             "ℹ️ Sobre o CP2B Maps"
         ])
-
-        # CSS already loaded via cached function (load_tab_navigation_css)
 
         # Main content area with landmark (WCAG 1.3.1)
         st.markdown('<main role="main" id="main-content" aria-label="Conteúdo principal">', unsafe_allow_html=True)
