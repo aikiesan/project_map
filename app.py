@@ -22,6 +22,14 @@ st.set_page_config(
     initial_sidebar_state=settings.SIDEBAR_STATE
 )
 
+# Preload Montserrat font to prevent FOUT (Flash of Unstyled Text)
+# This ensures font is ready before first render, eliminating layout shifts
+st.markdown("""
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+""", unsafe_allow_html=True)
+
 # Import after page config
 from src.utils.logging_config import get_logger
 from src.ui.pages.home import HomePage
@@ -65,6 +73,88 @@ def initialize_global_resources():
     return True
 
 
+@st.cache_resource
+def load_tab_navigation_css():
+    """Load tab navigation CSS once (cached)"""
+    st.markdown("""
+        <style>
+        /* Montserrat font already preloaded via <link> in <head> */
+
+        /* Hide accessibility skip links visually (but keep for screen readers) */
+        a[href="#main-content"],
+        a[href="#sidebar"],
+        a[href^="Pular"] {
+            position: absolute !important;
+            left: -10000px !important;
+            top: auto !important;
+            width: 1px !important;
+            height: 1px !important;
+            overflow: hidden !important;
+        }
+        /* Show on keyboard focus for accessibility */
+        a[href="#main-content"]:focus,
+        a[href="#sidebar"]:focus {
+            position: static !important;
+            width: auto !important;
+            height: auto !important;
+            background: #2E8B57;
+            color: white;
+            padding: 0.5rem 1rem;
+            z-index: 9999;
+        }
+
+        /* Remove purple lines from sidebar headers */
+        .stMarkdown h3 {
+            border-bottom: none !important;
+        }
+        section[data-testid="stSidebar"] h1,
+        section[data-testid="stSidebar"] h2,
+        section[data-testid="stSidebar"] h3 {
+            border-bottom: none !important;
+        }
+
+        /* Compact navigation tabs - 60% of V1 size */
+        .stTabs [data-baseweb="tab-list"] {
+            gap: 7px;
+            background-color: #f8f9fa;
+            padding: 5px 7px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .stTabs [data-baseweb="tab"] {
+            margin-right: 4px;
+            padding: 6px 11px;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            font-family: 'Montserrat', system-ui, sans-serif;
+        }
+        .stTabs [data-baseweb="tab"]:hover {
+            background-color: #e3f2fd;
+            transform: translateY(-1px);
+            box-shadow: 0 1px 5px rgba(0,0,0,0.15);
+        }
+        .stTabs [aria-selected="true"] {
+            background-color: #2E8B57 !important;
+            color: white !important;
+            border-color: #2E8B57;
+            box-shadow: 0 2px 6px rgba(46,139,87,0.3);
+        }
+        .stTabs [aria-selected="true"]:hover {
+            background-color: #257a4a !important;
+        }
+        .stTabs [data-baseweb="tab"] p {
+            font-size: 11px;
+            margin: 0;
+            font-weight: 600;
+            font-family: 'Montserrat', system-ui, sans-serif;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
+
 # ============================================================================
 # SESSION STATE INITIALIZATION - Runs only once per session
 # ============================================================================
@@ -78,6 +168,8 @@ def init_session_state():
         st.session_state.global_resources_loaded = initialize_global_resources()
         # Initialize scenario system
         init_scenario_state()
+        # Load tab navigation CSS once
+        load_tab_navigation_css()
 
 
 def main():
@@ -104,7 +196,7 @@ def main():
         # Language identification (WCAG 3.1.1)
         st.markdown('<div lang="pt-BR">', unsafe_allow_html=True)
 
-        # V1-Style Tab Navigation (7 tabs - EXACT V1 match)
+        # V1-Style Tab Navigation (8 tabs - Added Validated Research Data)
         tabs = st.tabs([
             "🏠 Mapa Principal",
             "🔍 Explorar Dados",
@@ -112,138 +204,64 @@ def main():
             "🎯 Análise de Proximidade",
             "🍊 Bagacinho IA",
             "📚 Referências Científicas",
+            "🔬 Dados Validados",
             "ℹ️ Sobre o CP2B Maps"
         ])
 
-        # Add custom CSS for V1-style tabs + Accessibility fixes
-        st.markdown("""
-            <style>
-            /* Import Montserrat font */
-            @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
-
-            /* Hide accessibility skip links visually (but keep for screen readers) */
-            a[href="#main-content"],
-            a[href="#sidebar"],
-            a[href^="Pular"] {
-                position: absolute !important;
-                left: -10000px !important;
-                top: auto !important;
-                width: 1px !important;
-                height: 1px !important;
-                overflow: hidden !important;
-            }
-            /* Show on keyboard focus for accessibility */
-            a[href="#main-content"]:focus,
-            a[href="#sidebar"]:focus {
-                position: static !important;
-                width: auto !important;
-                height: auto !important;
-                background: #2E8B57;
-                color: white;
-                padding: 0.5rem 1rem;
-                z-index: 9999;
-            }
-
-            /* Remove purple lines from sidebar headers */
-            .stMarkdown h3 {
-                border-bottom: none !important;
-            }
-            section[data-testid="stSidebar"] h1,
-            section[data-testid="stSidebar"] h2,
-            section[data-testid="stSidebar"] h3 {
-                border-bottom: none !important;
-            }
-
-            /* Compact navigation tabs - 60% of V1 size */
-            .stTabs [data-baseweb="tab-list"] {
-                gap: 7px;
-                background-color: #f8f9fa;
-                padding: 5px 7px;
-                border-radius: 6px;
-                margin-bottom: 10px;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            }
-            .stTabs [data-baseweb="tab"] {
-                margin-right: 4px;
-                padding: 6px 11px;
-                border-radius: 5px;
-                font-weight: 500;
-                transition: all 0.3s ease;
-                border: 1px solid transparent;
-                font-family: 'Montserrat', system-ui, sans-serif;
-            }
-            .stTabs [data-baseweb="tab"]:hover {
-                background-color: #e3f2fd;
-                transform: translateY(-1px);
-                box-shadow: 0 1px 5px rgba(0,0,0,0.15);
-            }
-            .stTabs [aria-selected="true"] {
-                background-color: #2E8B57 !important;
-                color: white !important;
-                border-color: #2E8B57;
-                box-shadow: 0 2px 6px rgba(46,139,87,0.3);
-            }
-            .stTabs [aria-selected="true"]:hover {
-                background-color: #257a4a !important;
-            }
-            .stTabs [data-baseweb="tab"] p {
-                font-size: 11px;
-                margin: 0;
-                font-weight: 600;
-                font-family: 'Montserrat', system-ui, sans-serif;
-            }
-            </style>
-            """, unsafe_allow_html=True)
+        # CSS already loaded via cached function (load_tab_navigation_css)
 
         # Main content area with landmark (WCAG 1.3.1)
         st.markdown('<main role="main" id="main-content" aria-label="Conteúdo principal">', unsafe_allow_html=True)
 
-        # Render content in tabs
+        # Render content in tabs (with loading indicator for Home tab)
         with tabs[0]:  # Home
             # Hidden heading for accessibility only
             st.markdown('<h2 style="position: absolute; left: -10000px;" id="home-section">Página Inicial</h2>', unsafe_allow_html=True)
-            from src.ui.pages.home import HomePage
-            home_page = HomePage()
-            home_page.render()
+
+            # Show loading spinner for initial map load
+            with st.spinner('🗺️ Carregando mapa e dados...'):
+                from src.ui.pages.home import HomePage
+                home_page = HomePage()
+                home_page.render()
 
         with tabs[1]:  # Explorar Dados (Enhanced Data Explorer with V1 charts)
             # Note: Data Explorer has its own styled banner header
-
-            # Enhanced Data Explorer with V1's comprehensive chart library
-            from src.ui.pages.data_explorer import create_data_explorer_page
-            data_explorer = create_data_explorer_page()
-            data_explorer.render()
+            with st.spinner('📊 Carregando explorador de dados...'):
+                from src.ui.pages.data_explorer import create_data_explorer_page
+                data_explorer = create_data_explorer_page()
+                data_explorer.render()
 
         with tabs[2]:  # Análises Avançadas (Residue Analysis only)
             # Note: Residue Analysis page has its own styled banner header
-
-            # Direct render - no sub-tabs
-            from src.ui.pages.residue_analysis import create_residue_analysis_page
-            create_residue_analysis_page()
+            with st.spinner('📈 Carregando análises avançadas...'):
+                from src.ui.pages.residue_analysis import create_residue_analysis_page
+                create_residue_analysis_page()
 
         with tabs[3]:  # Proximity Analysis (V1 UX with V2 Architecture)
             # Note: Proximity Analysis page has its own styled banner header
-
-            from src.ui.pages.proximity_analysis import create_proximity_analysis_page
-            proximity_page = create_proximity_analysis_page()
-            proximity_page.render()
+            with st.spinner('🎯 Carregando análise de proximidade...'):
+                from src.ui.pages.proximity_analysis import create_proximity_analysis_page
+                proximity_page = create_proximity_analysis_page()
+                proximity_page.render()
 
         with tabs[4]:  # Bagacinho AI Assistant
             # Note: Bagacinho page has its own beautiful header, no need for duplicate heading here
-
-            # Import and render Bagacinho assistant
-            from src.ui.pages.bagacinho_assistant import render_bagacinho_page
-            render_bagacinho_page()
+            with st.spinner('🍊 Carregando Bagacinho IA...'):
+                from src.ui.pages.bagacinho_assistant import render_bagacinho_page
+                render_bagacinho_page()
 
         with tabs[5]:  # References (V1 style)
             # Note: References page has its own styled banner header
-
             from src.ui.pages.references_v1 import render_references_v1_page
             render_references_v1_page()
 
-        with tabs[6]:  # Sobre (About) - V1 Style
-            # Note: About page has its own styled banner header
+        with tabs[6]:  # Validated Research Data (NEW)
+            # Note: Validated Research page has its own styled banner header
+            from src.ui.pages.validated_research import create_validated_research_page
+            create_validated_research_page()
 
+        with tabs[7]:  # Sobre (About) - V1 Style
+            # Note: About page has its own styled banner header
             from src.ui.pages.about_v1 import render_about_v1_page
             render_about_v1_page()
 
