@@ -149,15 +149,15 @@ class ValidatedResearchPage:
         {chr(10).join(overview['key_findings'])}
         """)
 
-    def _render_residue_cards(self, residues: dict) -> None:
+    def _render_residue_cards(self, residues: dict, culture: str = 'Cana-de-açúcar') -> None:
         """Render residue availability cards"""
         st.markdown("### 🔬 Disponibilidade por Resíduo")
 
         # Create cards for each residue
         for residue_key, residue_data in residues.items():
             with st.expander(
-                f"**{get_culture_icon('Cana-de-açúcar')} {residue_data.name}** - Disponibilidade: {residue_data.factors.final_availability}%",
-                expanded=(residue_key == 'palha')  # Expand palha by default (most important)
+                f"**{get_culture_icon(culture)} {residue_data.name}** - Disponibilidade: {residue_data.factors.final_availability}%",
+                expanded=(residue_key == 'palha' or residue_key == 'dejeto_aves')  # Expand main residue by default
             ):
                 col1, col2 = st.columns([2, 1])
 
@@ -187,6 +187,42 @@ class ValidatedResearchPage:
                 # Technical justification (expandable)
                 with st.expander("📝 Justificativa Técnica", expanded=False):
                     st.markdown(residue_data.justification)
+        
+        # Add complementary residues section for Avicultura
+        if culture == 'Avicultura':
+            self._render_complementary_residues()
+
+    def _render_complementary_residues(self) -> None:
+        """Render complementary residues information (not quantified)"""
+        from src.data.research_data import AVICULTURA_RESIDUES_COMPLEMENTARY
+        
+        with st.expander("⚠️ **Resíduos Complementares - Não Quantificados**", expanded=False):
+            st.info(AVICULTURA_RESIDUES_COMPLEMENTARY['note'])
+            
+            for residue in AVICULTURA_RESIDUES_COMPLEMENTARY['residues']:
+                st.markdown(f"#### {residue['status']} {residue['type']}")
+                
+                col1, col2 = st.columns([1, 1])
+                
+                with col1:
+                    st.markdown(f"""
+                    **Componentes:** {residue['components']}
+                    
+                    **BMP Literatura:** {residue['bmp_literature']}
+                    
+                    **FC:** {residue['fc']}
+                    
+                    **FCp:** {residue['fcp']}
+                    """)
+                
+                with col2:
+                    st.markdown("**🚧 Barreiras Identificadas:**")
+                    for barrier in residue['barriers']:
+                        st.markdown(f"- {barrier}")
+                
+                st.markdown("---")
+            
+            st.warning(AVICULTURA_RESIDUES_COMPLEMENTARY['conclusion'])
 
     def _render_availability_factors_table(self, residues: dict) -> None:
         """Render comprehensive availability factors table"""
@@ -643,7 +679,7 @@ class ValidatedResearchPage:
 
             st.markdown("---")
 
-            self._render_residue_cards(culture_data['residues'])
+            self._render_residue_cards(culture_data['residues'], selected_culture)
 
             st.markdown("---")
 

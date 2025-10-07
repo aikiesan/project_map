@@ -356,10 +356,62 @@ AVICULTURA_RESIDUES = {
         - Geração total: 3,12 milhões ton/ano
         - **Disponível biogás: 1,25 milhões ton/ano (40,5%)**
         - **Redução de 81,72% do potencial teórico**
+        
+        **Nota sobre Resíduos Complementares:**
+        GP Index 1,58 já incorpora carcaças mortas nas granjas (0,50 t/t produção).
+        Resíduos de abatedouro e incubatório não foram quantificados (ver seção Limitações).
         """,
         methane_potential='360 m³/ton ST (BMP = 0,36 m³/kg ST)',
         moisture='60-75% (ST = 25-30%)'
     )
+}
+
+# Resíduos Complementares - NÃO QUANTIFICADOS (dados insuficientes)
+AVICULTURA_RESIDUES_COMPLEMENTARY = {
+    'note': """
+    **Resíduos Complementares Não Quantificados no Escopo CP2B:**
+    
+    Estudos brasileiros validaram BMP para resíduos adicionais da cadeia avícola, 
+    porém estes foram excluídos do cálculo de disponibilidade real devido a:
+    """,
+    'residues': [
+        {
+            'type': 'Efluente de Abatedouro (Frigorífico)',
+            'components': 'Vísceras, sangue, penas, gorduras',
+            'bmp_literature': '0,41 m³ CH₄/kg DQO (Sunada et al., 2012)',
+            'fc': '95-100% (captação centralizada)',
+            'fcp': '85-95% (competição com mercado rendering consolidado)',
+            'barriers': [
+                'Farinha de vísceras/penas: US$ 400-700/ton (10-50× mais que biogás)',
+                'Sangue desidratado: US$ 800-1.200/ton (maior valor)',
+                'Gordura animal: US$ 600-900/ton (biodiesel, sabão)',
+                'Volume líquido imenso: 15 L efluente/ave (transporte inviável)',
+                'Heterogeneidade: inibição por ácidos graxos de cadeia longa'
+            ],
+            'status': '❌ Excluído: competição rendering > 85%'
+        },
+        {
+            'type': 'Resíduo de Incubatório (Hatchery)',
+            'components': 'Cascas de ovos, embriões não eclodidos, pintinhos refugados',
+            'bmp_literature': '0,14-0,16 m³ CH₄/kg SV em co-digestão (Matter et al., 2017)',
+            'fc': '100% (incubatórios centralizados)',
+            'fcp': '30-40% (competição com compostagem/corretivo calcário)',
+            'barriers': [
+                'Alto teor de cálcio: 371-400 g Ca/L (incrustação, inibição)',
+                'Requer trituração industrial + diluição 4% ST',
+                'Co-digestão obrigatória com água residuária suína',
+                'Escala pequena: <5% vs. cama de aviário'
+            ],
+            'status': '⏸️ Fase 2: requer validação operacional'
+        }
+    ],
+    'conclusion': """
+    O GP Index 1,58 (Forster-Carneiro et al., 2013) já incorpora carcaças mortas 
+    geradas nas granjas (0,50 t/t produção), cobrindo parcialmente o potencial de 
+    mortalidade. Resíduos de abatedouro foram excluídos pela alta competição com 
+    mercado rendering (FCp > 85%), e resíduos de incubatório pela complexidade 
+    operacional (Ca, co-digestão) vs. retorno marginal.
+    """
 }
 
 # Contribution breakdown (single residue type)
