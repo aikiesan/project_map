@@ -101,6 +101,19 @@ def init_session_state():
         st.session_state.data_explorer_page = create_data_explorer_page()
         st.session_state.proximity_analysis_page = create_proximity_analysis_page()
         logger.info("Page instances cached successfully")
+    
+    # Defensive initialization: ensure page instances exist even if session state was partially cleared
+    if 'home_page' not in st.session_state:
+        logger.warning("home_page missing from session state - reinitializing")
+        st.session_state.home_page = HomePage()
+    
+    if 'data_explorer_page' not in st.session_state:
+        logger.warning("data_explorer_page missing from session state - reinitializing")
+        st.session_state.data_explorer_page = create_data_explorer_page()
+    
+    if 'proximity_analysis_page' not in st.session_state:
+        logger.warning("proximity_analysis_page missing from session state - reinitializing")
+        st.session_state.proximity_analysis_page = create_proximity_analysis_page()
 
 
 def main():
