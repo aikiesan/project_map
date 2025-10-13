@@ -82,17 +82,20 @@ def initialize_accessibility():
 def init_session_state():
     """Initialize session state variables only once"""
     if 'app_initialized' not in st.session_state:
-        logger.info("First session initialization")
+        logger.info("🚀 First session initialization - Starting app...")
 
         # CRITICAL: Load CSS ONCE at session initialization
         # This prevents multiple reruns caused by module-level CSS loading
+        logger.info("Loading global CSS...")
         load_global_css()
 
         st.session_state.app_initialized = True
         st.session_state.accessibility_manager = initialize_accessibility()
+
         # Initialize scenario system
+        logger.info("Initializing scenario system...")
         init_scenario_state()
-        
+
         # CRITICAL: Initialize OBJECT-BASED page instances ONCE and cache in session state
         # Prevents creating new page objects on every rerun
         # Note: Functional pages (that render on creation) are not cached here
@@ -100,7 +103,9 @@ def init_session_state():
         st.session_state.home_page = HomePage()
         st.session_state.data_explorer_page = create_data_explorer_page()
         st.session_state.proximity_analysis_page = create_proximity_analysis_page()
-        logger.info("Page instances cached successfully")
+        logger.info("✅ Page instances cached successfully - App initialization complete")
+    else:
+        logger.debug("App already initialized - skipping initialization")
     
     # Defensive initialization: ensure page instances exist even if session state was partially cleared
     if 'home_page' not in st.session_state:
@@ -122,6 +127,12 @@ def main():
     Professional structure with accessibility and error handling
     """
     try:
+        # Track script executions for debugging reloads
+        if 'script_run_count' not in st.session_state:
+            st.session_state.script_run_count = 0
+        st.session_state.script_run_count += 1
+        logger.info(f"📊 Script execution #{st.session_state.script_run_count}")
+
         # Initialize session state once
         init_session_state()
 

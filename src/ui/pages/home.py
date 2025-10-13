@@ -19,7 +19,6 @@ from src.ui.components.dashboard_metrics import DashboardMetrics
 
 # Import supporting components
 from src.ui.components.substrate_info import render_substrate_information
-from src.ui.components.academic_footer import render_academic_footer
 from src.ui.components.map_export import render_export_panel_compact
 
 logger = get_logger(__name__)
@@ -85,11 +84,11 @@ class HomePage:
             
             # Step 3: Render dashboard metrics
             self.dashboard.render()
-            
-            # Step 4: Render modals and footer
+
+            # Step 4: Render modals and sidebar extras
             self._render_substrate_modal()
             self._render_sidebar_extras()
-            render_academic_footer()
+            # Academic footer removed per user request
         
         except Exception as e:
             self.logger.error(f"Error rendering home page: {e}", exc_info=True)
@@ -120,18 +119,15 @@ class HomePage:
         # Store map in session for export
         st.session_state.current_map = folium_map
         
-        # Display map
+        # Display map (suppress reruns by not returning objects on initial load)
+        # Use a stable key to prevent unnecessary reloads
         map_data = st_folium(
             folium_map,
             width="100%",
             height=map_config.map_height,
-            returned_objects=["last_object_clicked"],
+            returned_objects=[],  # Don't track clicks to prevent reruns
             key="main_map"
         )
-        
-        # Handle map interactions
-        if map_data and map_data.get("last_object_clicked"):
-            self._handle_map_click(map_data["last_object_clicked"])
 
     def _handle_map_click(self, clicked_data: dict) -> None:
         """

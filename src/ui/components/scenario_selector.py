@@ -16,8 +16,8 @@ def render_scenario_selector():
     current = get_current_scenario()
     current_config = SCENARIOS[current]
 
-    # USAR EXPANDER para organizar na sidebar
-    with st.sidebar.expander("🎯 Cenário de Disponibilidade", expanded=True):
+    # USAR EXPANDER para organizar na sidebar (collapsed by default to prevent rerun)
+    with st.sidebar.expander("🎯 Cenário de Disponibilidade", expanded=False):
 
         st.caption(
             "Selecione o percentual de resíduos disponíveis para geração de biogás:"

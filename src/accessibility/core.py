@@ -25,18 +25,26 @@ class AccessibilityManager:
         self.is_initialized = False
 
     def initialize(self):
-        """Initialize all WCAG 2.1 Level A compliance features"""
+        """
+        Initialize all WCAG 2.1 Level A compliance features
+        Only injects HTML/CSS once per session to prevent reruns
+        """
         try:
-            if not self.is_initialized:
-                # Core WCAG Level A requirements
-                self._inject_accessibility_css()
-                self._setup_language_identification()
-                self._create_skip_links()
-                self._setup_aria_landmarks()
-                self._setup_keyboard_navigation()
+            # Check session state to prevent re-injection on every render
+            if 'accessibility_initialized' in st.session_state:
+                return
 
-                self.is_initialized = True
-                self.logger.info("Accessibility manager initialized with WCAG 2.1 Level A features")
+            # Core WCAG Level A requirements
+            self._inject_accessibility_css()
+            self._setup_language_identification()
+            self._create_skip_links()
+            self._setup_aria_landmarks()
+            self._setup_keyboard_navigation()
+
+            # Mark as initialized in both instance and session state
+            self.is_initialized = True
+            st.session_state.accessibility_initialized = True
+            self.logger.info("Accessibility manager initialized with WCAG 2.1 Level A features")
 
         except Exception as e:
             self.logger.error(f"Failed to initialize accessibility manager: {e}")

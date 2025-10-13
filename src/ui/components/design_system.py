@@ -165,20 +165,9 @@ def render_page_header(
 def render_green_header():
     """
     Render V1's signature green gradient header at the top of the page
-    Note: This must render on every script execution to remain visible
+    Note: CSS is loaded once via global.css, only HTML is rendered here
     """
     st.markdown("""
-    <style>
-    /* Push main content down to accommodate header */
-    .main > div:first-child {
-        padding-top: 0 !important;
-    }
-    
-    /* Remove Streamlit's default top padding */
-    .block-container {
-        padding-top: 2rem !important;
-    }
-    </style>
     <div style='background: linear-gradient(135deg, #2E8B57 0%, #3ba068 50%, #48b879 100%);
                 color: white; padding: 1.5rem; margin: -2rem -1rem 1.5rem -1rem;
                 text-align: center; border-radius: 0 0 15px 15px; box-shadow: 0 3px 10px rgba(46,139,87,0.3);'>
@@ -632,17 +621,38 @@ def render_gradient_button(label: str, key: str, on_click=None, button_type: str
     else:
         return st.button(label, key=key)
 
-def load_global_css():
+@st.cache_resource
+def _load_css_content():
     """
-    Load global CSS styling from file using st.components.v1.html
-    This method does NOT trigger Streamlit reruns (unlike st.markdown)
+    Load CSS content from file and cache it
+    Cached to avoid repeated file reads
     """
     css_path = Path(__file__).parent.parent / "styles" / "global.css"
 
     if css_path.exists():
         with open(css_path, 'r', encoding='utf-8') as f:
-            css_content = f.read()
-            # Use st.components.v1.html instead of st.markdown to prevent reruns
-            st.components.v1.html(f"<style>{css_content}</style>", height=0)
+            return f.read()
     else:
         logger.warning(f"Global CSS file not found at {css_path}")
+        return ""
+
+
+def load_global_css():
+    """
+    Load global CSS styling - Only injects CSS ONCE per session
+    Uses session state to prevent re-injection on every render
+    """
+    # Check if CSS already loaded this session
+    if 'global_css_loaded' in st.session_state:
+        return
+
+    # Get cached CSS content
+    css_content = _load_css_content()
+
+    if css_content:
+        # Inject CSS once using st.markdown (lighter than st.components.v1.html)
+        st.markdown(f"<style>{css_content}</style>", unsafe_allow_html=True)
+
+        # Mark as loaded to prevent re-injection
+        st.session_state.global_css_loaded = True
+        logger.info("Global CSS loaded successfully")

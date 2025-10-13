@@ -379,3 +379,17 @@ textarea:focus {
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
     outline: none !important;
 }
+
+/* ============================================================================
+   GREEN HEADER - V1 Style (Loaded once at startup)
+   ============================================================================ */
+
+/* Push main content down to accommodate header */
+.main > div:first-child {
+    padding-top: 0 !important;
+}
+
+/* Remove Streamlit's default top padding */
+.block-container {
+    padding-top: 2rem !important;
+}
