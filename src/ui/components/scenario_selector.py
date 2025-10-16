@@ -11,7 +11,10 @@ from config.scenario_config import (
 
 def render_scenario_selector():
     """Renderiza seletor de cenário na sidebar com expander"""
-    init_scenario_state()
+    # Only initialize scenario state if not already initialized
+    # This prevents unnecessary state operations on every render
+    if 'biogas_scenario' not in st.session_state:
+        init_scenario_state()
 
     current = get_current_scenario()
     current_config = SCENARIOS[current]

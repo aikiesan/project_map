@@ -32,6 +32,10 @@ class AccessibilitySettings:
             st.markdown("### ♿ Configurações de Acessibilidade")
             st.markdown("*Recursos básicos para melhorar a acessibilidade*")
 
+            # Initialize first render flag to prevent rerun on initial load
+            if 'accessibility_first_render' not in st.session_state:
+                st.session_state.accessibility_first_render = True
+
             # Screen reader optimization
             screen_reader = st.checkbox(
                 "🔊 Modo Leitor de Tela",
@@ -56,12 +60,19 @@ class AccessibilitySettings:
                 key='accessibility_skip_links_toggle'
             )
 
-            # Apply settings if changed
-            if (screen_reader != self.screen_reader_mode or
+            # Apply settings if changed (but NOT on first render to prevent unnecessary rerun)
+            settings_changed = (
+                screen_reader != self.screen_reader_mode or
                 keyboard_nav != self.keyboard_navigation or
-                skip_links != self.skip_links_enabled):
+                skip_links != self.skip_links_enabled
+            )
 
-                self.apply_settings(screen_reader, keyboard_nav, skip_links)
+            if settings_changed and not st.session_state.accessibility_first_render:
+                self.apply_settings(screen_reader, keyboard_nav, skip_links, show_success=True)
+
+            # Clear first render flag after initial render
+            if st.session_state.accessibility_first_render:
+                st.session_state.accessibility_first_render = False
 
             # Information about WCAG compliance
             with st.expander("ℹ️ Sobre a Conformidade WCAG 2.1"):
@@ -86,8 +97,16 @@ class AccessibilitySettings:
             self.logger.error(f"Error rendering accessibility settings: {e}")
             st.error("Erro ao carregar configurações de acessibilidade")
 
-    def apply_settings(self, screen_reader: bool, keyboard_nav: bool, skip_links: bool):
-        """Apply accessibility settings"""
+    def apply_settings(self, screen_reader: bool, keyboard_nav: bool, skip_links: bool, show_success: bool = False):
+        """
+        Apply accessibility settings
+
+        Args:
+            screen_reader: Enable screen reader mode
+            keyboard_nav: Enable keyboard navigation
+            skip_links: Enable skip links
+            show_success: Show success message (only on actual user change, not initialization)
+        """
         try:
             # Update session state
             st.session_state.accessibility_screen_reader = screen_reader
@@ -99,14 +118,18 @@ class AccessibilitySettings:
             self.keyboard_navigation = keyboard_nav
             self.skip_links_enabled = skip_links
 
-            # Apply CSS changes for screen reader mode
-            if screen_reader:
+            # Apply CSS changes for screen reader mode (only if enabling for first time)
+            if screen_reader and 'screen_reader_css_applied' not in st.session_state:
                 self._apply_screen_reader_optimizations()
+                st.session_state.screen_reader_css_applied = True
 
             # Save settings
             self.save_settings()
 
-            st.success("✅ Configurações de acessibilidade aplicadas")
+            # Only show success message if explicitly requested (not on init)
+            if show_success:
+                st.success("✅ Configurações de acessibilidade aplicadas")
+
             self.logger.info("Accessibility settings applied successfully")
 
         except Exception as e:
