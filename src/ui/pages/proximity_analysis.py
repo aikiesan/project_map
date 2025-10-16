@@ -7,6 +7,9 @@ Professional layout with purple gradient header, 50/50 split, top controls
 from typing import Dict, List, Optional, Any, Tuple
 import streamlit as st
 import pandas as pd
+import numpy as np
+import plotly.express as px
+import plotly.graph_objects as go
 
 # Geospatial imports
 try:
@@ -376,21 +379,178 @@ class ProximityAnalysisPage:
         # Municipal analysis
         if enable_municipal:
             try:
-                # Load municipalities and calculate in radius
-                df = self.database_loader.load_municipalities_data()
-                # TODO: Implement municipal analysis
-                results['municipal'] = {"status": "not_implemented"}
+                # Calculate municipalities within radius
+                municipalities_df = self._calculate_municipalities_in_radius(
+                    center_lat, center_lon, radius_km
+                )
+                results['municipal'] = municipalities_df
             except Exception as e:
                 self.logger.error(f"Municipal analysis failed: {e}")
                 results['municipal'] = None
 
         return results
 
+    def _calculate_municipalities_in_radius(
+        self,
+        center_lat: float,
+        center_lon: float,
+        radius_km: float
+    ) -> Optional[pd.DataFrame]:
+        """
+        Calculate which municipalities fall within the specified radius
+
+        Args:
+            center_lat: Center latitude
+            center_lon: Center longitude
+            radius_km: Radius in kilometers
+
+        Returns:
+            DataFrame with municipalities within radius and their distances
+        """
+        try:
+            # Load all municipalities data
+            df = self.database_loader.load_municipalities_data()
+
+            if df is None or df.empty:
+                self.logger.warning("No municipality data available")
+                return None
+
+            # Calculate distance using haversine formula
+            def haversine_distance(lat1, lon1, lat2, lon2):
+                """Calculate distance between two points on Earth in kilometers"""
+                R = 6371  # Earth radius in kilometers
+
+                lat1_rad = np.radians(lat1)
+                lat2_rad = np.radians(lat2)
+                delta_lat = np.radians(lat2 - lat1)
+                delta_lon = np.radians(lon2 - lon1)
+
+                a = np.sin(delta_lat/2)**2 + np.cos(lat1_rad) * np.cos(lat2_rad) * np.sin(delta_lon/2)**2
+                c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1-a))
+
+                return R * c
+
+            # Calculate distance for each municipality
+            df['distance_km'] = df.apply(
+                lambda row: haversine_distance(
+                    center_lat, center_lon,
+                    row['latitude'], row['longitude']
+                ),
+                axis=1
+            )
+
+            # Filter municipalities within radius
+            municipalities_in_radius = df[df['distance_km'] <= radius_km].copy()
+
+            # Sort by distance
+            municipalities_in_radius = municipalities_in_radius.sort_values('distance_km')
+
+            self.logger.info(
+                f"Found {len(municipalities_in_radius)} municipalities within {radius_km}km radius"
+            )
+
+            return municipalities_in_radius
+
+        except Exception as e:
+            self.logger.error(f"Failed to calculate municipalities in radius: {e}", exc_info=True)
+            return None
+
+    def _create_land_use_pie_chart(self, df: pd.DataFrame) -> go.Figure:
+        """Create pie chart for land use distribution"""
+        fig = px.pie(
+            df,
+            values='Área (ha)',
+            names='Tipo de Uso',
+            title='📊 Distribuição de Uso do Solo por Área',
+            hole=0.4,  # Donut chart
+            color_discrete_sequence=px.colors.qualitative.Set3
+        )
+
+        fig.update_traces(
+            textposition='inside',
+            textinfo='percent+label',
+            hovertemplate='<b>%{label}</b><br>Área: %{value:,.0f} ha<br>Percentual: %{percent}<extra></extra>'
+        )
+
+        fig.update_layout(
+            height=500,
+            showlegend=True,
+            legend=dict(
+                orientation="v",
+                yanchor="middle",
+                y=0.5,
+                xanchor="left",
+                x=1.02
+            )
+        )
+
+        return fig
+
+    def _create_land_use_bar_chart(self, df: pd.DataFrame) -> go.Figure:
+        """Create horizontal bar chart for land use by area"""
+        fig = px.bar(
+            df,
+            x='Área (ha)',
+            y='Tipo de Uso',
+            orientation='h',
+            title='📊 Uso do Solo por Área (Hectares)',
+            color='Área (ha)',
+            color_continuous_scale='Greens',
+            text_auto='.2s'
+        )
+
+        fig.update_traces(
+            textposition='outside',
+            hovertemplate='<b>%{y}</b><br>Área: %{x:,.0f} ha<extra></extra>'
+        )
+
+        fig.update_layout(
+            height=max(400, len(df) * 30),  # Dynamic height based on number of items
+            yaxis={'categoryorder': 'total ascending'},
+            showlegend=False,
+            xaxis_title="Área (hectares)",
+            yaxis_title=""
+        )
+
+        return fig
+
+    def _create_municipality_bar_chart(self, df: pd.DataFrame) -> go.Figure:
+        """Create bar chart for municipalities ranked by biogas potential"""
+        # Limit to top 15 municipalities for readability
+        df_top = df.nlargest(15, 'biogas_potential_m3_day').copy()
+
+        fig = px.bar(
+            df_top,
+            x='biogas_potential_m3_day',
+            y='municipality',
+            orientation='h',
+            title='🏆 Top 15 Municípios por Potencial de Biogás',
+            color='biogas_potential_m3_day',
+            color_continuous_scale='Purples',
+            text_auto='.2s',
+            hover_data=['distance_km']
+        )
+
+        fig.update_traces(
+            textposition='outside',
+            hovertemplate='<b>%{y}</b><br>Potencial: %{x:,.0f} m³/dia<br>Distância: %{customdata[0]:.1f} km<extra></extra>'
+        )
+
+        fig.update_layout(
+            height=max(450, len(df_top) * 35),
+            yaxis={'categoryorder': 'total ascending'},
+            showlegend=False,
+            xaxis_title="Potencial de Biogás (m³/dia)",
+            yaxis_title=""
+        )
+
+        return fig
+
     def _display_results(self, results: Dict, radius_km: int) -> None:
-        """Display analysis results"""
+        """Display analysis results with visualization options"""
         center_lat, center_lon = st.session_state.proximity_center
 
-        # Raster results
+        # ========== MapBiomas Results ==========
         if results.get('raster'):
             st.markdown(f"#### 🌾 Uso do Solo (MapBiomas) - Raio {radius_km}km")
             st.caption(f"Centro: {center_lat:.4f}, {center_lon:.4f}")
@@ -404,21 +564,101 @@ class ProximityAnalysisPage:
                     for uso, area in raster_data.items()
                 ]).sort_values('Área (ha)', ascending=False)
 
-                # Display table
-                st.dataframe(df, width='stretch', hide_index=True)
-
                 # Summary metrics
                 total_area = df['Área (ha)'].sum()
-                col1, col2 = st.columns(2)
+                col1, col2, col3 = st.columns(3)
                 with col1:
                     st.metric("🏞️ Área Total", f"{total_area:,.0f} ha")
                 with col2:
                     st.metric("📊 Tipos de Uso", len(df))
+                with col3:
+                    # Calculate agricultural percentage
+                    agri_keywords = ['🌾', '🌱', '☕', '🍊', '🌴', '🌲']
+                    agri_area = df[df['Tipo de Uso'].apply(
+                        lambda x: any(k in x for k in agri_keywords)
+                    )]['Área (ha)'].sum()
+                    agri_pct = (agri_area / total_area * 100) if total_area > 0 else 0
+                    st.metric("🌾 Área Agrícola", f"{agri_pct:.1f}%")
+
+                # Visualization selector
+                viz_option = st.radio(
+                    "Selecione o tipo de visualização:",
+                    options=['📊 Gráfico de Pizza', '📊 Gráfico de Barras', '📋 Tabela'],
+                    horizontal=True,
+                    key='mapbiomas_viz'
+                )
+
+                # Display selected visualization
+                if viz_option == '📊 Gráfico de Pizza':
+                    fig = self._create_land_use_pie_chart(df)
+                    st.plotly_chart(fig, use_container_width=True)
+                elif viz_option == '📊 Gráfico de Barras':
+                    fig = self._create_land_use_bar_chart(df)
+                    st.plotly_chart(fig, use_container_width=True)
+                else:  # Table
+                    st.dataframe(df, use_container_width=True, hide_index=True)
+
             else:
                 st.warning("⚠️ Nenhum dado encontrado na área")
 
-        # Municipal results
-        if results.get('municipal') and results['municipal'] != {"status": "not_implemented"}:
+        # ========== Municipal Results ==========
+        if results.get('municipal') is not None and not isinstance(results['municipal'], dict):
+            st.markdown("---")
+            st.markdown(f"#### 🏘️ Municípios na Área - Raio {radius_km}km")
+
+            municipalities_df = results['municipal']
+
+            if municipalities_df is not None and not municipalities_df.empty:
+                # Summary metrics
+                num_municipalities = len(municipalities_df)
+                total_biogas = municipalities_df['biogas_potential_m3_day'].sum()
+                avg_distance = municipalities_df['distance_km'].mean()
+
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    st.metric("🏘️ Municípios", num_municipalities)
+                with col2:
+                    st.metric("💨 Potencial Total", f"{total_biogas:,.0f} m³/dia")
+                with col3:
+                    st.metric("📏 Distância Média", f"{avg_distance:.1f} km")
+
+                # Visualization selector
+                muni_viz_option = st.radio(
+                    "Selecione o tipo de visualização:",
+                    options=['📋 Tabela Completa', '🏆 Ranking (Top 15)'],
+                    horizontal=True,
+                    key='municipal_viz'
+                )
+
+                # Display selected visualization
+                if muni_viz_option == '📋 Tabela Completa':
+                    # Prepare table with selected columns
+                    display_df = municipalities_df[[
+                        'municipality', 'distance_km', 'biogas_potential_m3_day',
+                        'energy_potential_kwh_day', 'population'
+                    ]].copy()
+
+                    display_df.columns = [
+                        'Município', 'Distância (km)', 'Biogás (m³/dia)',
+                        'Energia (kWh/dia)', 'População'
+                    ]
+
+                    # Format numbers
+                    display_df['Distância (km)'] = display_df['Distância (km)'].apply(lambda x: f"{x:.1f}")
+                    display_df['Biogás (m³/dia)'] = display_df['Biogás (m³/dia)'].apply(lambda x: f"{x:,.0f}")
+                    display_df['Energia (kWh/dia)'] = display_df['Energia (kWh/dia)'].apply(lambda x: f"{x:,.0f}")
+                    display_df['População'] = display_df['População'].apply(lambda x: f"{x:,.0f}")
+
+                    st.dataframe(display_df, use_container_width=True, hide_index=True, height=400)
+
+                else:  # Ranking chart
+                    fig = self._create_municipality_bar_chart(municipalities_df)
+                    st.plotly_chart(fig, use_container_width=True)
+
+            else:
+                st.info("ℹ️ Nenhum município encontrado neste raio")
+        elif results.get('municipal') == {"status": "not_implemented"}:
+            st.markdown("---")
             st.markdown("#### 🏘️ Análise Municipal")
             st.info("Dados municipais em desenvolvimento")
 
