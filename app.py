@@ -57,7 +57,8 @@ from src.ui.pages.residue_analysis import create_residue_analysis_page
 from src.ui.pages.proximity_analysis import create_proximity_analysis_page
 from src.ui.pages.bagacinho_assistant import render_bagacinho_page
 from src.ui.pages.references_v1 import render_references_v1_page
-from src.ui.pages.validated_research import create_validated_research_page
+# TEMPORARILY DISABLED: Dados Validados page needs further development
+# from src.ui.pages.validated_research import create_validated_research_page
 from src.ui.pages.about_v1 import render_about_v1_page
 
 # Initialize logger
@@ -151,7 +152,7 @@ def main():
         # Language identification (WCAG 3.1.1)
         st.markdown('<div lang="pt-BR">', unsafe_allow_html=True)
 
-        # V1-Style Tab Navigation (8 tabs - Added Validated Research Data)
+        # V1-Style Tab Navigation (7 tabs - Dados Validados temporarily disabled)
         # CSS loaded at startup via st.components.v1.html, so tabs render with correct styles immediately
         tabs = st.tabs([
             "🏠 Mapa Principal",
@@ -160,7 +161,6 @@ def main():
             "🎯 Análise de Proximidade",
             "🍊 Bagacinho IA",
             "📚 Referências Científicas",
-            "🔬 Dados Validados",
             "ℹ️ Sobre o CP2B Maps"
         ])
 
@@ -196,11 +196,12 @@ def main():
             # Note: References page has its own styled banner header
             render_references_v1_page()
 
-        with tabs[6]:  # Validated Research Data (NEW)
-            # Note: Validated Research page has its own styled banner header
-            create_validated_research_page()
+        # TEMPORARILY DISABLED: Dados Validados page needs further development
+        # with tabs[6]:  # Validated Research Data (NEW)
+        #     # Note: Validated Research page has its own styled banner header
+        #     create_validated_research_page()
 
-        with tabs[7]:  # Sobre (About) - V1 Style
+        with tabs[6]:  # Sobre (About) - V1 Style
             # Note: About page has its own styled banner header
             render_about_v1_page()
 
