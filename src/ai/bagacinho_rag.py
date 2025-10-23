@@ -257,6 +257,203 @@ class BagacinhoRAG:
             logger.error(f"Erro ao comparar municípios: {e}")
             return pd.DataFrame()
 
+    def buscar_municipios_regiao(self, regiao: str) -> pd.DataFrame:
+        """
+        Busca municípios de uma região administrativa específica
+
+        Args:
+            regiao: Nome da região (ex: "Campinas", "Ribeirão Preto", "Vale do Paraíba")
+
+        Returns:
+            DataFrame com municípios da região
+        """
+        try:
+            with self._get_connection() as conn:
+                query = """
+                SELECT
+                    nome_municipio,
+                    total_final_m_ano,
+                    total_agricola_m_ano,
+                    total_pecuaria_m_ano,
+                    populacao_2022,
+                    categoria_potencial
+                FROM municipalities
+                WHERE LOWER(nome_municipio) LIKE LOWER(?)
+                ORDER BY total_final_m_ano DESC
+                LIMIT 50
+                """
+
+                return pd.read_sql_query(query, conn, params=(f"%{regiao}%",))
+
+        except Exception as e:
+            logger.error(f"Erro ao buscar municípios da região: {e}")
+            return pd.DataFrame()
+
+    def obter_clusters_geograficos(self, limite: int = 5) -> Dict:
+        """
+        Identifica principais clusters geográficos de produção de biogás
+
+        Args:
+            limite: Número de clusters a retornar
+
+        Returns:
+            Dicionário com informações sobre clusters principais
+        """
+        try:
+            with self._get_connection() as conn:
+                # Identify top regions by concentration of high-potential municipalities
+                query = """
+                SELECT
+                    nome_municipio,
+                    total_final_m_ano,
+                    biogas_cana_m_ano,
+                    biogas_aves_m_ano,
+                    biogas_bovinos_m_ano,
+                    categoria_potencial
+                FROM municipalities
+                WHERE categoria_potencial = 'ALTO'
+                   OR total_final_m_ano > 100000000
+                ORDER BY total_final_m_ano DESC
+                LIMIT ?
+                """
+
+                df = pd.read_sql_query(query, conn, params=(limite,))
+
+                if df.empty:
+                    return {}
+
+                clusters = {
+                    'top_municipalities': df.to_dict('records'),
+                    'total_potential': df['total_final_m_ano'].sum(),
+                    'concentration': f"{len(df)} municípios representam {df['total_final_m_ano'].sum():,.0f} Nm³/ano"
+                }
+
+                return clusters
+
+        except Exception as e:
+            logger.error(f"Erro ao obter clusters geográficos: {e}")
+            return {}
+
+    def obter_metodologia_mcda(self) -> str:
+        """
+        Retorna informações sobre metodologia MCDA para seleção de locais
+
+        Returns:
+            String com explicação da metodologia MCDA
+        """
+        return """
+### Metodologia MCDA (Multi-Criteria Decision Analysis)
+
+**Análise Multicriterial para Localização de Plantas de Biogás**
+
+O CP2B Maps utiliza MCDA para identificar locais ótimos para instalação de biodigestores,
+considerando múltiplos critérios ponderados:
+
+**1. Critérios Técnicos (peso: 35%)**
+- Disponibilidade de substrato (potencial de biogás)
+- Proximidade de fontes de resíduo (<20-30 km)
+- Infraestrutura existente (usinas, plantas)
+- Acesso viário e logística
+
+**2. Critérios Econômicos (peso: 30%)**
+- Custo de transporte de resíduos
+- Viabilidade de conexão à rede elétrica
+- Escala de produção (economia de escala)
+- Mercado consumidor próximo
+
+**3. Critérios Ambientais (peso: 20%)**
+- Restrições de áreas protegidas
+- Proximidade de corpos hídricos
+- Licenciamento ambiental
+- Redução de emissões GEE
+
+**4. Critérios Sociais (peso: 15%)**
+- Densidade populacional (buffer de segurança)
+- Geração de empregos locais
+- Aceitação social
+- Benefícios para comunidade rural
+
+**Resultado:** Mapa de aptidão espacial com scores 0-100 para cada região.
+"""
+
+    def obter_fatores_disponibilidade(self, cultura: str = "cana") -> Dict:
+        """
+        Retorna fatores de disponibilidade validados por pesquisa
+
+        Args:
+            cultura: Cultura de interesse ("cana", "avicultura")
+
+        Returns:
+            Dicionário com fatores de correção e metodologia
+        """
+        if cultura.lower() in ["cana", "cana-de-açúcar", "cana-de-acucar"]:
+            return {
+                'cultura': 'Cana-de-açúcar',
+                'residuos': {
+                    'palha': {
+                        'fc': '90%',  # Fator de Coleta
+                        'fcp': '60%',  # Fator de Competição (cogeração prioritária)
+                        'fs': '100%',  # Fator Sazonal
+                        'fl': '85%',  # Fator Logístico (20km)
+                        'disponibilidade_final': '30.6%',
+                        'bmp': '243 m³ CH₄/ton MS',
+                        'justificativa': 'Palha compete com cogeração (60% prioritária para caldeiras)'
+                    },
+                    'bagaco': {
+                        'fc': '100%',
+                        'fcp': '95%',
+                        'fs': '100%',
+                        'fl': '100%',
+                        'disponibilidade_final': '5%',
+                        'bmp': '200-250 m³ CH₄/ton MS',
+                        'justificativa': 'Bagaço altamente competido por cogeração elétrica (95%)'
+                    },
+                    'vinhaca': {
+                        'fc': '100%',
+                        'fcp': '70%',
+                        'fs': '100%',
+                        'fl': '100%',
+                        'disponibilidade_final': '30%',
+                        'bmp': '15-25 m³ CH₄/m³',
+                        'justificativa': 'Vinhaça compete com fertirrigação (70% destinado ao solo)'
+                    }
+                },
+                'cenarios': {
+                    'pessimista': '72% menor que teórico',
+                    'realista': 'Base para planejamento (cenário conservador)',
+                    'otimista': '28% maior que realista',
+                    'teorico': '100% disponibilidade (não operacional)'
+                },
+                'validacao': 'Dados IBGE SIDRA × MapBiomas Coleção 10.0 (2024) (divergência esperada +18.5%)'
+            }
+        elif cultura.lower() in ["avicultura", "aves", "frango"]:
+            return {
+                'cultura': 'Avicultura',
+                'residuos': {
+                    'dejeto_aves': {
+                        'fc': '80%',
+                        'fcp': '30%',
+                        'fs': '100%',
+                        'fl': '70%',
+                        'disponibilidade_final': '39.2%',
+                        'bmp': '350-450 m³ CH₄/ton MS',
+                        'justificativa': 'Cama de frango parcialmente competida por fertilizante orgânico'
+                    }
+                },
+                'clusters': {
+                    'principal': 'Bastos (24.8% do potencial estadual)',
+                    'outros': 'Salto, Tatuí, Ourinhos, Rancharia',
+                    'concentracao': 'Top 10 municípios = 68.4% do potencial'
+                },
+                'validacao': 'IBGE PPM - 15 artigos científicos brasileiros validados'
+            }
+        else:
+            return {
+                'cultura': cultura,
+                'status': 'Dados em desenvolvimento',
+                'nota': 'Atualmente disponível: Cana-de-açúcar e Avicultura'
+            }
+
     def construir_contexto(self, pergunta: str) -> str:
         """
         Analisa a pergunta e constrói contexto RAG com dados relevantes
@@ -399,7 +596,63 @@ class BagacinhoRAG:
 """
                     return contexto
 
-        # ========== DETECÇÃO 4: ESTADO / GERAL ==========
+        # ========== DETECÇÃO 4: MCDA / METODOLOGIA ==========
+        if any(word in pergunta_lower for word in ["mcda", "multicriterial", "localização", "localizacao", "onde instalar", "criterios", "critérios", "seleção", "selecao"]):
+            mcda_info = self.obter_metodologia_mcda()
+            contexto += mcda_info
+            return contexto
+
+        # ========== DETECÇÃO 5: FATORES DE DISPONIBILIDADE / VALIDAÇÃO ==========
+        if any(word in pergunta_lower for word in ["fator", "disponibilidade", "fc ", "fcp", "validado", "validação", "pesquisa", "bmp", "metanogênico"]):
+            # Detect culture
+            cultura_detectada = "cana"
+            if any(word in pergunta_lower for word in ["ave", "frango", "galinha", "avicultura"]):
+                cultura_detectada = "avicultura"
+
+            fatores = self.obter_fatores_disponibilidade(cultura_detectada)
+            contexto += f"### Fatores de Disponibilidade Validados - {fatores['cultura']}\n\n"
+
+            if 'residuos' in fatores:
+                for residuo, dados in fatores['residuos'].items():
+                    contexto += f"**{residuo.title()}:**\n"
+                    for chave, valor in dados.items():
+                        contexto += f"- {chave}: {valor}\n"
+                    contexto += "\n"
+
+            if 'cenarios' in fatores:
+                contexto += "**Cenários de Análise:**\n"
+                for cenario, descricao in fatores['cenarios'].items():
+                    contexto += f"- {cenario.title()}: {descricao}\n"
+                contexto += "\n"
+
+            if 'clusters' in fatores:
+                contexto += "**Clusters Geográficos:**\n"
+                for chave, valor in fatores['clusters'].items():
+                    contexto += f"- {chave.title()}: {valor}\n"
+                contexto += "\n"
+
+            if 'validacao' in fatores:
+                contexto += f"**Validação:** {fatores['validacao']}\n\n"
+
+            return contexto
+
+        # ========== DETECÇÃO 6: CLUSTERS / CONCENTRAÇÃO GEOGRÁFICA ==========
+        if any(word in pergunta_lower for word in ["cluster", "concentração", "concentracao", "região", "regiao", "polo", "polos"]):
+            clusters = self.obter_clusters_geograficos(limite=10)
+
+            if clusters:
+                contexto += "### Principais Clusters Geográficos de Biogás\n\n"
+                contexto += f"{clusters['concentration']}\n\n"
+
+                if 'top_municipalities' in clusters:
+                    for idx, mun in enumerate(clusters['top_municipalities'], 1):
+                        contexto += f"{idx}. **{mun['nome_municipio']}**: {mun['total_final_m_ano']:,.0f} Nm3/ano"
+                        contexto += f" (Cana: {mun['biogas_cana_m_ano']:,.0f} | Aves: {mun['biogas_aves_m_ano']:,.0f})\n"
+
+                contexto += "\n"
+                return contexto
+
+        # ========== DETECÇÃO 7: ESTADO / GERAL ==========
         if any(word in pergunta_lower for word in ["estado", "são paulo", "sao paulo", "total", "sp", "estadual", "geral"]):
             stats = self.estatisticas_estado()
 

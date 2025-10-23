@@ -179,11 +179,12 @@ A metodologia segue padrões internacionais de cálculo de potencial de biogás,
 - Potencial de metano como proxy para biogás (60-70% CH₄)
 
 ### Referências Científicas
-O projeto é financiado pela FAPESP (processo 2024/01112-1) e utiliza dados de:
-- IBGE (população, agricultura, pecuária)
+O projeto é financiado pela FAPESP (processos 2024/01112-1 e 2025/08745-2) e utiliza dados de:
+- IBGE SIDRA (população, agricultura, pecuária - Censo 2022, PAM, PPM)
 - CETESB (resíduos urbanos)
-- MapBiomas (uso do solo)
-- Literatura científica peer-reviewed
+- MapBiomas Coleção 10.0 (2024) - Classificação de uso do solo via satélite
+- Literatura científica peer-reviewed (validação de fatores de disponibilidade)
+- Dados geoespaciais: SIRGAS 2000 / WGS84
 """)
 
     return "\n".join(context_parts)
