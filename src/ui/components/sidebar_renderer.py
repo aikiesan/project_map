@@ -220,4 +220,8 @@ class SidebarRenderer:
             accessibility_settings = AccessibilitySettings()
             accessibility_settings.render_basic_settings()
 
+        # Panel 5: Central de Ajuda (after Accessibility)
+        from src.ui.components.help_fab import render_help_fab_in_sidebar
+        render_help_fab_in_sidebar()
+
         return config

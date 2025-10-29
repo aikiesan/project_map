@@ -10,152 +10,47 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def render_help_fab(
+def render_help_fab_in_sidebar(
     current_page: Optional[str] = None,
     show_bagacinho_link: bool = True,
     custom_help_items: Optional[List[Dict[str, str]]] = None
 ) -> None:
     """
-    Render a floating action button for help and documentation access
+    Render help section directly in sidebar (positioned after Accessibility)
 
     Args:
         current_page: Current page name for contextual help
         show_bagacinho_link: Whether to show quick link to Bagacinho IA
         custom_help_items: Custom help items for specific pages
     """
+    # Get current page from session state if not provided
+    if current_page is None and 'current_tab' in st.session_state:
+        current_page = st.session_state.current_tab
 
-    # CSS for floating button
-    st.markdown("""
-    <style>
-    /* Floating Action Button */
-    .help-fab-container {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        z-index: 9999;
-    }
+    # Create help section in sidebar
+    st.markdown("---")
+    st.markdown("### 💡 Precisa de Ajuda?")
 
-    .help-fab-button {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border: none;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        cursor: pointer;
-        font-size: 28px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
-    }
+    with st.expander("📚 Central de Ajuda", expanded=False):
+        _render_help_content(current_page, show_bagacinho_link, custom_help_items)
 
-    .help-fab-button:hover {
-        transform: scale(1.1);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-    }
 
-    .help-fab-button:focus {
-        outline: 3px solid #ffdd57;
-        outline-offset: 2px;
-    }
+def render_help_fab(
+    current_page: Optional[str] = None,
+    show_bagacinho_link: bool = True,
+    custom_help_items: Optional[List[Dict[str, str]]] = None
+) -> None:
+    """
+    DEPRECATED: Use render_help_fab_in_sidebar() instead
+    This function is kept for backward compatibility but does nothing
 
-    /* Help Panel Styles */
-    .help-panel {
-        background-color: #ffffff;
-        border-radius: 10px;
-        padding: 1.5rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    .help-section {
-        margin-bottom: 1.5rem;
-        padding-bottom: 1rem;
-        border-bottom: 1px solid #e9ecef;
-    }
-
-    .help-section:last-child {
-        border-bottom: none;
-    }
-
-    .help-section-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 0.75rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .help-item {
-        margin: 0.5rem 0;
-        padding: 0.5rem;
-        background-color: #f8f9fa;
-        border-radius: 5px;
-        transition: background-color 0.2s;
-    }
-
-    .help-item:hover {
-        background-color: #e9ecef;
-    }
-
-    .help-link {
-        color: #667eea;
-        text-decoration: none;
-        font-weight: 500;
-    }
-
-    .help-link:hover {
-        text-decoration: underline;
-    }
-
-    .help-description {
-        font-size: 0.9rem;
-        color: #666;
-        margin-top: 0.25rem;
-    }
-
-    .quick-action-button {
-        width: 100%;
-        padding: 0.75rem 1rem;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: transform 0.2s;
-        margin-top: 0.5rem;
-    }
-
-    .quick-action-button:hover {
-        transform: translateY(-2px);
-    }
-
-    /* Accessibility improvements */
-    @media (prefers-reduced-motion: reduce) {
-        .help-fab-button, .quick-action-button {
-            transition: none;
-        }
-    }
-
-    /* Keyboard navigation highlight */
-    .help-item:focus-within {
-        outline: 2px solid #667eea;
-        outline-offset: 2px;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-    # Create help button in sidebar with popover
-    with st.sidebar:
-        st.markdown("---")
-        st.markdown("### 💡 Precisa de Ajuda?")
-
-        with st.expander("📚 Central de Ajuda", expanded=False):
-            _render_help_content(current_page, show_bagacinho_link, custom_help_items)
+    Args:
+        current_page: Current page name for contextual help
+        show_bagacinho_link: Whether to show quick link to Bagacinho IA
+        custom_help_items: Custom help items for specific pages
+    """
+    # Now handled by render_help_fab_in_sidebar() called from SidebarRenderer
+    pass
 
 
 def _render_help_content(
