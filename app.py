@@ -49,6 +49,10 @@ from src.accessibility.components.accessible_components import (
 # Import scenario system
 from config.scenario_config import init_scenario_state
 
+# Import new usability components (Phase 1)
+from src.ui.components.help_fab import render_help_fab, render_aria_live_region, announce_to_screen_reader
+from src.ui.components.onboarding_modal import show_onboarding_modal
+
 # CRITICAL: Import all page modules at startup to prevent re-imports on tab rendering
 # This eliminates multiple reruns caused by lazy imports inside tab blocks
 from src.ui.pages.welcome_home import WelcomeHomePage
@@ -80,6 +84,15 @@ def initialize_accessibility():
 # ============================================================================
 # SESSION STATE INITIALIZATION - Runs only once per session
 # ============================================================================
+
+def _get_current_page_name() -> str:
+    """Get current page name based on active tab (helper for contextual help)"""
+    # Initialize if not exists
+    if 'current_tab' not in st.session_state:
+        st.session_state.current_tab = "Início"
+
+    return st.session_state.get('current_tab', "Início")
+
 
 def init_session_state():
     """Initialize session state variables only once"""
@@ -155,6 +168,16 @@ def main():
         # V1-style beautiful green gradient header
         render_green_header()
 
+        # ARIA live region for accessibility announcements (WCAG 4.1.3)
+        render_aria_live_region()
+
+        # Show onboarding modal for first-time users
+        show_onboarding_modal()
+
+        # Render Help FAB in sidebar
+        current_page = _get_current_page_name()
+        render_help_fab(current_page=current_page, show_bagacinho_link=True)
+
         # Language identification (WCAG 3.1.1)
         st.markdown('<div lang="pt-BR">', unsafe_allow_html=True)
 
@@ -176,37 +199,52 @@ def main():
 
         # Render content in tabs (using cached page instances from session state)
         with tabs[0]:  # Welcome Home
+            st.session_state.current_tab = "Início"
             # Hidden heading for accessibility only
             st.markdown('<h2 style="position: absolute; left: -10000px;" id="welcome-section">Página Inicial</h2>', unsafe_allow_html=True)
+            # Announce page change to screen readers
+            announce_to_screen_reader("Navegando para Página Inicial", priority="polite")
 
             # Use cached welcome page instance
             st.session_state.welcome_page.render()
 
         with tabs[1]:  # Map Page
+            st.session_state.current_tab = "Mapa Principal"
             # Hidden heading for accessibility only
             st.markdown('<h2 style="position: absolute; left: -10000px;" id="map-section">Mapa Principal</h2>', unsafe_allow_html=True)
+            announce_to_screen_reader("Navegando para Mapa Principal", priority="polite")
 
             # Use cached map page instance
             st.session_state.map_page.render()
 
         with tabs[2]:  # Explorar Dados (Enhanced Data Explorer with V1 charts)
+            st.session_state.current_tab = "Explorar Dados"
+            announce_to_screen_reader("Navegando para Explorar Dados", priority="polite")
             # Note: Data Explorer has its own styled banner header
             st.session_state.data_explorer_page.render()
 
         with tabs[3]:  # Análises Avançadas (Residue Analysis only)
+            st.session_state.current_tab = "Análises Avançadas"
+            announce_to_screen_reader("Navegando para Análises Avançadas", priority="polite")
             # Note: Residue Analysis page has its own styled banner header
             # Functional page - renders on creation
             create_residue_analysis_page()
 
         with tabs[4]:  # Proximity Analysis (V1 UX with V2 Architecture)
+            st.session_state.current_tab = "Análise de Proximidade"
+            announce_to_screen_reader("Navegando para Análise de Proximidade", priority="polite")
             # Note: Proximity Analysis page has its own styled banner header
             st.session_state.proximity_analysis_page.render()
 
         with tabs[5]:  # Bagacinho AI Assistant
+            st.session_state.current_tab = "Bagacinho IA"
+            announce_to_screen_reader("Navegando para Bagacinho IA", priority="polite")
             # Note: Bagacinho page has its own beautiful header
             render_bagacinho_page()
 
         with tabs[6]:  # References (V1 style)
+            st.session_state.current_tab = "Referências Científicas"
+            announce_to_screen_reader("Navegando para Referências Científicas", priority="polite")
             # Note: References page has its own styled banner header
             render_references_v1_page()
 
@@ -216,6 +254,8 @@ def main():
         #     create_validated_research_page()
 
         with tabs[7]:  # Sobre (About) - V1 Style
+            st.session_state.current_tab = "Sobre"
+            announce_to_screen_reader("Navegando para Sobre o CP2B Maps", priority="polite")
             # Note: About page has its own styled banner header
             render_about_v1_page()
 

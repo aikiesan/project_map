@@ -1,0 +1,263 @@
+{
+  "scenarios": {
+    "realista": {
+      "title": "Cenário Realista (17.5%)",
+      "definition": "Estima que 17.5% dos resíduos orgânicos estão disponíveis para coleta efetiva, considerando limitações logísticas, sazonalidade e dispersão geográfica.",
+      "methodology": "Baseado em pesquisa FAPESP validada com dados empíricos de coleta em municípios paulistas.",
+      "reference": "FAPESP 2016/17221-8",
+      "use_case": "Recomendado para análises de viabilidade técnica e planejamento de projetos de curto prazo."
+    },
+    "otimista": {
+      "title": "Cenário Otimista (35%)",
+      "definition": "Estima que 35% dos resíduos estão disponíveis para coleta, assumindo melhoria nas rotas logísticas e parcerias com geradores.",
+      "methodology": "Baseado em projeções de eficiência operacional com infraestrutura otimizada.",
+      "reference": "Literatura técnica especializada",
+      "use_case": "Utilizado em análises de médio prazo com investimentos em infraestrutura de coleta."
+    },
+    "pessimista": {
+      "title": "Cenário Pessimista (5%)",
+      "definition": "Estima que apenas 5% dos resíduos estão disponíveis, considerando restrições severas de logística e custos elevados de transporte.",
+      "methodology": "Baseado em casos de dispersão geográfica extrema e infraestrutura limitada.",
+      "reference": "Análise conservadora para avaliação de riscos",
+      "use_case": "Usado em análises de viabilidade mínima e estudos de sensibilidade econômica."
+    },
+    "100_percent": {
+      "title": "Cenário Teórico (100%)",
+      "definition": "Representa o potencial máximo teórico sem considerar restrições logísticas ou econômicas.",
+      "methodology": "Cálculo direto baseado em fatores de conversão de substratos sem perdas.",
+      "reference": "NBR 15849:2010 - Resíduos Sólidos Urbanos",
+      "use_case": "Utilizado apenas para comparação teórica e benchmarking regional."
+    }
+  },
+  "substrates": {
+    "fracao_organica": {
+      "title": "Fração Orgânica",
+      "definition": "Material orgânico biodegradável de origem doméstica, comercial e pública (restos alimentares, resíduos de jardim, etc.).",
+      "classification": "Resíduo Classe II-A (NBR 10004:2004)",
+      "biogas_potential": "80-120 m³ CH₄/ton de matéria orgânica seca",
+      "methane_content": "55-65% CH₄",
+      "reference": "IPCC Guidelines 2006 - Waste Sector",
+      "characteristics": "Alta umidade (50-70%), C/N ratio: 15-25, pH: 5-7"
+    },
+    "lodo_esgoto": {
+      "title": "Lodo de Esgoto",
+      "definition": "Resíduo semissólido resultante do tratamento de efluentes domésticos e industriais em estações de tratamento (ETEs).",
+      "classification": "Resíduo Classe II-A ou II-B (depende de metais pesados)",
+      "biogas_potential": "200-400 m³ CH₄/ton de sólidos voláteis",
+      "methane_content": "60-70% CH₄",
+      "reference": "CONAMA 375/2006 - Uso agrícola de lodo",
+      "characteristics": "Teor de sólidos: 2-8%, C/N ratio: 8-12, patógenos requerem tratamento"
+    },
+    "residuos_culturas": {
+      "title": "Resíduos de Culturas Agrícolas",
+      "definition": "Biomassa residual de atividades agrícolas (palha, bagaço, cascas, restos de podas, etc.).",
+      "classification": "Resíduo Classe II-B (NBR 10004:2004)",
+      "biogas_potential": "150-300 m³ CH₄/ton de matéria seca (varia por cultura)",
+      "methane_content": "50-60% CH₄",
+      "reference": "FAO - Agricultural Residues for Bioenergy",
+      "characteristics": "Baixa umidade (10-30%), C/N ratio: 25-80, lignina pode reduzir digestibilidade"
+    },
+    "residuos_animais": {
+      "title": "Resíduos de Criação Animal",
+      "definition": "Dejetos de suínos, bovinos, aves e outros animais de criação, incluindo esterco e resíduos de camas.",
+      "classification": "Resíduo Classe II-A (NBR 10004:2004)",
+      "biogas_potential": "200-500 m³ CH₄/ton de sólidos voláteis (bovinos: 200-300, suínos: 350-500)",
+      "methane_content": "55-65% CH₄",
+      "reference": "ASABE Standards - Manure Production and Characteristics",
+      "characteristics": "Alta carga orgânica, C/N ratio: 6-20, alto potencial de emissão de NH₃"
+    },
+    "residuos_agroindustria": {
+      "title": "Resíduos de Agroindústria",
+      "definition": "Subprodutos do processamento agroindustrial (bagaço de cana, torta de filtro, cascas de frutas, vinhaça, etc.).",
+      "classification": "Resíduo Classe II-A ou II-B",
+      "biogas_potential": "100-400 m³ CH₄/ton de matéria seca (varia por tipo)",
+      "methane_content": "55-70% CH₄",
+      "reference": "ISO 14040:2006 - Life Cycle Assessment",
+      "characteristics": "Varia amplamente: vinhaça (alta umidade), bagaço (alta lignina), torta (rico em nutrientes)"
+    }
+  },
+  "metrics": {
+    "biogas_m3_ano": {
+      "title": "Biogás (m³/ano)",
+      "definition": "Volume total de biogás produzido anualmente pela digestão anaeróbica de resíduos orgânicos.",
+      "unit": "metros cúbicos normais por ano (Nm³/ano, 0°C e 1 atm)",
+      "conversion": "1000 m³ biogás ≈ 6000 kWh energia térmica ≈ 2000 kWh energia elétrica (motor a combustão)",
+      "composition": "CH₄ (50-70%), CO₂ (30-50%), traços de H₂S, NH₃, H₂O",
+      "reference": "VDI 4630:2016 - Fermentation of organic materials"
+    },
+    "metano_m3_ano": {
+      "title": "Metano (m³ CH₄/ano)",
+      "definition": "Volume de metano puro contido no biogás produzido, principal componente energético.",
+      "unit": "metros cúbicos normais de metano por ano",
+      "conversion": "1 m³ CH₄ ≈ 9.97 kWh PCI (poder calorífico inferior)",
+      "importance": "Determina o conteúdo energético real do biogás. Também é um gás de efeito estufa 28x mais potente que CO₂.",
+      "reference": "IPCC AR6 - CH₄ GWP100 = 27.9"
+    },
+    "energia_mwh_ano": {
+      "title": "Energia Elétrica (MWh/ano)",
+      "definition": "Energia elétrica potencial que pode ser gerada a partir do biogás em sistemas de cogeração.",
+      "unit": "megawatt-hora por ano",
+      "conversion": "1 MWh = 1000 kWh = consumo médio de ~4 residências brasileiras por mês",
+      "efficiency": "Assume eficiência de 35-40% em motores a combustão (cogeração) ou 50-60% em células a combustível",
+      "reference": "ANEEL - Atlas Brasileiro de Energia Elétrica"
+    },
+    "potencial_termico": {
+      "title": "Potencial Térmico (GJ/ano)",
+      "definition": "Energia térmica total liberada pela combustão do biogás, incluindo calor recuperável.",
+      "unit": "gigajoules por ano (1 GJ = 277.78 kWh)",
+      "conversion": "1 m³ CH₄ = 35.9 MJ PCI",
+      "applications": "Aquecimento industrial, secagem, climatização, processos térmicos",
+      "reference": "ISO 6976:2016 - Natural gas calculation"
+    },
+    "reducao_co2_eq": {
+      "title": "Redução de CO₂ Equivalente (ton CO₂eq/ano)",
+      "definition": "Emissões de gases de efeito estufa evitadas pela captura e uso do metano, em vez de emissão atmosférica.",
+      "unit": "toneladas de dióxido de carbono equivalente por ano",
+      "methodology": "GWP100 do CH₄ = 27.9 (IPCC AR6). Inclui emissões evitadas de aterros sanitários e substituição de combustíveis fósseis.",
+      "reference": "IPCC 2006 Guidelines - Volume 5: Waste",
+      "importance": "Métrica crítica para projetos de crédito de carbono (MDL, mercado voluntário) e políticas climáticas."
+    },
+    "residencias_equivalentes": {
+      "title": "Residências Equivalentes",
+      "definition": "Número estimado de residências que podem ser abastecidas com a energia elétrica gerada.",
+      "assumptions": "Consumo médio residencial: 150-200 kWh/mês (Brasil, EPE 2023)",
+      "calculation": "(Energia MWh/ano × 1000) ÷ (consumo mensal × 12 meses)",
+      "limitations": "Varia regionalmente. Sul/Sudeste: maior consumo (aquecimento). Norte/Nordeste: menor consumo.",
+      "reference": "EPE - Anuário Estatístico de Energia Elétrica"
+    }
+  },
+  "technical_terms": {
+    "digestao_anaerobia": {
+      "title": "Digestão Anaeróbica",
+      "definition": "Processo bioquímico de degradação de matéria orgânica por microrganismos na ausência de oxigênio, produzindo biogás e digestato.",
+      "stages": "1) Hidrólise, 2) Acidogênese, 3) Acetogênese, 4) Metanogênese",
+      "parameters": "Temperatura (mesofílica 35-40°C ou termofílica 50-60°C), pH 6.5-7.5, TRH (tempo de retenção hidráulica) 15-30 dias",
+      "reference": "VDI 3475:2016 - Biogas plants"
+    },
+    "poder_calorifico_inferior": {
+      "title": "Poder Calorífico Inferior (PCI)",
+      "definition": "Energia liberada na combustão completa, excluindo o calor latente da água formada (vapor não condensa).",
+      "biogas": "PCI biogás: 5-7 kWh/m³ (varia com % CH₄)",
+      "methane": "PCI CH₄ puro: 9.97 kWh/m³",
+      "reference": "ISO 6976:2016",
+      "use_case": "Usado em cálculos de eficiência de motores e caldeiras (condição real de operação)."
+    },
+    "tempo_retencao_hidraulica": {
+      "title": "Tempo de Retenção Hidráulica (TRH)",
+      "definition": "Tempo médio que o substrato permanece dentro do biodigestor durante o processo de digestão anaeróbica.",
+      "unit": "dias",
+      "typical_values": "Mesofílico: 20-30 dias, Termofílico: 12-20 dias, Alta carga: 10-15 dias",
+      "impact": "TRH maior → maior degradação → mais biogás, mas requer biodigestores maiores.",
+      "reference": "ASABE EP404.4:2014"
+    },
+    "carga_organica_volumetrica": {
+      "title": "Carga Orgânica Volumétrica (COV)",
+      "definition": "Quantidade de matéria orgânica (sólidos voláteis) alimentada no biodigestor por unidade de volume e tempo.",
+      "unit": "kg SV/m³.dia (quilogramas de sólidos voláteis por metro cúbico por dia)",
+      "typical_values": "Baixa carga: 1-2 kg SV/m³.dia, Média carga: 2-4, Alta carga: 4-6",
+      "importance": "COV muito alta → acidificação do digestor. COV muito baixa → ineficiência volumétrica.",
+      "reference": "VDI 4630:2016"
+    },
+    "solidos_volateis": {
+      "title": "Sólidos Voláteis (SV)",
+      "definition": "Fração orgânica dos sólidos totais que volatiliza (queima) a 550°C. Representa o conteúdo orgânico biodegradável.",
+      "measurement": "SV = ST - SF (sólidos fixos são cinzas inorgânicas)",
+      "importance": "Métrica fundamental para calcular potencial de biogás. SV/ST ratio indica biodegradabilidade.",
+      "typical_ratio": "Resíduos orgânicos: 80-95%, Lodo esgoto: 60-80%, Resíduos agrícolas: 70-90%",
+      "reference": "APHA Standard Methods 2540E"
+    },
+    "relacao_carbono_nitrogenio": {
+      "title": "Relação Carbono/Nitrogênio (C/N)",
+      "definition": "Razão entre o teor de carbono e nitrogênio na matéria orgânica. Indica o equilíbrio nutricional para microrganismos.",
+      "optimal_range": "C/N ideal para digestão anaeróbica: 20-30",
+      "problems": "C/N > 30 → lenta degradação (falta N). C/N < 15 → inibição por amônia (excesso N).",
+      "solution": "Co-digestão de substratos complementares (ex: palha + esterco).",
+      "reference": "Cornell Waste Management Institute"
+    },
+    "co_digestao": {
+      "title": "Co-digestão",
+      "definition": "Digestão anaeróbica simultânea de dois ou mais substratos diferentes para otimizar produção de biogás.",
+      "benefits": "1) Balanceamento C/N, 2) Diluição de inibidores, 3) Sinergia de nutrientes, 4) Maior estabilidade operacional.",
+      "examples": "Lodo de esgoto + resíduos agrícolas, Esterco bovino + silagem de milho, Fração orgânica + gorduras.",
+      "reference": "IEA Bioenergy Task 37 - Co-digestion Technical Brochure"
+    },
+    "gwp100": {
+      "title": "GWP100 (Global Warming Potential)",
+      "definition": "Potencial de aquecimento global de um gás em relação ao CO₂ em um período de 100 anos.",
+      "methane": "CH₄ GWP100 = 27.9 (IPCC AR6, inclui feedback climático)",
+      "n2o": "N₂O GWP100 = 273",
+      "co2": "CO₂ GWP100 = 1 (referência)",
+      "application": "Usado em inventários de GEE, créditos de carbono e análises de ciclo de vida.",
+      "reference": "IPCC AR6 WG1 - Chapter 7"
+    },
+    "credito_carbono": {
+      "title": "Crédito de Carbono",
+      "definition": "Certificado que representa a redução de 1 tonelada de CO₂ equivalente (tCO₂eq) na atmosfera.",
+      "markets": "1) Mercado regulado (compliance): EU ETS, California Cap-and-Trade. 2) Mercado voluntário: VCS, Gold Standard.",
+      "biogas_eligibility": "Projetos de captura e uso de metano são elegíveis (evitam emissões fugitivas e substituem fósseis).",
+      "methodology": "CDM AMS-III.H (Methane recovery in animal waste), AMS-I.C (Thermal energy)",
+      "reference": "UNFCCC CDM Methodologies"
+    },
+    "sirgas_2000": {
+      "title": "SIRGAS 2000 (EPSG:4674)",
+      "definition": "Sistema de Referência Geocêntrico para as Américas, datum oficial do Brasil desde 2015.",
+      "replaces": "SAD69 (antigo datum brasileiro)",
+      "projection": "Geográfica (lat/lon) ou UTM (zonas 18-25 para Brasil)",
+      "importance": "Obrigatório para dados geoespaciais oficiais brasileiros (IBGE, ANA, FUNAI, etc.).",
+      "reference": "IBGE - Resolução PR nº 1/2005"
+    }
+  },
+  "infrastructure": {
+    "gasodutos": {
+      "title": "Gasodutos",
+      "definition": "Infraestrutura de transporte de gás natural por tubulações pressurizadas.",
+      "relevance": "Proximidade a gasodutos permite injeção de biometano (biogás purificado) na rede de distribuição.",
+      "requirements": "Biometano deve atingir especificação ANP (>90% CH₄, <6% CO₂, H₂S < 10 mg/m³).",
+      "reference": "ANP Resolução 685/2017 - Especificação de Biometano"
+    },
+    "linhas_transmissao": {
+      "title": "Linhas de Transmissão de Energia",
+      "definition": "Infraestrutura de alta tensão (138 kV a 750 kV) para transporte de energia elétrica em longas distâncias.",
+      "relevance": "Proximidade facilita conexão à rede e escoamento de energia gerada por biogás.",
+      "connection": "Requer subestação e aprovação de estudos de acesso (ONS/ANEEL).",
+      "reference": "PRODIST Módulo 3 - ANEEL"
+    },
+    "areas_protegidas": {
+      "title": "Áreas Protegidas e Unidades de Conservação",
+      "definition": "Territórios legalmente protegidos para conservação ambiental (parques, reservas, APAs, etc.).",
+      "restrictions": "Instalação de biodigestores em UCs depende de categoria e zona. Proibido em áreas de proteção integral.",
+      "legislation": "Lei 9.985/2000 (SNUC), Lei 12.651/2012 (Código Florestal)",
+      "reference": "ICMBio/MMA - Sistema Nacional de Unidades de Conservação"
+    }
+  },
+  "units": {
+    "nm3": {
+      "title": "Nm³ (Normal metro cúbico)",
+      "definition": "Volume de gás nas condições normais de temperatura e pressão (0°C e 1 atm = 101.325 kPa).",
+      "standardization": "Permite comparação independente de condições ambientais (altitude, temperatura local).",
+      "conversion": "1 Nm³ ≠ 1 m³ medido localmente (corrigir por T e P reais).",
+      "reference": "ISO 2533:1975 - Standard Atmosphere"
+    },
+    "kwh": {
+      "title": "kWh (Quilowatt-hora)",
+      "definition": "Unidade de energia equivalente à potência de 1 kilowatt atuando durante 1 hora.",
+      "conversions": "1 kWh = 3.6 MJ = 860 kcal",
+      "residential": "Consumo residencial médio brasileiro: 150-200 kWh/mês",
+      "reference": "SI (Sistema Internacional de Unidades)"
+    },
+    "gj": {
+      "title": "GJ (Gigajoule)",
+      "definition": "Unidade de energia equivalente a 1 bilhão de joules. Comum para energia térmica em processos industriais.",
+      "conversions": "1 GJ = 277.78 kWh = 0.278 MWh",
+      "industrial": "Caldeira industrial típica: 50-500 GJ/dia",
+      "reference": "SI (Sistema Internacional de Unidades)"
+    },
+    "tco2eq": {
+      "title": "tCO₂eq (Toneladas de CO₂ Equivalente)",
+      "definition": "Métrica padronizada para comparar emissões de diferentes gases de efeito estufa convertidos em equivalente de CO₂.",
+      "calculation": "tCO₂eq = massa do gás × GWP do gás",
+      "example": "1 ton CH₄ = 27.9 ton CO₂eq (IPCC AR6)",
+      "reference": "IPCC Guidelines for National GHG Inventories"
+    }
+  }
+}

@@ -7,6 +7,7 @@ import streamlit as st
 from config.scenario_config import (
     SCENARIOS, get_current_scenario, set_scenario, init_scenario_state
 )
+from src.ui.components.contextual_tooltip import scenario_badge_with_tooltip, quick_tooltip
 
 
 def render_scenario_selector():
@@ -22,9 +23,20 @@ def render_scenario_selector():
     # USAR EXPANDER para organizar na sidebar (collapsed by default to prevent rerun)
     with st.sidebar.expander("🎯 Cenário de Disponibilidade", expanded=False):
 
-        st.caption(
-            "Selecione o percentual de resíduos disponíveis para geração de biogás:"
-        )
+        col1, col2 = st.columns([0.9, 0.1])
+        with col1:
+            st.caption(
+                "Selecione o percentual de resíduos disponíveis para geração de biogás:"
+            )
+        with col2:
+            with st.popover("ℹ️", use_container_width=False):
+                st.markdown("""
+                **Cenários de Disponibilidade**
+
+                Representam o percentual de resíduos efetivamente disponíveis para coleta e conversão em biogás, considerando restrições logísticas, econômicas e sazonais.
+
+                Clique em cada cenário para ver detalhes da metodologia científica.
+                """, unsafe_allow_html=True)
 
         # Radio buttons para seleção
         options = list(SCENARIOS.keys())
