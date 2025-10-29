@@ -11,30 +11,6 @@ from src.utils.logging_config import get_logger
 logger = get_logger(__name__)
 
 
-def _navigate_to_tool(tool_key: str) -> None:
-    """
-    Navigate to specific tool tab by showing helpful message
-
-    Args:
-        tool_key: Tool identifier (e.g., 'mapa_principal')
-    """
-    # Map tool keys to tab display names
-    tool_to_tab_display = {
-        "mapa_principal": "🗺️ Mapa Principal",
-        "explorar_dados": "🔍 Explorar Dados",
-        "analises_avancadas": "📊 Análises Avançadas",
-        "proximidade": "🎯 Análise de Proximidade",
-        "bagacinho_ia": "🍊 Bagacinho IA",
-        "referencias": "📚 Referências Científicas",
-        "sobre": "ℹ️ Sobre o CP2B Maps"
-    }
-
-    # Show success message guiding user to the tab
-    tab_name = tool_to_tab_display.get(tool_key, "ferramenta")
-    st.toast(f"✅ Clique na aba **{tab_name}** para começar!", icon="🚀")
-    logger.info(f"User ready to navigate to tool: {tool_key}")
-
-
 # Comprehensive tool details database
 TOOL_DETAILS = {
     "mapa_principal": {
@@ -456,11 +432,6 @@ def show_feature_modal(tool_key: str):
         </div>
         """, unsafe_allow_html=True)
 
-        # CTA with refined styling
-        if st.button("🚀 Começar a Usar", key=f"cta_overview_{tool_key}", use_container_width=True):
-            _navigate_to_tool(tool_key)
-            # Dialog auto-closes and triggers rerun - no manual rerun needed
-
     # TAB 2: Tutorial
     with tab2:
         st.markdown("""
@@ -495,11 +466,6 @@ def show_feature_modal(tool_key: str):
 
         st.markdown("<div style='margin: 2rem 0;'></div>", unsafe_allow_html=True)
 
-        # CTA
-        if st.button("🚀 Começar a Usar", key=f"cta_tutorial_{tool_key}", use_container_width=True):
-            _navigate_to_tool(tool_key)
-            # Dialog auto-closes and triggers rerun - no manual rerun needed
-
     # TAB 3: Exemplos (Use Cases)
     with tab3:
         st.markdown("""
@@ -525,11 +491,6 @@ def show_feature_modal(tool_key: str):
                 """, unsafe_allow_html=True)
 
         st.markdown("<div style='margin: 2rem 0;'></div>", unsafe_allow_html=True)
-
-        # CTA
-        if st.button("🚀 Começar a Usar", key=f"cta_exemplos_{tool_key}", use_container_width=True):
-            _navigate_to_tool(tool_key)
-            # Dialog auto-closes and triggers rerun - no manual rerun needed
 
     # TAB 4: Dicas (Tips)
     with tab4:
@@ -559,8 +520,3 @@ def show_feature_modal(tool_key: str):
             """, unsafe_allow_html=True)
 
         st.markdown("<div style='margin: 2rem 0;'></div>", unsafe_allow_html=True)
-
-        # CTA
-        if st.button("🚀 Começar a Usar", key=f"cta_dicas_{tool_key}", use_container_width=True):
-            _navigate_to_tool(tool_key)
-            # Dialog auto-closes and triggers rerun - no manual rerun needed
