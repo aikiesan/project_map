@@ -459,7 +459,7 @@ def show_feature_modal(tool_key: str):
         # CTA with refined styling
         if st.button("🚀 Começar a Usar", key=f"cta_overview_{tool_key}", use_container_width=True):
             _navigate_to_tool(tool_key)
-            st.rerun()
+            # Dialog auto-closes and triggers rerun - no manual rerun needed
 
     # TAB 2: Tutorial
     with tab2:
@@ -498,7 +498,7 @@ def show_feature_modal(tool_key: str):
         # CTA
         if st.button("🚀 Começar a Usar", key=f"cta_tutorial_{tool_key}", use_container_width=True):
             _navigate_to_tool(tool_key)
-            st.rerun()
+            # Dialog auto-closes and triggers rerun - no manual rerun needed
 
     # TAB 3: Exemplos (Use Cases)
     with tab3:
@@ -529,7 +529,7 @@ def show_feature_modal(tool_key: str):
         # CTA
         if st.button("🚀 Começar a Usar", key=f"cta_exemplos_{tool_key}", use_container_width=True):
             _navigate_to_tool(tool_key)
-            st.rerun()
+            # Dialog auto-closes and triggers rerun - no manual rerun needed
 
     # TAB 4: Dicas (Tips)
     with tab4:
@@ -563,4 +563,4 @@ def show_feature_modal(tool_key: str):
         # CTA
         if st.button("🚀 Começar a Usar", key=f"cta_dicas_{tool_key}", use_container_width=True):
             _navigate_to_tool(tool_key)
-            st.rerun()
+            # Dialog auto-closes and triggers rerun - no manual rerun needed
