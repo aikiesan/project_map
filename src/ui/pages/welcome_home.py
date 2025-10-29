@@ -90,7 +90,7 @@ class WelcomeHomePage:
 
             - 🔬 **Pesquisadores** que estudam energia renovável e sustentabilidade
             - 🏢 **Empresas** que planejam investimentos em biogás e bioenergia
-            - 🏛️ **Gestores públicos** que desenvolvem políticas energéticas
+            - 🏛️ **Gestores públicos** que desenvolvem políticas energéticas e de sustentabilidade
             - 🎓 **Estudantes** que exploram temas de energia limpa e meio ambiente
 
             ### 🎯 Por que usar o CP2B Maps?

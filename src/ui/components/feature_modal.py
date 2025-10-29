@@ -11,6 +11,30 @@ from src.utils.logging_config import get_logger
 logger = get_logger(__name__)
 
 
+def _navigate_to_tool(tool_key: str) -> None:
+    """
+    Navigate to specific tool tab by showing helpful message
+
+    Args:
+        tool_key: Tool identifier (e.g., 'mapa_principal')
+    """
+    # Map tool keys to tab display names
+    tool_to_tab_display = {
+        "mapa_principal": "🗺️ Mapa Principal",
+        "explorar_dados": "🔍 Explorar Dados",
+        "analises_avancadas": "📊 Análises Avançadas",
+        "proximidade": "🎯 Análise de Proximidade",
+        "bagacinho_ia": "🍊 Bagacinho IA",
+        "referencias": "📚 Referências Científicas",
+        "sobre": "ℹ️ Sobre o CP2B Maps"
+    }
+
+    # Show success message guiding user to the tab
+    tab_name = tool_to_tab_display.get(tool_key, "ferramenta")
+    st.toast(f"✅ Clique na aba **{tab_name}** para começar!", icon="🚀")
+    logger.info(f"User ready to navigate to tool: {tool_key}")
+
+
 # Comprehensive tool details database
 TOOL_DETAILS = {
     "mapa_principal": {
@@ -357,18 +381,28 @@ def show_feature_modal(tool_key: str):
 
     tool = TOOL_DETAILS[tool_key]
 
-    # Enhanced modal header with refined typography and spacing
+    # Add compact modal styling with reduced height
+    st.markdown("""
+    <style>
+    [data-testid="stDialog"] > div:first-child {
+        max-height: 70vh !important;
+        overflow-y: auto !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # Enhanced modal header with refined typography and spacing (more compact)
     st.markdown(f"""
-    <div style='text-align: center; margin-bottom: 2.5rem; padding-bottom: 2rem;
+    <div style='text-align: center; margin-bottom: 1.5rem; padding-bottom: 1.25rem;
                 border-bottom: 1px solid #e9ecef;'>
-        <div style='font-size: 4rem; margin-bottom: 1rem; line-height: 1;'>
+        <div style='font-size: 3rem; margin-bottom: 0.75rem; line-height: 1;'>
             {tool['icon']}
         </div>
-        <h1 style='color: #1a202c; margin: 0 0 1rem 0; font-weight: 600;
-                   font-size: 2rem; letter-spacing: -0.02em;'>
+        <h1 style='color: #1a202c; margin: 0 0 0.75rem 0; font-weight: 600;
+                   font-size: 1.75rem; letter-spacing: -0.02em;'>
             {tool['title']}
         </h1>
-        <p style='color: #718096; font-size: 1.1rem; margin: 0; line-height: 1.7;
+        <p style='color: #718096; font-size: 1rem; margin: 0; line-height: 1.6;
                   max-width: 700px; margin-left: auto; margin-right: auto;'>
             {tool['description']}
         </p>
@@ -424,6 +458,7 @@ def show_feature_modal(tool_key: str):
 
         # CTA with refined styling
         if st.button("🚀 Começar a Usar", key=f"cta_overview_{tool_key}", use_container_width=True):
+            _navigate_to_tool(tool_key)
             st.rerun()
 
     # TAB 2: Tutorial
@@ -462,6 +497,7 @@ def show_feature_modal(tool_key: str):
 
         # CTA
         if st.button("🚀 Começar a Usar", key=f"cta_tutorial_{tool_key}", use_container_width=True):
+            _navigate_to_tool(tool_key)
             st.rerun()
 
     # TAB 3: Exemplos (Use Cases)
@@ -492,6 +528,7 @@ def show_feature_modal(tool_key: str):
 
         # CTA
         if st.button("🚀 Começar a Usar", key=f"cta_exemplos_{tool_key}", use_container_width=True):
+            _navigate_to_tool(tool_key)
             st.rerun()
 
     # TAB 4: Dicas (Tips)
@@ -525,4 +562,5 @@ def show_feature_modal(tool_key: str):
 
         # CTA
         if st.button("🚀 Começar a Usar", key=f"cta_dicas_{tool_key}", use_container_width=True):
+            _navigate_to_tool(tool_key)
             st.rerun()

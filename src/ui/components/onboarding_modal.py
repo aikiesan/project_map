@@ -71,7 +71,6 @@ def _render_onboarding_modal() -> None:
         with col_btn2:
             if st.button("🚀 Começar a Explorar", use_container_width=True, type="primary"):
                 _dismiss_onboarding(dont_show_again)
-                st.rerun()
 
     # Show dialog
     welcome_dialog()
