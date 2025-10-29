@@ -51,6 +51,7 @@ from config.scenario_config import init_scenario_state
 
 # CRITICAL: Import all page modules at startup to prevent re-imports on tab rendering
 # This eliminates multiple reruns caused by lazy imports inside tab blocks
+from src.ui.pages.welcome_home import WelcomeHomePage
 from src.ui.pages.home import HomePage
 from src.ui.pages.data_explorer import create_data_explorer_page
 from src.ui.pages.residue_analysis import create_residue_analysis_page
@@ -101,7 +102,8 @@ def init_session_state():
         # Prevents creating new page objects on every rerun
         # Note: Functional pages (that render on creation) are not cached here
         logger.info("Initializing cached page instances...")
-        st.session_state.home_page = HomePage()
+        st.session_state.welcome_page = WelcomeHomePage()
+        st.session_state.map_page = HomePage()
         st.session_state.data_explorer_page = create_data_explorer_page()
         st.session_state.proximity_analysis_page = create_proximity_analysis_page()
         logger.info("✅ Page instances cached successfully - App initialization complete")
@@ -109,14 +111,18 @@ def init_session_state():
         logger.debug("App already initialized - skipping initialization")
     
     # Defensive initialization: ensure page instances exist even if session state was partially cleared
-    if 'home_page' not in st.session_state:
-        logger.warning("home_page missing from session state - reinitializing")
-        st.session_state.home_page = HomePage()
-    
+    if 'welcome_page' not in st.session_state:
+        logger.warning("welcome_page missing from session state - reinitializing")
+        st.session_state.welcome_page = WelcomeHomePage()
+
+    if 'map_page' not in st.session_state:
+        logger.warning("map_page missing from session state - reinitializing")
+        st.session_state.map_page = HomePage()
+
     if 'data_explorer_page' not in st.session_state:
         logger.warning("data_explorer_page missing from session state - reinitializing")
         st.session_state.data_explorer_page = create_data_explorer_page()
-    
+
     if 'proximity_analysis_page' not in st.session_state:
         logger.warning("proximity_analysis_page missing from session state - reinitializing")
         st.session_state.proximity_analysis_page = create_proximity_analysis_page()
@@ -152,10 +158,11 @@ def main():
         # Language identification (WCAG 3.1.1)
         st.markdown('<div lang="pt-BR">', unsafe_allow_html=True)
 
-        # V1-Style Tab Navigation (7 tabs - Dados Validados temporarily disabled)
+        # V1-Style Tab Navigation (8 tabs - Dados Validados temporarily disabled)
         # CSS loaded at startup via st.components.v1.html, so tabs render with correct styles immediately
         tabs = st.tabs([
-            "🏠 Mapa Principal",
+            "🏠 Início",
+            "🗺️ Mapa Principal",
             "🔍 Explorar Dados",
             "📊 Análises Avançadas",
             "🎯 Análise de Proximidade",
@@ -168,40 +175,47 @@ def main():
         st.markdown('<main role="main" id="main-content" aria-label="Conteúdo principal">', unsafe_allow_html=True)
 
         # Render content in tabs (using cached page instances from session state)
-        with tabs[0]:  # Home
+        with tabs[0]:  # Welcome Home
             # Hidden heading for accessibility only
-            st.markdown('<h2 style="position: absolute; left: -10000px;" id="home-section">Página Inicial</h2>', unsafe_allow_html=True)
-            
-            # Use cached page instance
-            st.session_state.home_page.render()
+            st.markdown('<h2 style="position: absolute; left: -10000px;" id="welcome-section">Página Inicial</h2>', unsafe_allow_html=True)
 
-        with tabs[1]:  # Explorar Dados (Enhanced Data Explorer with V1 charts)
+            # Use cached welcome page instance
+            st.session_state.welcome_page.render()
+
+        with tabs[1]:  # Map Page
+            # Hidden heading for accessibility only
+            st.markdown('<h2 style="position: absolute; left: -10000px;" id="map-section">Mapa Principal</h2>', unsafe_allow_html=True)
+
+            # Use cached map page instance
+            st.session_state.map_page.render()
+
+        with tabs[2]:  # Explorar Dados (Enhanced Data Explorer with V1 charts)
             # Note: Data Explorer has its own styled banner header
             st.session_state.data_explorer_page.render()
 
-        with tabs[2]:  # Análises Avançadas (Residue Analysis only)
+        with tabs[3]:  # Análises Avançadas (Residue Analysis only)
             # Note: Residue Analysis page has its own styled banner header
             # Functional page - renders on creation
             create_residue_analysis_page()
 
-        with tabs[3]:  # Proximity Analysis (V1 UX with V2 Architecture)
+        with tabs[4]:  # Proximity Analysis (V1 UX with V2 Architecture)
             # Note: Proximity Analysis page has its own styled banner header
             st.session_state.proximity_analysis_page.render()
 
-        with tabs[4]:  # Bagacinho AI Assistant
+        with tabs[5]:  # Bagacinho AI Assistant
             # Note: Bagacinho page has its own beautiful header
             render_bagacinho_page()
 
-        with tabs[5]:  # References (V1 style)
+        with tabs[6]:  # References (V1 style)
             # Note: References page has its own styled banner header
             render_references_v1_page()
 
         # TEMPORARILY DISABLED: Dados Validados page needs further development
-        # with tabs[6]:  # Validated Research Data (NEW)
+        # with tabs[7]:  # Validated Research Data (NEW)
         #     # Note: Validated Research page has its own styled banner header
         #     create_validated_research_page()
 
-        with tabs[6]:  # Sobre (About) - V1 Style
+        with tabs[7]:  # Sobre (About) - V1 Style
             # Note: About page has its own styled banner header
             render_about_v1_page()
 
