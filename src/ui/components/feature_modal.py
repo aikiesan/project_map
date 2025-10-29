@@ -239,7 +239,7 @@ TOOL_DETAILS = {
         "dicas": [
             "💬 **Seja específico nas perguntas**: 'Qual município tem mais biogás de cana?' é melhor que 'Fale sobre cana'",
             "🔢 Peça **rankings e comparações**: 'Top 5 municípios' gera ranking automático",
-            "❓ Pergunte **"como" e "por quê"** para entender metodologia e contexto",
+            "❓ Pergunte **'como' e 'por quê'** para entender metodologia e contexto",
             "🔄 Use **contexto de conversa**: 'E quanto a energia?' após uma pergunta sobre biogás",
             "📊 Peça **cálculos percentuais**: 'Quantos % do total é São Paulo?' - ele calcula na hora",
             "🎯 Funciona com **erros de digitação**: 'Campinas', 'Canpinas', 'kampinas' - tudo funciona!"
