@@ -51,7 +51,6 @@ from config.scenario_config import init_scenario_state
 
 # Import new usability components (Phase 1)
 from src.ui.components.help_fab import render_help_fab, render_aria_live_region, announce_to_screen_reader
-from src.ui.components.onboarding_modal import show_onboarding_modal
 
 # CRITICAL: Import all page modules at startup to prevent re-imports on tab rendering
 # This eliminates multiple reruns caused by lazy imports inside tab blocks
@@ -170,9 +169,6 @@ def main():
 
         # ARIA live region for accessibility announcements (WCAG 4.1.3)
         render_aria_live_region()
-
-        # Show onboarding modal for first-time users
-        show_onboarding_modal()
 
         # Render Help FAB in sidebar
         current_page = _get_current_page_name()
