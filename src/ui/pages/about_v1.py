@@ -366,7 +366,7 @@ def _render_footer():
 
     with col2:
         try:
-            st.image("logotipo-full-black.png", width=250)
+            st.image("assets/images/logotipo-full-black.png", width=250)
         except:
             logger.warning("Logo not found")
             st.markdown("""

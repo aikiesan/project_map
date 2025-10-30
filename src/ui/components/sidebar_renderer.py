@@ -29,7 +29,7 @@ class SidebarRenderer:
             logo_path: Path to CP2B logo image
         """
         self.logger = get_logger(self.__class__.__name__)
-        self.logo_path = logo_path or Path("logotipo-full-black.png")
+        self.logo_path = logo_path or Path("assets/images/logotipo-full-black.png")
 
     def render(self) -> MapConfig:
         """

@@ -1,4 +1,0 @@
-# Simple requirements for initial testing - using pre-installed packages
-streamlit
-streamlit-folium
-folium
