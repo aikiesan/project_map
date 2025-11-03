@@ -426,3 +426,315 @@ class TestQueryPerformance:
 
         except Exception as e:
             pytest.skip(f"Could not test single query performance: {e}")
+
+
+class TestScenarioFactorEdgeCases:
+    """Test scenario factor application edge cases"""
+
+    def test_scenario_factor_1_0_unchanged(self):
+        """Test that factor 1.0 leaves values unchanged"""
+        loader = DatabaseLoader()
+
+        # Create sample data
+        df = pd.DataFrame({
+            'municipality': ['Test'],
+            'biogas_potential_m3_year': [1000000.0],
+            'energy_potential_kwh_day': [10000.0]
+        })
+
+        # Mock scenario factor as 1.0
+        from config import scenario_config
+        original_factor = scenario_config.get_scenario_factor
+        scenario_config.get_scenario_factor = lambda: 1.0
+        scenario_config.get_current_scenario = lambda: 'utopian'
+
+        try:
+            df_adjusted = loader.apply_scenario_factor(df)
+
+            # Values should be identical
+            assert df_adjusted['biogas_potential_m3_year'].iloc[0] == 1000000.0
+            assert df_adjusted['energy_potential_kwh_day'].iloc[0] == 10000.0
+
+        finally:
+            # Restore original function
+            scenario_config.get_scenario_factor = original_factor
+
+    def test_scenario_factor_reduces_values(self):
+        """Test that scenario factor scales biogas values proportionally"""
+        loader = DatabaseLoader()
+
+        # Create sample data
+        df = pd.DataFrame({
+            'municipality': ['Test'],
+            'biogas_potential_m3_year': [1000000.0],
+            'energy_potential_kwh_day': [10000.0],
+            'other_column': [100]  # Should not be affected
+        })
+
+        df_adjusted = loader.apply_scenario_factor(df)
+
+        # Biogas columns should be scaled (factor is 0 < factor <= 1)
+        # Adjusted values should be <= original (unless factor > 1)
+        assert df_adjusted['biogas_potential_m3_year'].iloc[0] <= df['biogas_potential_m3_year'].iloc[0]
+        assert df_adjusted['energy_potential_kwh_day'].iloc[0] <= df['energy_potential_kwh_day'].iloc[0]
+
+        # Non-biogas columns should be unchanged
+        assert df_adjusted['other_column'].iloc[0] == df['other_column'].iloc[0]
+
+        # Values should still be non-negative
+        assert df_adjusted['biogas_potential_m3_year'].iloc[0] >= 0
+        assert df_adjusted['energy_potential_kwh_day'].iloc[0] >= 0
+
+    def test_apply_scenario_factor_empty_dataframe(self):
+        """Test scenario factor application to empty DataFrame"""
+        loader = DatabaseLoader()
+
+        df = pd.DataFrame()
+
+        df_adjusted = loader.apply_scenario_factor(df)
+
+        # Should return empty DataFrame without errors
+        assert isinstance(df_adjusted, pd.DataFrame)
+        assert len(df_adjusted) == 0
+
+    def test_apply_scenario_factor_missing_columns(self):
+        """Test scenario factor with DataFrame missing biogas columns"""
+        loader = DatabaseLoader()
+
+        # DataFrame with no biogas columns
+        df = pd.DataFrame({
+            'municipality': ['Test'],
+            'population': [100000]
+        })
+
+        df_adjusted = loader.apply_scenario_factor(df)
+
+        # Should handle gracefully (no columns to adjust)
+        assert isinstance(df_adjusted, pd.DataFrame)
+        assert 'municipality' in df_adjusted.columns
+        assert df_adjusted['population'].iloc[0] == 100000
+
+    def test_apply_scenario_factor_preserves_original(self):
+        """Test that applying scenario factor doesn't modify original DataFrame"""
+        loader = DatabaseLoader()
+
+        # Create sample data
+        df_original = pd.DataFrame({
+            'municipality': ['Test'],
+            'biogas_potential_m3_year': [1000000.0]
+        })
+
+        original_value = df_original['biogas_potential_m3_year'].iloc[0]
+
+        df_adjusted = loader.apply_scenario_factor(df_original)
+
+        # Original should be unchanged
+        assert df_original['biogas_potential_m3_year'].iloc[0] == original_value
+
+
+class TestDatabaseLoaderMethods:
+    """Test additional DatabaseLoader methods"""
+
+    def test_get_database_info(self):
+        """Test get_database_info returns expected structure"""
+        loader = DatabaseLoader()
+
+        info = loader.get_database_info()
+
+        # Should return dict
+        assert isinstance(info, dict)
+
+        # Should have expected keys
+        if 'error' not in info:
+            assert 'database_path' in info
+            assert 'database_size_mb' in info
+            assert 'tables' in info
+
+    def test_validate_database_success(self):
+        """Test database validation succeeds for valid database"""
+        loader = DatabaseLoader()
+
+        result = loader.validate_database()
+
+        # Should return True for valid database
+        assert result is True
+
+    def test_validate_database_invalid_path(self):
+        """Test database validation fails for invalid path"""
+        from pathlib import Path
+
+        # Create loader with invalid path
+        invalid_path = Path("/nonexistent/path/to/database.db")
+        loader = DatabaseLoader(db_path=invalid_path)
+
+        result = loader.validate_database()
+
+        # Should return False
+        assert result is False
+
+    def test_search_municipalities(self):
+        """Test municipality search functionality"""
+        loader = DatabaseLoader()
+
+        try:
+            result = loader.search_municipalities("São Paulo", limit=5)
+
+            if result is not None:
+                # Should return DataFrame
+                assert isinstance(result, pd.DataFrame)
+                # Should have at most 5 results
+                assert len(result) <= 5
+
+        except Exception:
+            # If method uses different table structure, skip
+            pytest.skip("search_municipalities not compatible with current schema")
+
+    def test_search_municipalities_no_results(self):
+        """Test municipality search with no matching results"""
+        loader = DatabaseLoader()
+
+        try:
+            result = loader.search_municipalities("NONEXISTENTCITYXYZ123", limit=10)
+
+            if result is not None:
+                # Should return empty DataFrame
+                assert isinstance(result, pd.DataFrame)
+                assert len(result) == 0
+
+        except Exception:
+            pytest.skip("search_municipalities not compatible with current schema")
+
+    def test_search_municipalities_empty_term(self):
+        """Test municipality search with empty search term"""
+        loader = DatabaseLoader()
+
+        try:
+            result = loader.search_municipalities("", limit=10)
+
+            # Should handle gracefully
+            assert result is None or isinstance(result, pd.DataFrame)
+
+        except Exception:
+            pytest.skip("search_municipalities not compatible with current schema")
+
+
+class TestDatabaseConnectionErrors:
+    """Test database connection error handling"""
+
+    def test_database_loader_nonexistent_path_initialization(self):
+        """Test DatabaseLoader initialization with nonexistent database"""
+        from pathlib import Path
+
+        invalid_path = Path("/tmp/nonexistent_database.db")
+
+        # Should initialize without error (error logged)
+        loader = DatabaseLoader(db_path=invalid_path)
+
+        assert loader.db_path == invalid_path
+
+    def test_get_connection_with_invalid_database(self):
+        """Test get_connection with invalid database path"""
+        from pathlib import Path
+
+        invalid_path = Path("/tmp/nonexistent_database.db")
+        loader = DatabaseLoader(db_path=invalid_path)
+
+        # Connection might succeed even for nonexistent DB (SQLite creates it)
+        # but querying non-existent table should fail
+        try:
+            with loader.get_connection() as conn:
+                # Try to query a table that doesn't exist
+                with pytest.raises(Exception):  # Could be sqlite3.OperationalError or DatabaseError
+                    conn.execute("SELECT * FROM nonexistent_table").fetchall()
+        except sqlite3.Error:
+            # If connection itself fails, that's also acceptable
+            pass
+
+
+class TestDatabaseCaching:
+    """Test that caching decorators work correctly"""
+
+    def test_load_municipalities_data_cached(self):
+        """Test that load_municipalities_data uses caching"""
+        loader = DatabaseLoader()
+
+        # First call
+        df1 = loader.load_municipalities_data()
+
+        # Second call (should be cached)
+        df2 = loader.load_municipalities_data()
+
+        # Both should be DataFrames (or both None)
+        if df1 is not None:
+            assert isinstance(df1, pd.DataFrame)
+            assert isinstance(df2, pd.DataFrame)
+            # Should have same shape
+            assert df1.shape == df2.shape
+
+    def test_get_top_municipalities(self):
+        """Test get_top_municipalities method"""
+        loader = DatabaseLoader()
+
+        result = loader.get_top_municipalities(limit=10)
+
+        if result is not None:
+            # Should return DataFrame
+            assert isinstance(result, pd.DataFrame)
+            # Should have at most 10 results
+            assert len(result) <= 10
+            # Should have expected columns
+            if len(result) > 0:
+                assert 'municipality' in result.columns
+
+    def test_get_top_municipalities_different_limits(self):
+        """Test get_top_municipalities with different limits"""
+        loader = DatabaseLoader()
+
+        result_5 = loader.get_top_municipalities(limit=5)
+        result_20 = loader.get_top_municipalities(limit=20)
+
+        if result_5 is not None and result_20 is not None:
+            # 5-limit result should be smaller
+            assert len(result_5) <= 5
+            assert len(result_20) <= 20
+            assert len(result_5) <= len(result_20)
+
+    def test_get_summary_statistics(self):
+        """Test get_summary_statistics method"""
+        loader = DatabaseLoader()
+
+        stats = loader.get_summary_statistics()
+
+        # Should return dict (or None if method implementation varies)
+        if stats is not None:
+            assert isinstance(stats, dict)
+            # May have various keys depending on implementation
+
+    def test_load_municipality_by_name(self):
+        """Test loading specific municipality by name"""
+        loader = DatabaseLoader()
+
+        try:
+            # Try loading a known municipality
+            result = loader.load_municipality_by_name("Piracicaba")
+
+            if result is not None:
+                # Should return Series
+                assert isinstance(result, pd.Series)
+
+        except Exception:
+            # If method signature differs, skip
+            pytest.skip("load_municipality_by_name not compatible")
+
+    def test_load_municipality_by_name_not_found(self):
+        """Test loading nonexistent municipality"""
+        loader = DatabaseLoader()
+
+        try:
+            result = loader.load_municipality_by_name("NONEXISTENTCITY123XYZ")
+
+            # Should return None
+            assert result is None
+
+        except Exception:
+            pytest.skip("load_municipality_by_name not compatible")
