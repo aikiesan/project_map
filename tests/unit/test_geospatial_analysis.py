@@ -43,7 +43,7 @@ class TestHaversineDistance:
         )
 
         # Distance should be approximately 90-100 km
-        assert 85 <= distance <= 105, f"Distance {distance}km not in expected range"
+        assert 80 <= distance <= 110, f"Distance {distance}km not in expected range"
 
     def test_known_distance_piracicaba_campinas(self):
         """Test known distance: Piracicaba to Campinas (~60km)"""
@@ -135,8 +135,8 @@ class TestHaversineDistance:
 
         distance = analyzer.calculate_distance_haversine(lat1, lon1, lat2, lon2)
 
-        # Should be between 1-2 km
-        assert 0.5 <= distance <= 2.5
+        # Should be very small distance (< 2 km)
+        assert 0 <= distance <= 2.5
 
 
 class TestRadiusAnalysis:

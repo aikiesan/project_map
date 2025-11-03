@@ -47,14 +47,14 @@ class TestBiogasCalculator:
         )
 
         # Verify result structure
-        assert 'biogas_production_m3_day' in result
-        assert 'methane_production_m3_day' in result
+        assert 'biogas_potential_m3_day' in result
+        assert 'methane_potential_m3_day' in result
         assert 'energy_potential_kwh_day' in result
         assert 'co2_reduction_tons_year' in result
 
         # Verify calculations are positive
-        assert result['biogas_production_m3_day'] > 0
-        assert result['methane_production_m3_day'] > 0
+        assert result['biogas_potential_m3_day'] > 0
+        assert result['methane_potential_m3_day'] > 0
         assert result['energy_potential_kwh_day'] > 0
 
     def test_biogas_yield_calculation(self):
@@ -77,7 +77,7 @@ class TestBiogasCalculator:
         expected_biogas = expected_organic_kg * 0.5
 
         # Allow 1% tolerance for floating point
-        assert abs(result['biogas_production_m3_day'] - expected_biogas) / expected_biogas < 0.01
+        assert abs(result['biogas_potential_m3_day'] - expected_biogas) / expected_biogas < 0.01
 
     def test_methane_content_calculation(self):
         """Test methane extraction from biogas"""
@@ -92,7 +92,7 @@ class TestBiogasCalculator:
         )
 
         # Methane should be ~60% of biogas
-        methane_fraction = result['methane_production_m3_day'] / result['biogas_production_m3_day']
+        methane_fraction = result['methane_potential_m3_day'] / result['biogas_potential_m3_day']
 
         assert abs(methane_fraction - calc.factors.methane_content) < 0.001
 
@@ -109,7 +109,7 @@ class TestBiogasCalculator:
         )
 
         # Energy = methane × energy_content
-        expected_energy = result['methane_production_m3_day'] * calc.factors.methane_energy_content
+        expected_energy = result['methane_potential_m3_day'] * calc.factors.methane_energy_content
 
         assert abs(result['energy_potential_kwh_day'] - expected_energy) < 0.1
 
@@ -119,8 +119,8 @@ class TestBiogasCalculator:
 
         result = calc.calculate_municipality_potential(0, 0, 100000)
 
-        assert result['biogas_production_m3_day'] == 0
-        assert result['methane_production_m3_day'] == 0
+        assert result['biogas_potential_m3_day'] == 0
+        assert result['methane_potential_m3_day'] == 0
         assert result['energy_potential_kwh_day'] == 0
 
     def test_negative_values_handling(self):
@@ -160,7 +160,7 @@ class TestBiogasCalculator:
         result2 = calc.calculate_municipality_potential(0, 150, 100000)
 
         # Rural should produce more biogas (65% vs 52% organic)
-        assert result2['biogas_production_m3_day'] > result1['biogas_production_m3_day']
+        assert result2['biogas_potential_m3_day'] > result1['biogas_potential_m3_day']
 
     def test_co2_reduction_calculation(self):
         """Test CO2 reduction potential calculation"""
@@ -236,8 +236,8 @@ class TestNumericalPrecision:
         result_large = calc.calculate_municipality_potential(10000, 5000, 10000000)
 
         # Both should produce valid results
-        assert result_small['biogas_production_m3_day'] >= 0
-        assert result_large['biogas_production_m3_day'] > 0
+        assert result_small['biogas_potential_m3_day'] >= 0
+        assert result_large['biogas_potential_m3_day'] > 0
 
     def test_calculation_consistency(self):
         """Test that same inputs produce same outputs"""
@@ -251,5 +251,5 @@ class TestNumericalPrecision:
         result2 = calc.calculate_municipality_potential(urban_waste, rural_waste, population)
 
         # Results should be identical
-        assert result1['biogas_production_m3_day'] == result2['biogas_production_m3_day']
+        assert result1['biogas_potential_m3_day'] == result2['biogas_potential_m3_day']
         assert result1['energy_potential_kwh_day'] == result2['energy_potential_kwh_day']
