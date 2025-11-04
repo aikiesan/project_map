@@ -1,0 +1,176 @@
+{
+  "summary": {
+    "total_issues": 0,
+    "total_warnings": 3,
+    "status": "PASS"
+  },
+  "issues": [],
+  "warnings": [
+    {
+      "category": "research_data_calculations",
+      "severity": "WARNING",
+      "message": "palha: Stated availability (25.2%) differs from simple factor multiplication (46.8%)",
+      "details": {
+        "residue": "palha",
+        "fc": 0.8,
+        "fcp": 0.65,
+        "fs": 1.0,
+        "fl": 0.9,
+        "calculated": 46.800000000000004,
+        "stated": 25.2,
+        "difference": 21.600000000000005,
+        "note": "May be correct if based on sequential application rather than multiplication"
+      }
+    },
+    {
+      "category": "research_data_calculations",
+      "severity": "WARNING",
+      "message": "vinhaca: Stated availability (61.7%) differs from simple factor multiplication (33.2%)",
+      "details": {
+        "residue": "vinhaca",
+        "fc": 0.95,
+        "fcp": 0.35,
+        "fs": 1.0,
+        "fl": 1.0,
+        "calculated": 33.24999999999999,
+        "stated": 61.7,
+        "difference": 28.45000000000001,
+        "note": "May be correct if based on sequential application rather than multiplication"
+      }
+    },
+    {
+      "category": "research_data_calculations",
+      "severity": "WARNING",
+      "message": "torta_filtro: Stated availability (54.0%) differs from simple factor multiplication (36.0%)",
+      "details": {
+        "residue": "torta_filtro",
+        "fc": 0.9,
+        "fcp": 0.4,
+        "fs": 1.0,
+        "fl": 1.0,
+        "calculated": 36.00000000000001,
+        "stated": 54.0,
+        "difference": 17.999999999999993,
+        "note": "May be correct if based on sequential application rather than multiplication"
+      }
+    }
+  ],
+  "validation_results": {
+    "conversion_factors": {
+      "methane_content": {
+        "status": "PASS",
+        "value": 0.6
+      },
+      "methane_energy_content": {
+        "status": "PASS",
+        "value": 9.97
+      },
+      "co2_avoided_per_kwh": {
+        "status": "PASS",
+        "value": 0.45
+      }
+    },
+    "research_data": {
+      "cana": {
+        "bagaco": {
+          "status": "PASS"
+        },
+        "palha": {
+          "status": "WARNING",
+          "calculated": 46.800000000000004,
+          "stated": 25.2
+        },
+        "vinhaca": {
+          "status": "WARNING",
+          "calculated": 33.24999999999999,
+          "stated": 61.7
+        },
+        "torta_filtro": {
+          "status": "WARNING",
+          "calculated": 36.00000000000001,
+          "stated": 54.0
+        }
+      },
+      "avicultura": {
+        "dejeto_aves": {
+          "status": "PASS",
+          "value": 40.5
+        }
+      }
+    },
+    "database": {
+      "total_municipalities": {
+        "value": 645,
+        "expected": 645,
+        "status": "PASS"
+      },
+      "nome_municipio_nulls": {
+        "status": "PASS",
+        "count": 0
+      },
+      "populacao_2022_nulls": {
+        "status": "PASS",
+        "count": 0
+      },
+      "lat_nulls": {
+        "status": "PASS",
+        "count": 0
+      },
+      "lon_nulls": {
+        "status": "PASS",
+        "count": 0
+      },
+      "total_final_m_ano_nulls": {
+        "status": "PASS",
+        "count": 0
+      },
+      "total_final_m_ano_negatives": {
+        "status": "PASS",
+        "count": 0
+      },
+      "biogas_cana_m_ano_negatives": {
+        "status": "PASS",
+        "count": 0
+      },
+      "biogas_aves_m_ano_negatives": {
+        "status": "PASS",
+        "count": 0
+      },
+      "biogas_bovinos_m_ano_negatives": {
+        "status": "PASS",
+        "count": 0
+      },
+      "coordinates_validity": {
+        "status": "PASS",
+        "out_of_bounds": 0
+      },
+      "biogas_statistics": {
+        "min": 102022.13,
+        "max": 650448740.0522015,
+        "avg": 75728219.10173014,
+        "total": 48844701320.61594
+      }
+    },
+    "scenarios": {
+      "pessimistic": {
+        "status": "PASS",
+        "factor": 0.1
+      },
+      "realistic": {
+        "status": "PASS",
+        "factor": 0.175
+      },
+      "optimistic": {
+        "status": "PASS",
+        "factor": 0.275
+      },
+      "utopian": {
+        "status": "PASS",
+        "factor": 1.0
+      },
+      "ordering": {
+        "status": "PASS"
+      }
+    }
+  }
+}
