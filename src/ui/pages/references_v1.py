@@ -289,16 +289,39 @@ def _render_panorama_database(loader, papers):
     </div>
     """, unsafe_allow_html=True)
 
-    # Search and filters
-    filtered_papers, selected_category, citation_format = render_search_and_filters(loader)
+    # Search and filters - get filter settings as dictionary
+    filters = render_search_and_filters(loader)
+
+    # Extract individual filter values
+    search_query = filters['search_query']
+    citation_format = filters['citation_format']
+    selected_category = filters['category']
+    start_year = filters['start_year']
+    end_year = filters['end_year']
+
+    # Apply filters to papers
+    filtered_papers = papers  # Start with all papers
+
+    # Apply search query if provided
+    if search_query:
+        filtered_papers = loader.search_papers(search_query)
+
+    # Apply category filter if specified
+    if selected_category:
+        filtered_papers = [p for p in filtered_papers if p.category == selected_category]
+
+    # Apply year range filter
+    filtered_papers = [p for p in filtered_papers
+                      if start_year <= p.year <= end_year]
 
     # Show statistics for filtered results
-    if selected_category and selected_category != "all":
+    if selected_category:
+        category_name = selected_category.value if hasattr(selected_category, 'value') else str(selected_category)
         st.markdown(f"""
         <div style='background: #fef3c7; border-radius: 8px; padding: 0.8rem 1rem;
                     border-left: 3px solid #f59e0b; margin-bottom: 1rem;'>
             <span style='color: #92400e; font-weight: 600;'>
-                📊 Mostrando {len(filtered_papers)} papers na categoria "{selected_category}"
+                📊 Mostrando {len(filtered_papers)} papers na categoria "{category_name}"
             </span>
         </div>
         """, unsafe_allow_html=True)
