@@ -1,0 +1,883 @@
+/*
+=================================================================
+CP2B MAPS - MOBILE RESPONSIVE DESIGN
+Optimized for mobile browsers (Chrome, Safari, Firefox Mobile)
+Version: 1.0.0
+=================================================================
+*/
+
+/* ============================================
+   MOBILE VIEWPORT & BASE CONFIGURATION
+   ============================================ */
+
+/* Force proper mobile scaling */
+@viewport {
+    width: device-width;
+    zoom: 1.0;
+}
+
+/* Prevent text size adjustment on orientation change */
+html {
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    font-size: 16px; /* Base font size for better mobile readability */
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   CONTAINER & LAYOUT FIXES
+   ============================================ */
+
+/* Fix Streamlit's default container padding on mobile */
+@media (max-width: 768px) {
+
+    /* Main content area */
+    .main .block-container {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+        padding-top: 1rem !important;
+        max-width: 100% !important;
+    }
+
+    /* Prevent horizontal overflow */
+    .main,
+    .stApp,
+    .block-container {
+        overflow-x: hidden !important;
+        max-width: 100vw !important;
+    }
+
+    /* Fix main container width */
+    section.main > div {
+        max-width: 100% !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    /* Sidebar mobile optimization */
+    [data-testid="stSidebar"] {
+        width: 85vw !important; /* 85% of viewport width */
+        max-width: 320px !important;
+    }
+
+    [data-testid="stSidebar"] > div {
+        width: 85vw !important;
+        max-width: 320px !important;
+    }
+
+    [data-testid="stSidebar"] .block-container {
+        padding: 1rem !important;
+    }
+
+    /* Sidebar content */
+    [data-testid="stSidebar"] section {
+        padding: 0.5rem 0 !important;
+    }
+}
+
+/* ============================================
+   RESPONSIVE TYPOGRAPHY
+   ============================================ */
+
+@media (max-width: 768px) {
+
+    /* Headers - Scale down for mobile */
+    .main h1,
+    .header-title {
+        font-size: 1.75rem !important;
+        line-height: 1.2 !important;
+        margin-bottom: 0.75rem !important;
+        word-wrap: break-word !important;
+    }
+
+    .main h2,
+    .header-subtitle {
+        font-size: 1.35rem !important;
+        line-height: 1.3 !important;
+        word-wrap: break-word !important;
+    }
+
+    .main h3 {
+        font-size: 1.15rem !important;
+        line-height: 1.4 !important;
+        word-wrap: break-word !important;
+    }
+
+    .main h4 {
+        font-size: 1.05rem !important;
+        line-height: 1.4 !important;
+    }
+
+    /* Body text - Increase for readability */
+    .main p,
+    .main li,
+    .main div {
+        font-size: 1rem !important;
+        line-height: 1.6 !important;
+        word-wrap: break-word !important;
+    }
+
+    /* Small text - Still readable */
+    .main small,
+    .stat-label {
+        font-size: 0.875rem !important;
+    }
+
+    /* Prevent text overflow */
+    * {
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+    }
+}
+
+/* ============================================
+   TOUCH-FRIENDLY INTERACTIVE ELEMENTS
+   ============================================ */
+
+@media (max-width: 768px) {
+
+    /* Buttons - Minimum 48px touch target (Apple/Google guidelines) */
+    .stButton > button {
+        min-height: 48px !important;
+        min-width: 48px !important;
+        padding: 14px 20px !important;
+        font-size: 1rem !important;
+        width: 100% !important; /* Full-width buttons on mobile */
+        margin-bottom: 0.75rem !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+    }
+
+    /* Ensure button text doesn't wrap awkwardly */
+    .stButton > button > div {
+        white-space: normal !important;
+        line-height: 1.4 !important;
+    }
+
+    /* Selectbox - Touch-friendly */
+    .stSelectbox > div > div {
+        min-height: 48px !important;
+        padding: 12px !important;
+        font-size: 1rem !important;
+    }
+
+    .stSelectbox label {
+        font-size: 1rem !important;
+        font-weight: 600 !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    /* Text inputs - Easy to tap */
+    .stTextInput > div > div > input,
+    .stTextArea > div > div > textarea,
+    .stNumberInput > div > div > input {
+        min-height: 48px !important;
+        padding: 14px !important;
+        font-size: 16px !important; /* Prevents iOS zoom on focus */
+        border-radius: 8px !important;
+    }
+
+    .stTextInput label,
+    .stTextArea label,
+    .stNumberInput label {
+        font-size: 1rem !important;
+        font-weight: 600 !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    /* Checkbox & Radio - Larger touch targets */
+    .stCheckbox,
+    .stRadio {
+        min-height: 48px !important;
+        padding: 12px 0 !important;
+    }
+
+    .stCheckbox label,
+    .stRadio label {
+        font-size: 1rem !important;
+        min-height: 44px !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    /* Links - Touch-friendly spacing */
+    a {
+        padding: 8px 4px !important;
+        display: inline-block !important;
+        min-height: 44px !important;
+        line-height: 28px !important;
+        text-decoration: underline !important;
+    }
+
+    /* Slider - Touch-friendly */
+    .stSlider {
+        padding: 1rem 0 !important;
+    }
+
+    .stSlider > div > div > div {
+        padding: 1rem 0 !important;
+    }
+}
+
+/* ============================================
+   RESPONSIVE GRID & COLUMNS
+   ============================================ */
+
+@media (max-width: 768px) {
+
+    /* Force single column layout */
+    .row-widget.stHorizontal {
+        flex-direction: column !important;
+    }
+
+    /* Streamlit columns - Stack vertically */
+    [data-testid="column"] {
+        width: 100% !important;
+        min-width: 100% !important;
+        margin-bottom: 1rem !important;
+    }
+
+    /* Force columns to stack */
+    div[data-testid="column"] > div {
+        width: 100% !important;
+    }
+
+    /* Metrics - Stack vertically */
+    [data-testid="metric-container"] {
+        margin-bottom: 1rem !important;
+    }
+
+    .stMetric {
+        margin-bottom: 1rem !important;
+    }
+
+    /* Stats container - Stack items */
+    .stats-container {
+        flex-direction: column !important;
+        gap: 1rem !important;
+        padding: 0 !important;
+    }
+
+    .stat-item {
+        width: 100% !important;
+        margin-bottom: 0.5rem !important;
+        padding: 1rem !important;
+    }
+}
+
+/* ============================================
+   MAPS & VISUALIZATIONS
+   ============================================ */
+
+@media (max-width: 768px) {
+
+    /* Folium maps - Responsive sizing */
+    .folium-map,
+    iframe[src*="folium"],
+    iframe[srcdoc*="folium"] {
+        width: 100% !important;
+        min-height: 400px !important;
+        max-height: 500px !important;
+        max-width: 100vw !important;
+        border-radius: 8px !important;
+        margin: 0.5rem 0 !important;
+    }
+
+    /* Plotly charts - Full width */
+    .js-plotly-plot,
+    .plotly,
+    [data-testid="stPlotlyChart"] {
+        width: 100% !important;
+        max-width: 100vw !important;
+    }
+
+    /* Chart containers */
+    .stPlotlyChart {
+        width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+
+    /* Plotly modebar - Mobile friendly */
+    .modebar {
+        right: 0 !important;
+        top: 0 !important;
+    }
+
+    .modebar-btn {
+        width: 40px !important;
+        height: 40px !important;
+    }
+
+    /* DataFrames - Horizontal scroll */
+    [data-testid="stDataFrame"],
+    .stDataFrame {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        width: 100% !important;
+    }
+
+    [data-testid="stDataFrame"] > div,
+    .stDataFrame > div {
+        max-width: 100vw !important;
+    }
+
+    /* Table wrapper for horizontal scroll */
+    .dataframe-container {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        margin: 0.5rem 0 !important;
+    }
+}
+
+/* ============================================
+   CUSTOM COMPONENTS - MOBILE OPTIMIZATION
+   ============================================ */
+
+@media (max-width: 768px) {
+
+    /* Main header gradient - Reduce padding */
+    .main-header {
+        padding: 1.5rem 1rem !important;
+        border-radius: 8px !important;
+        margin-bottom: 1rem !important;
+    }
+
+    .header-icon {
+        font-size: 2.5rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    .header-description {
+        font-size: 0.95rem !important;
+        padding: 0 0.5rem !important;
+        line-height: 1.5 !important;
+    }
+
+    /* Page breadcrumb */
+    .page-breadcrumb {
+        padding: 0.5rem 1rem !important;
+        font-size: 0.85rem !important;
+        margin-bottom: 1rem !important;
+    }
+
+    /* Cards - Mobile friendly */
+    .card,
+    [class*="card-"] {
+        margin: 0.75rem 0 !important;
+        padding: 1rem !important;
+        border-radius: 8px !important;
+    }
+
+    /* Expanders - Better spacing */
+    [data-testid="stExpander"] {
+        margin: 0.5rem 0 !important;
+    }
+
+    [data-testid="stExpander"] details {
+        padding: 0.5rem !important;
+    }
+
+    [data-testid="stExpander"] summary {
+        min-height: 48px !important;
+        padding: 12px !important;
+        font-size: 1rem !important;
+        cursor: pointer !important;
+    }
+}
+
+/* ============================================
+   SIDEBAR OPTIMIZATION
+   ============================================ */
+
+@media (max-width: 768px) {
+
+    /* Sidebar sections */
+    [data-testid="stSidebar"] section {
+        padding: 0.75rem 0 !important;
+    }
+
+    /* Sidebar labels */
+    [data-testid="stSidebar"] label {
+        font-size: 1rem !important;
+        font-weight: 600 !important;
+    }
+
+    /* Sidebar buttons */
+    [data-testid="stSidebar"] .stButton > button {
+        width: 100% !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    /* Sidebar selectboxes */
+    [data-testid="stSidebar"] .stSelectbox {
+        margin-bottom: 1rem !important;
+    }
+
+    /* Sidebar dividers */
+    [data-testid="stSidebar"] hr {
+        margin: 1rem 0 !important;
+    }
+}
+
+/* ============================================
+   NAVIGATION & TABS
+   ============================================ */
+
+@media (max-width: 768px) {
+
+    /* Streamlit tabs - Scrollable */
+    .stTabs {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        margin-bottom: 1rem !important;
+    }
+
+    [data-baseweb="tab-list"] {
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        gap: 0.5rem !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+
+    [data-baseweb="tab"] {
+        white-space: nowrap !important;
+        padding: 12px 16px !important;
+        font-size: 0.95rem !important;
+        min-width: max-content !important;
+        flex-shrink: 0 !important;
+    }
+
+    [data-baseweb="tab-panel"] {
+        padding: 1rem 0 !important;
+    }
+
+    /* Tab highlight */
+    [data-baseweb="tab-highlight"] {
+        height: 3px !important;
+    }
+}
+
+/* ============================================
+   TABLES - MOBILE RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+
+    /* Scrollable tables */
+    table {
+        display: block !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        white-space: nowrap !important;
+        border-radius: 8px !important;
+        margin: 0.5rem 0 !important;
+    }
+
+    thead {
+        display: table-header-group !important;
+    }
+
+    tbody {
+        display: table-row-group !important;
+    }
+
+    tr {
+        display: table-row !important;
+    }
+
+    th, td {
+        display: table-cell !important;
+        padding: 10px 8px !important;
+        font-size: 0.9rem !important;
+    }
+
+    th {
+        font-weight: 600 !important;
+        position: sticky !important;
+        top: 0 !important;
+        background-color: #f8f9fa !important;
+        z-index: 10 !important;
+    }
+}
+
+/* ============================================
+   ACCESSIBILITY - MOBILE ENHANCEMENTS
+   ============================================ */
+
+@media (max-width: 768px) {
+
+    /* Skip links - Larger on mobile */
+    .skip-link {
+        font-size: 1.1rem !important;
+        padding: 12px 24px !important;
+        min-height: 48px !important;
+    }
+
+    /* Focus indicators - More visible */
+    *:focus {
+        outline-width: 3px !important;
+        outline-offset: 3px !important;
+    }
+
+    /* Alerts - Full width */
+    .accessibility-alert,
+    [data-testid="stAlert"],
+    .stAlert {
+        width: 100% !important;
+        padding: 12px !important;
+        margin: 0.75rem 0 !important;
+        border-radius: 8px !important;
+    }
+
+    /* Success/Info/Warning/Error messages */
+    .stSuccess,
+    .stInfo,
+    .stWarning,
+    .stError {
+        padding: 12px !important;
+        margin: 0.75rem 0 !important;
+        border-radius: 8px !important;
+    }
+}
+
+/* ============================================
+   IMAGES & MEDIA
+   ============================================ */
+
+@media (max-width: 768px) {
+
+    /* Responsive images */
+    img {
+        max-width: 100% !important;
+        height: auto !important;
+        border-radius: 8px !important;
+    }
+
+    [data-testid="stImage"],
+    .stImage {
+        width: 100% !important;
+        margin: 0.5rem 0 !important;
+    }
+
+    [data-testid="stImage"] img,
+    .stImage img {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+
+    /* Video embeds */
+    video,
+    iframe[src*="youtube"],
+    iframe[src*="vimeo"] {
+        max-width: 100% !important;
+        height: auto !important;
+        aspect-ratio: 16/9 !important;
+    }
+}
+
+/* ============================================
+   STREAMLIT SPECIFIC MOBILE FIXES
+   ============================================ */
+
+@media (max-width: 768px) {
+
+    /* File uploader */
+    [data-testid="stFileUploader"] {
+        margin: 1rem 0 !important;
+    }
+
+    [data-testid="stFileUploader"] button {
+        width: 100% !important;
+        min-height: 48px !important;
+    }
+
+    /* Download button */
+    [data-testid="stDownloadButton"] button {
+        width: 100% !important;
+        min-height: 48px !important;
+    }
+
+    /* Progress bar */
+    .stProgress {
+        margin: 1rem 0 !important;
+    }
+
+    /* Spinner */
+    .stSpinner {
+        margin: 1rem auto !important;
+    }
+
+    /* Code blocks */
+    .stCodeBlock,
+    pre {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        font-size: 0.85rem !important;
+        padding: 1rem !important;
+        border-radius: 8px !important;
+    }
+
+    code {
+        font-size: 0.85rem !important;
+        word-break: break-all !important;
+    }
+
+    /* JSON viewer */
+    .stJson {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+/* Hide on mobile */
+.mobile-hide {
+    display: none !important;
+}
+
+/* Show only on mobile */
+.mobile-only {
+    display: block !important;
+}
+
+/* Desktop only */
+.desktop-only {
+    display: none !important;
+}
+
+@media (min-width: 769px) {
+    .mobile-hide {
+        display: block !important;
+    }
+
+    .mobile-only {
+        display: none !important;
+    }
+
+    .desktop-only {
+        display: block !important;
+    }
+}
+
+/* ============================================
+   PERFORMANCE - MOBILE OPTIMIZATIONS
+   ============================================ */
+
+@media (max-width: 768px) {
+
+    /* Reduce animations for better performance */
+    * {
+        animation-duration: 0.2s !important;
+        transition-duration: 0.2s !important;
+    }
+
+    /* Disable hover effects on touch devices */
+    @media (hover: none) {
+        *:hover {
+            transform: none !important;
+        }
+
+        .stButton > button:hover {
+            transform: none !important;
+        }
+    }
+
+    /* GPU acceleration for smooth scrolling */
+    .main,
+    [data-testid="stSidebar"] {
+        -webkit-transform: translate3d(0, 0, 0) !important;
+        transform: translate3d(0, 0, 0) !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+}
+
+/* ============================================
+   LANDSCAPE ORIENTATION
+   ============================================ */
+
+@media (max-width: 768px) and (orientation: landscape) {
+
+    /* Adjust header for landscape */
+    .main-header {
+        padding: 1rem !important;
+    }
+
+    .header-icon {
+        font-size: 2rem !important;
+    }
+
+    .header-title {
+        font-size: 1.5rem !important;
+    }
+
+    /* Reduce vertical spacing */
+    .main .block-container {
+        padding-top: 0.5rem !important;
+    }
+
+    /* Maps - Better use of horizontal space */
+    .folium-map,
+    iframe[src*="folium"],
+    iframe[srcdoc*="folium"] {
+        min-height: 300px !important;
+        max-height: 400px !important;
+    }
+}
+
+/* ============================================
+   VERY SMALL SCREENS (< 380px)
+   ============================================ */
+
+@media (max-width: 380px) {
+
+    html {
+        font-size: 14px !important;
+    }
+
+    .main h1 {
+        font-size: 1.5rem !important;
+    }
+
+    .main h2 {
+        font-size: 1.25rem !important;
+    }
+
+    .main h3 {
+        font-size: 1.1rem !important;
+    }
+
+    .stButton > button {
+        padding: 12px 16px !important;
+        font-size: 0.95rem !important;
+    }
+
+    .main-header {
+        padding: 1rem 0.5rem !important;
+    }
+
+    .stat-item {
+        padding: 0.75rem !important;
+    }
+
+    .stat-number {
+        font-size: 1.5rem !important;
+    }
+}
+
+/* ============================================
+   TABLET (768px - 1024px)
+   ============================================ */
+
+@media (min-width: 769px) and (max-width: 1024px) {
+
+    .main .block-container {
+        padding-left: 2rem !important;
+        padding-right: 2rem !important;
+        max-width: 95% !important;
+    }
+
+    [data-testid="stSidebar"] {
+        width: 280px !important;
+    }
+
+    [data-testid="stSidebar"] > div {
+        width: 280px !important;
+    }
+
+    /* Buttons can be smaller on tablet */
+    .stButton > button {
+        width: auto !important;
+        min-width: 120px !important;
+    }
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+
+    /* Hide sidebar on print */
+    [data-testid="stSidebar"] {
+        display: none !important;
+    }
+
+    /* Full width for print */
+    .main .block-container {
+        max-width: 100% !important;
+        padding: 0 !important;
+    }
+
+    /* Remove backgrounds */
+    .main-header {
+        background: none !important;
+        color: #000 !important;
+    }
+
+    /* Ensure readable text */
+    * {
+        color: #000 !important;
+        background: #fff !important;
+    }
+
+    /* Page breaks */
+    h1, h2, h3 {
+        page-break-after: avoid !important;
+    }
+
+    table, figure, img {
+        page-break-inside: avoid !important;
+    }
+}
+
+/* ============================================
+   DARK MODE SUPPORT (Future enhancement)
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+    /* Dark mode styles can be added here in future */
+    /* For now, maintaining light mode for consistency */
+}
+
+/* ============================================
+   REDUCED MOTION (Accessibility)
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ============================================
+   HIGH CONTRAST MODE SUPPORT
+   ============================================ */
+
+@media (prefers-contrast: high) {
+    .stButton > button {
+        border: 2px solid currentColor !important;
+    }
+
+    .stSelectbox > div > div {
+        border: 2px solid currentColor !important;
+    }
+
+    a {
+        text-decoration: underline !important;
+        text-decoration-thickness: 2px !important;
+    }
+}
+
+/* End of Mobile Responsive CSS */

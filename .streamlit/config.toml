@@ -1,0 +1,76 @@
+# CP2B Maps - Streamlit Configuration
+# Mobile-optimized configuration for better user experience
+
+[theme]
+# Primary color - Purple from design system
+primaryColor = "#667eea"
+
+# Background color - Clean white
+backgroundColor = "#ffffff"
+
+# Secondary background - Light gray for cards
+secondaryBackgroundColor = "#f8f9fa"
+
+# Text color - Dark gray for readability
+textColor = "#1f1f1f"
+
+# Font - System fonts for better mobile performance
+font = "sans serif"
+
+[browser]
+# Don't gather usage stats
+gatherUsageStats = false
+
+# Server address
+serverAddress = "0.0.0.0"
+
+[server]
+# CORS and security
+enableCORS = false
+enableXsrfProtection = true
+
+# Performance settings
+maxUploadSize = 200
+maxMessageSize = 200
+
+# Port configuration (default 8501)
+port = 8501
+
+# Enable websocket compression for better mobile performance
+enableWebsocketCompression = true
+
+# File watcher settings
+fileWatcherType = "auto"
+
+[runner]
+# Fast reruns for better UX
+fastReruns = true
+
+# Magic enabled
+magicEnabled = true
+
+# Install tracer for better debugging
+installTracer = false
+
+# Fix matplotlib for mobile
+fixMatplotlib = true
+
+# Post script GC
+postScriptGC = true
+
+[client]
+# Show error details
+showErrorDetails = true
+
+# Toolbar mode - auto (shows on hover)
+toolbarMode = "auto"
+
+# Show sidebar navigation
+showSidebarNavigation = true
+
+[ui]
+# Hide top bar for cleaner mobile experience
+hideTopBar = false
+
+# Hide sidebar close button on mobile
+hideSidebarNav = false

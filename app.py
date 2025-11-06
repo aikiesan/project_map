@@ -22,6 +22,17 @@ st.set_page_config(
     initial_sidebar_state=settings.SIDEBAR_STATE
 )
 
+# Mobile Viewport Configuration - CRITICAL for mobile responsiveness
+# Ensures proper scaling and prevents horizontal scrolling on mobile devices
+st.markdown("""
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CP2B Maps">
+<meta name="format-detection" content="telephone=no">
+""", unsafe_allow_html=True)
+
 # Preload Montserrat font to prevent FOUT (Flash of Unstyled Text)
 # This ensures font is ready before first render, eliminating layout shifts
 st.markdown("""
@@ -34,7 +45,7 @@ st.markdown("""
 from src.utils.logging_config import get_logger
 
 # Import design system for V1 styling
-from src.ui.components.design_system import render_green_header, load_global_css
+from src.ui.components.design_system import render_green_header, load_global_css, load_mobile_css
 
 # Import accessibility components
 from src.accessibility.core import AccessibilityManager
@@ -102,6 +113,10 @@ def init_session_state():
         # This prevents multiple reruns caused by module-level CSS loading
         logger.info("Loading global CSS...")
         load_global_css()
+
+        # Load mobile responsive CSS
+        logger.info("Loading mobile responsive CSS...")
+        load_mobile_css()
 
         st.session_state.app_initialized = True
         st.session_state.accessibility_manager = initialize_accessibility()

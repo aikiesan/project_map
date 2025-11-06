@@ -656,3 +656,42 @@ def load_global_css():
         # Mark as loaded to prevent re-injection
         st.session_state.global_css_loaded = True
         logger.info("Global CSS loaded successfully")
+
+
+@st.cache_resource
+def _load_mobile_css_content():
+    """
+    Load mobile responsive CSS content from file and cache it
+    Cached to avoid repeated file reads
+    """
+    mobile_css_path = Path(__file__).parent.parent.parent.parent / "static" / "css" / "mobile_responsive.css"
+
+    if mobile_css_path.exists():
+        with open(mobile_css_path, 'r', encoding='utf-8') as f:
+            return f.read()
+    else:
+        logger.warning(f"Mobile responsive CSS file not found at {mobile_css_path}")
+        return ""
+
+
+def load_mobile_css():
+    """
+    Load mobile responsive CSS styling - Only injects CSS ONCE per session
+    Uses session state to prevent re-injection on every render
+    """
+    # Check if mobile CSS already loaded this session
+    if 'mobile_css_loaded' in st.session_state:
+        return
+
+    # Get cached mobile CSS content
+    mobile_css_content = _load_mobile_css_content()
+
+    if mobile_css_content:
+        # Inject mobile CSS once using st.markdown
+        st.markdown(f"<style>{mobile_css_content}</style>", unsafe_allow_html=True)
+
+        # Mark as loaded to prevent re-injection
+        st.session_state.mobile_css_loaded = True
+        logger.info("✅ Mobile responsive CSS loaded successfully")
+    else:
+        logger.error("❌ Failed to load mobile responsive CSS")
