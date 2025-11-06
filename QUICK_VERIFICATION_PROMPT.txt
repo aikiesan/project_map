@@ -1,0 +1,90 @@
+========================================
+COPY EVERYTHING BELOW THIS LINE
+========================================
+
+I need your help to verify the Enhanced Scientific References System before merging to main.
+
+CONTEXT:
+Branch: claude/scientific-references-011CUqck8tRQ7YCqmKkEgarS
+Base: f3e39b5
+Changes: Added new "Base Panorama" tab with 58 scientific papers from Panorama CP2B database
+
+FILES CHANGED:
+- Created: data/panorama_scientific_papers.json (58 papers)
+- Created: src/data/references/enhanced_references_loader.py
+- Created: src/ui/components/enhanced_references_ui.py
+- Modified: src/ui/pages/references_v1.py (+94, -18 lines)
+- Created: Documentation files (guides and reports)
+
+PLEASE DO:
+
+1. FETCH AND CHECKOUT
+```bash
+git fetch origin claude/scientific-references-011CUqck8tRQ7YCqmKkEgarS
+git checkout claude/scientific-references-011CUqck8tRQ7YCqmKkEgarS
+git log --oneline HEAD~5..HEAD
+```
+
+2. REVIEW FILES
+- List all changed files vs base commit f3e39b5
+- Show git diff statistics
+- Check if data/panorama_scientific_papers.json is valid JSON
+- Verify Python files compile without errors
+
+3. START THE APP
+```bash
+streamlit run app.py
+```
+
+4. TEST FUNCTIONALITY
+Navigate to "Referências Científicas" page and test:
+- [ ] All 6 tabs visible (including new "Base Panorama")
+- [ ] Statistics show: 58 papers, 6 categories, 4 validated
+- [ ] New tab loads and shows paper cards
+- [ ] Search "cana" returns results
+- [ ] Category filter works
+- [ ] Year range slider works
+- [ ] Switch ABNT ↔ APA citation formats
+- [ ] Export BibTeX downloads file
+- [ ] Original 5 tabs still work
+- [ ] No console errors (F12)
+- [ ] No terminal errors
+
+5. PERFORMANCE CHECK
+- Page load time?
+- Search response time?
+- Any lag or issues?
+
+6. PROVIDE ASSESSMENT
+Based on testing, tell me:
+- Overall Status: READY TO MERGE / NEEDS FIXES / NEEDS REVIEW
+- Risk Level: LOW / MEDIUM / HIGH
+- Your confidence: X/10
+- Any issues found?
+- Merge commands if approved
+
+EXPECTED OUTCOMES:
+✅ All tests should pass
+✅ No breaking changes
+✅ Performance < 3s load time
+⚠️ Note: 55/58 papers have empty journal field (database under development - expected)
+
+SUCCESS CRITERIA:
+- All files valid
+- App starts successfully
+- All features work
+- No errors
+- Original functionality preserved
+
+If everything passes, provide merge commands:
+```bash
+git checkout main
+git merge --no-ff claude/scientific-references-011CUqck8tRQ7YCqmKkEgarS
+git push origin main
+```
+
+Please start verification and report findings. Thank you!
+
+========================================
+COPY EVERYTHING ABOVE THIS LINE
+========================================
