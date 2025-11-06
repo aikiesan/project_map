@@ -1,10 +1,22 @@
 """
 CP2B Maps - Modern Scientific References Page
 Professional design with teal gradient banner matching other pages
+Enhanced with Panorama CP2B scientific papers database
 """
 
 import streamlit as st
 from src.data.references.scientific_references import render_reference_button
+from src.data.references.enhanced_references_loader import (
+    get_references_loader,
+    CitationFormat,
+    ReferenceCategory
+)
+from src.ui.components.enhanced_references_ui import (
+    render_search_and_filters,
+    render_papers_list,
+    render_export_options,
+    render_category_summary
+)
 from src.utils.logging_config import get_logger
 
 logger = get_logger(__name__)
@@ -16,16 +28,22 @@ def render_references_v1_page():
     # Modern teal gradient header (scientific/academic theme)
     _render_modern_header()
 
-    # Quick stats banner
-    _render_stats_banner()
+    # Load references data
+    loader = get_references_loader()
+    papers = loader.load_papers()
+    stats = loader.get_statistics()
 
-    # Category tabs with modern styling (5 tabs only)
+    # Quick stats banner with live data
+    _render_stats_banner(stats)
+
+    # Category tabs with modern styling (6 tabs - added Panorama Database)
     ref_tabs = st.tabs([
         "🌾 Substratos Agrícolas",
         "🐄 Resíduos Pecuários",
         "⚗️ Co-digestão",
         "🗺️ Fontes de Dados",
-        "🔬 Metodologias"
+        "🔬 Metodologias",
+        "📚 Base Panorama"
     ])
 
     with ref_tabs[0]:  # Agricultural
@@ -53,6 +71,11 @@ def render_references_v1_page():
         st.markdown("")
         _render_methodologies()
 
+    with ref_tabs[5]:  # Panorama Database
+        st.markdown("Base de dados científicos do projeto Panorama CP2B - Pesquisas validadas e revisadas por pares")
+        st.markdown("")
+        _render_panorama_database(loader, papers)
+
     # Search section
     st.markdown("---")
     _render_search_section()
@@ -78,50 +101,58 @@ def _render_modern_header() -> None:
     """, unsafe_allow_html=True)
 
 
-def _render_stats_banner() -> None:
-    """Render floating stats banner"""
+def _render_stats_banner(stats: dict) -> None:
+    """Render floating stats banner with live data"""
     col1, col2, col3, col4 = st.columns(4)
 
+    total_papers = stats.get('total_papers', 0)
+    categories = len(stats.get('by_category', {}))
+    validated = stats.get('validated_papers', 0)
+    complete = stats.get('complete_metadata', 0)
+
+    # Calculate percentage of validated papers
+    validation_pct = int((validated / total_papers * 100)) if total_papers > 0 else 0
+
     with col1:
-        st.markdown("""
+        st.markdown(f"""
         <div style='background: white; border-radius: 12px; padding: 1.2rem;
                     box-shadow: 0 2px 8px rgba(20,184,166,0.15); border: 1px solid #e5e7eb;
                     text-align: center;'>
             <div style='font-size: 2rem; margin-bottom: 0.3rem;'>📖</div>
-            <div style='color: #14b8a6; font-size: 1.8rem; font-weight: 700; margin-bottom: 0.2rem;'>50+</div>
-            <div style='color: #6b7280; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;'>Referências</div>
+            <div style='color: #14b8a6; font-size: 1.8rem; font-weight: 700; margin-bottom: 0.2rem;'>{total_papers}</div>
+            <div style='color: #6b7280; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;'>Papers</div>
         </div>
         """, unsafe_allow_html=True)
 
     with col2:
-        st.markdown("""
+        st.markdown(f"""
         <div style='background: white; border-radius: 12px; padding: 1.2rem;
                     box-shadow: 0 2px 8px rgba(20,184,166,0.15); border: 1px solid #e5e7eb;
                     text-align: center;'>
             <div style='font-size: 2rem; margin-bottom: 0.3rem;'>🏷️</div>
-            <div style='color: #14b8a6; font-size: 1.8rem; font-weight: 700; margin-bottom: 0.2rem;'>5</div>
+            <div style='color: #14b8a6; font-size: 1.8rem; font-weight: 700; margin-bottom: 0.2rem;'>{categories}</div>
             <div style='color: #6b7280; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;'>Categorias</div>
         </div>
         """, unsafe_allow_html=True)
 
     with col3:
-        st.markdown("""
-        <div style='background: white; border-radius: 12px; padding: 1.2rem;
-                    box-shadow: 0 2px 8px rgba(20,184,166,0.15); border: 1px solid #e5e7eb;
-                    text-align: center;'>
-            <div style='font-size: 2rem; margin-bottom: 0.3rem;'>🗺️</div>
-            <div style='color: #14b8a6; font-size: 1.8rem; font-weight: 700; margin-bottom: 0.2rem;'>4</div>
-            <div style='color: #6b7280; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;'>Fontes de Dados</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    with col4:
-        st.markdown("""
+        st.markdown(f"""
         <div style='background: white; border-radius: 12px; padding: 1.2rem;
                     box-shadow: 0 2px 8px rgba(20,184,166,0.15); border: 1px solid #e5e7eb;
                     text-align: center;'>
             <div style='font-size: 2rem; margin-bottom: 0.3rem;'>✅</div>
-            <div style='color: #14b8a6; font-size: 1.8rem; font-weight: 700; margin-bottom: 0.2rem;'>100%</div>
+            <div style='color: #14b8a6; font-size: 1.8rem; font-weight: 700; margin-bottom: 0.2rem;'>{validated}</div>
+            <div style='color: #6b7280; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;'>Validados</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with col4:
+        st.markdown(f"""
+        <div style='background: white; border-radius: 12px; padding: 1.2rem;
+                    box-shadow: 0 2px 8px rgba(20,184,166,0.15); border: 1px solid #e5e7eb;
+                    text-align: center;'>
+            <div style='font-size: 2rem; margin-bottom: 0.3rem;'>📊</div>
+            <div style='color: #14b8a6; font-size: 1.8rem; font-weight: 700; margin-bottom: 0.2rem;'>{validation_pct}%</div>
             <div style='color: #6b7280; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;'>Peer-Reviewed</div>
         </div>
         """, unsafe_allow_html=True)
@@ -241,6 +272,51 @@ def _render_methodologies():
         </ul>
     </div>
     """, unsafe_allow_html=True)
+
+
+def _render_panorama_database(loader, papers):
+    """Render Panorama CP2B scientific papers with search and filters"""
+
+    # Info banner
+    st.markdown("""
+    <div style='background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+                border-radius: 12px; padding: 1.2rem; margin-bottom: 1.5rem;
+                border-left: 4px solid #0ea5e9;'>
+        <h4 style='margin: 0 0 0.5rem 0; color: #075985;'>📚 Base de Dados Panorama CP2B</h4>
+        <p style='margin: 0; color: #0c4a6e; font-size: 0.95rem;'>
+            Acervo completo de artigos científicos validados, com parâmetros técnicos extraídos e revisados.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Search and filters
+    filtered_papers, selected_category, citation_format = render_search_and_filters(loader)
+
+    # Show statistics for filtered results
+    if selected_category and selected_category != "all":
+        st.markdown(f"""
+        <div style='background: #fef3c7; border-radius: 8px; padding: 0.8rem 1rem;
+                    border-left: 3px solid #f59e0b; margin-bottom: 1rem;'>
+            <span style='color: #92400e; font-weight: 600;'>
+                📊 Mostrando {len(filtered_papers)} papers na categoria "{selected_category}"
+            </span>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # Render papers list
+    if filtered_papers:
+        render_papers_list(
+            papers=filtered_papers,
+            citation_format=citation_format,
+            show_category=True
+        )
+
+        # Export options at bottom
+        st.markdown("---")
+        st.markdown("### 📥 Exportar Referências")
+        render_export_options(filtered_papers, citation_format)
+    else:
+        st.info("🔍 Nenhum paper encontrado com os filtros selecionados.")
 
 
 def _render_search_section():
