@@ -330,8 +330,7 @@ def _render_panorama_database(loader, papers):
     if filtered_papers:
         render_papers_list(
             papers=filtered_papers,
-            citation_format=citation_format,
-            show_category=True
+            citation_format=citation_format
         )
 
         # Export options at bottom
